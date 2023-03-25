@@ -11,9 +11,9 @@ const mongoSanitize = require('express-mongo-sanitize');
 const XSSClean = require('xss-clean');
 const paymentRouter = require('./routes/paymentRouter');
 const cookieParser = require('cookie-parser');
-const viewsRouter = require('./routes/viewsRouter')
 const compression = require('compression')
-
+const expressSession =require('express-session');
+const MongoDBSession=require('connect-mongodb-session')(expressSession);
 const limiter = rateLimit({
     max: 100,
     windowMs : 60*60*1000,
@@ -21,8 +21,27 @@ const limiter = rateLimit({
 });
 
 const app = express();
+const store=new MongoDBSession({
+    uri: process.env.DB_CONN_STR,
+    collection: 'sessions',
+})
 
+app.use(
+    expressSession({
+        maxAge : 30*24*60*60,
+        resave:false,
+        secret: process.env.MONGO_SESSION_SECRET_KEY,
+        saveUninitialized : false,
+        store: store,
+    })
+)
 
+//setting passport
+const passport = require('passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+//setting pug view engine for mails
 app.set('views', path.join(__dirname,'views'));
 app.set('view engine','pug');
 
@@ -60,8 +79,8 @@ app.use(express.static(path.join(__dirname,'public')));
 
 //routes
 app.use('/api/users',userRouter);
+
 app.use('/api/payments',paymentRouter);
-app.use(viewsRouter);
 
 //to handle unhandled requests
 app.all('*',(req,res,next)=>{
@@ -72,4 +91,3 @@ app.all('*',(req,res,next)=>{
 app.use(globalErrorHandler);
 
 module.exports = app;
-

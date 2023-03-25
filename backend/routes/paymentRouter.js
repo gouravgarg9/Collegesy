@@ -4,8 +4,6 @@ const userControllers = require('./../controllers/userControllers');
 const authControllers = require('./../controllers/authControllers');
 
 const router = express.Router();
-router.get('/:prod_id',authControllers.protect,paymentControllers.createCheckoutSession);
-
-
+router.get('/:prod_id',paymentControllers.createCheckoutSession);
 
 module.exports = router;

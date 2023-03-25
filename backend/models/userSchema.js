@@ -11,7 +11,6 @@ const UserSchema = new mongoose.Schema({
         default : 'local'
     },
     username : {
-        require : [true,"plz provide an email id"],
         type : String,
         unique : [true,"Username already exists in database"],
     },
@@ -26,6 +25,8 @@ const UserSchema = new mongoose.Schema({
         type : String,
         default : 'xyz.jpg'
     },
+    oauthId : String,
+
     role : {
         type : String,
         enum : ['buyer','seller','admin'],
@@ -72,7 +73,7 @@ UserSchema.pre(/^find/,function(next){
 
 
 UserSchema.pre('save',async function(next){
-    if(this.isNew || this.isModified('password'))
+    if((this.isNew || this.isModified('password')) && this.password)
     {
         this.password = await bcrypt.hash(this.password,12);
         //passwordconfirm was required to schema not database
