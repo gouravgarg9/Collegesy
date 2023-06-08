@@ -4,16 +4,17 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const path = require('path');
 const appError = require('./utils/appError')
-const globalErrorHandler = require('./controllers/errorcontrollers')
+const globalErrorHandler = require('./controllers/errorControllers')
 const userRouter = require('./routes/userRouter');
+const chatRouter = require('./routes/chatRouter');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const XSSClean = require('xss-clean');
 const paymentRouter = require('./routes/paymentRouter');
 const cookieParser = require('cookie-parser');
 const compression = require('compression')
-const expressSession =require('express-session');
-const MongoDBSession=require('connect-mongodb-session')(expressSession);
+const productRouter = require('./routes/productRouter')
+const messageRouter = require('./routes/messageRouter')
 const limiter = rateLimit({
     max: 100,
     windowMs : 60*60*1000,
@@ -21,25 +22,6 @@ const limiter = rateLimit({
 });
 
 const app = express();
-const store=new MongoDBSession({
-    uri: process.env.DB_CONN_STR,
-    collection: 'sessions',
-})
-
-app.use(
-    expressSession({
-        maxAge : 30*24*60*60,
-        resave:false,
-        secret: process.env.MONGO_SESSION_SECRET_KEY,
-        saveUninitialized : false,
-        store: store,
-    })
-)
-
-//setting passport
-const passport = require('passport');
-app.use(passport.initialize());
-app.use(passport.session());
 
 //setting pug view engine for mails
 app.set('views', path.join(__dirname,'views'));
@@ -57,6 +39,7 @@ app.use('/api',limiter)
 
 //body Parser and cookie-parser
 app.use(express.json({ limit : '10kb'}));
+app.use(express.urlencoded({extended : true}));
 app.use(cookieParser());
 // app.use(bodyParser.urlencoded({extended:true}));
 // app.use(bodyParser.json());
@@ -77,11 +60,25 @@ app.use(compression());
 //serve static files
 app.use(express.static(path.join(__dirname,'public')));
 
-//routes
+// routes
+// const upcLookup = require('./utils/upcLookUp');
+// app.get('/',async(req,res,next)=>{
+//     const upcRes = await upcLookup.upcLookupFun(6941059623571);
+// });
+
+
+// const imgToText = require('./utils/imgToText');
+// app.get('/',async(req,res,next)=>{
+//     const arr = await imgToText.detectText();
+//     const newArr = imgToText.getRequired(arr,"ingredients");
+//     newArr.forEach((s)=>console.log(s));
+// });
+
 app.use('/api/users',userRouter);
-
+app.use('/api/chats',chatRouter);
 app.use('/api/payments',paymentRouter);
-
+app.use('/api/products',productRouter);
+app.use('/api/messages',messageRouter);
 //to handle unhandled requests
 app.all('*',(req,res,next)=>{
     next(new appError(`Can't find ${req.originalUrl}`,404)); 

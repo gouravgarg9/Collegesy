@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-
 const UserSchema = new mongoose.Schema({
     oauthType : {
         type : String,
@@ -54,16 +53,21 @@ const UserSchema = new mongoose.Schema({
     active:{
         type:Boolean,
         default: true,
-        select: false
-    },
-
+    },    
     verified:{
         type:Boolean,
         default:false
     },
+    deleteBy: Date,
     hashedOTP : String,
-    OTPExpires : Date
-});
+    OTPExpires : Date,
+    jwtTokens : [
+        {
+            token: String,
+            expiresBy: Date
+        }
+    ]
+},{timestamps:true});
 
 
 UserSchema.pre(/^find/,function(next){
@@ -91,6 +95,56 @@ UserSchema.methods.verifyPassword = async function(candidatePassword,userPasswor
     return await bcrypt.compare(candidatePassword,userPassword);
 }
 
+UserSchema.methods.addJwtToken = async function(token,time){
+    const partiallyHashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const encryptedToken = await bcrypt.hash(partiallyHashedToken,12);
+    let expiresBy = new Date(Date.now() + process.env.NOT_REMEMBER_TIME*24*60*60*1000);
+    if(time) expiresBy = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES*24*60*60*1000);
+    //for early verification in subsequent requests, we have added new token at beginning, not end
+    this.jwtTokens.unshift({token:encryptedToken,expiresBy});
+    await this.save();
+}
+
+//since it need to be done before every logged in request completely,
+//using find to move on as soon as possible and not removing old tokens here
+UserSchema.methods.verifyJwtToken = async function(candidateToken){
+    let ans;
+    const partiallyHashedCandidateToken = crypto.createHash("sha256").update(candidateToken).digest("hex");
+    for(const singleTokenObj of this.jwtTokens){
+        const userToken = singleTokenObj.token;
+        if(await bcrypt.compare(partiallyHashedCandidateToken,userToken)){
+            ans = singleTokenObj;
+            break;
+        }
+    }
+    if(!ans)return false;
+    //for early verification in subsequent requests, we have added new token at beginning
+    const i = this.jwtTokens.indexOf(ans);
+    this.jwtTokens.unshift(ans);
+    this.jwtTokens.splice(i+1,1);
+    this.save();
+    return true;
+}
+
+//since we move on calling it ,it can be a bit heavy
+//using filter and removing old tokens
+UserSchema.methods.removeToken = async function(candidateToken){
+    const partiallyHashedCandidateToken = crypto.createHash("sha256").update(candidateToken).digest("hex");
+    const tokenToKeepOrNot = await Promise.all(this.jwtTokens.map(async (singleTokenObj)=>{
+        if(singleTokenObj.expiresBy < Date.now())
+            return false;
+        const userToken = singleTokenObj.token;
+        const matched = await bcrypt.compare(partiallyHashedCandidateToken,userToken);
+        if(matched)
+            return false;
+        return true;
+    }));
+    const res = this.jwtTokens.filter((value, index) => tokenToKeepOrNot[index]);
+    this.jwtTokens = res;
+    await this.save();
+}
+
 UserSchema.methods.passwordChangedAfter = function(JWTtimestamp){
     if(this.passwordChangedAt){
         passwordTimeStamp = Date.parse(this.passwordChangedAt);
@@ -99,12 +153,13 @@ UserSchema.methods.passwordChangedAfter = function(JWTtimestamp){
     return false;
 }
 
-UserSchema.methods.createPassResetKey = function(){
+UserSchema.methods.createPassResetKey = async function(){
     const resetKey = crypto.randomBytes(32).toString('hex');
     const passwordResetToken = crypto.createHash('sha256').update(resetKey).digest('hex');
     const passwordResetExpires = Date.now() + 10 * 60 * 1000;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetExpires = passwordResetExpires;
+    await this.save({ validateBeforeSave: false }); 
     return resetKey;
 }
 
