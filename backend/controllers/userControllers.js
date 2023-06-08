@@ -4,6 +4,7 @@ const User = require("./../models/userSchema");
 const multer = require("multer");
 const FilterObject = require("./../utils/FilterObject");
 const sharp = require("sharp");
+const path = require("path");
 
 // const multerStorage = multer.diskStorage({
 //     destination: (req,file,cb)=>{
@@ -29,30 +30,19 @@ const upload = multer({
 
 exports.userPhotoUpload = upload.single("userImage");
 
-exports.userPhotoResize = (req, res, next) => {
+exports.userPhotoReOrg = (req, res, next) => {
   if (!req.file) return next();
-
-  req.file.filename = `user_${req.user._id}_at_${Date.now()}.jpeg`;
-
+  req.file.filename = `${req.user._id}.jpeg`;
+  const filePath = path.join(process.env.USER_IMAGE_LOCATION,req.file.filename);
   sharp(req.file.buffer)
     .resize(500, 500, { fit: "fill" })
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`public/images/users/${req.file.filename}`);
+    .toFile(filePath);
 
   next();
 };
 
-exports.getuser = catchAsync(async (req, res, next) => {
-  const user = await User.find({ email: req.params.email });
-  if (!user) next(new AppError("No user bt this email"), 200);
-  res.status(200).json({
-    status: "success",
-    data: {
-      user,
-    },
-  });
-});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //filter fields applicable
