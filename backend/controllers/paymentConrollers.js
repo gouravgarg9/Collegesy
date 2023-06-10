@@ -3,12 +3,14 @@ const catchAsync = require("../utils/catchAsync");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
 module.exports.createCheckoutSession = catchAsync(async (req, res, next) => {
-  const line_items = req.body.cart.map((element, index, arr) => {
-    return {
-      price: element.product_id,
-      quantity: 1,
-    };
-  });
+  // const line_items = req.body.cart.map((element, index, arr) => {
+  //   return {
+  //     price: element.product_id,
+  //     quantity: 1,
+  //   };
+  // });
+
+  const line_items = [req.params.productId];
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",

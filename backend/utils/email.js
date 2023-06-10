@@ -8,17 +8,17 @@ module.exports = class Email {
   constructor(user) {
     this.to = user.email;
     this.firstName = user.username.split(" ")[0];
-    this.from = `Gourav Garg <${process.env.MAIL_FROM}>`;
+    this.from = `<Organisation Name> <${process.env.MAIL_FROM}>`;
   }
 
   newTransport() {
     if (process.env.NODE_ENV === "production") {
       return nodemailer.createTransport({
-        host: "smtp-relay.sendinblue.com",
-        port: 587,
+        host: process.env.MAILHOST_PROD,
+        port: process.env.MAILPORT_PROD,
         auth: {
-          user: process.env.SENDINBLUE_USERNAME,
-          pass: process.env.SENDINBLUE_PASSWORD,
+          user: process.env.MAILUSERNAME_PROD,
+          pass: process.env.MAILPASSWORD_PROD,
         },
       });
     } else {
@@ -87,4 +87,5 @@ module.exports = class Email {
       ...vars,
     });
   }
+
 };

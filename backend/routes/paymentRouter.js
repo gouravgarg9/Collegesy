@@ -1,9 +1,9 @@
 const express = require('express');
-const paymentControllers = require('./../controllers/paymentconrollers')
+const paymentControllers = require('./../controllers/paymentConrollers')
 const userControllers = require('./../controllers/userControllers');
-const authControllers = require('./../controllers/authControllers');
+const authControllers = require('../controllers/authControllers');
 
 const router = express.Router();
-router.get('/:prod_id',paymentControllers.createCheckoutSession);
+router.get('/:productId',authControllers.protect,paymentControllers.createCheckoutSession);
 
 module.exports = router;
