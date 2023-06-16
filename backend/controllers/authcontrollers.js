@@ -22,8 +22,8 @@ const createAndSendToken = async (user, statusCode,time, res) => {
   if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
   if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
   try{
-    user.addJwtToken(token,time);
-    //await user.addJwtToken(token,time);
+    // user.addJwtToken(token,time);
+    await user.addJwtToken(token,time);
     //trying to make things a bit fast. Don't need to wait to add token to user in db 
   }catch(err){
     res.status(500).json({
@@ -42,9 +42,9 @@ const createAndSendToken = async (user, statusCode,time, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const email =  req.body?.email;
+  // console.log(email)
   if (!email)
     return next(new AppError("Bad Request.No mail recieved.", 404));
-
   const user = await User.findOne({ email });
   if (user && user.verified)
     return next(new AppError("Account exists. Just Login to use", 404));
@@ -62,7 +62,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-
+  console.log(newUser)
   if (!newUser) next(new AppError(`Account can't be created`), 404);
   req.body.email = newUser.email;
   //to send signup otp
@@ -146,8 +146,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetKey = await user.createPassResetKey();
 
   //generate url and send mail
-  const resetRoute = "api/users/resetPassword";
-  const resetUrl = `${req.protocol}://${req.hostname}/${resetRoute}/${resetKey}`;
+  const resetRoute = "reset-password";
+  const resetUrl = `${req.protocol}://${req.hostname}:3000/${resetRoute}/?${resetKey}`;
   try {
     new Mail(user).sendResetPasswordURL({ resetUrl });
     //await new Mail(user).sendResetPasswordURL({ resetUrl });
@@ -293,6 +293,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
   const rememberMe = false;
   if(req.body?.rememberMe) rememberMe = true;
+  console.log(rememberMe)
   user.updateOne({active:true})
   //await user.updateOne({active:true})
   //save some time dude

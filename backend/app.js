@@ -15,6 +15,7 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression')
 const productRouter = require('./routes/productRouter')
 const messageRouter = require('./routes/messageRouter')
+const cors=require('cors')
 const limiter = rateLimit({
     max: 100,
     windowMs : 60*60*1000,
@@ -22,6 +23,8 @@ const limiter = rateLimit({
 });
 
 const app = express();
+
+app.use(cors());
 
 //setting pug view engine for mails
 app.set('views', path.join(__dirname,'views'));
