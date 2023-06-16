@@ -8,7 +8,7 @@ module.exports = class Email {
   constructor(user) {
     this.to = user.email;
     this.firstName = user.username.split(" ")[0];
-    this.from = `Organisation Name <${process.env.MAIL_FROM}>`;
+    this.from = `Organisation Name<${process.env.MAIL_FROM}>`;
   }
 
   newTransport() {
@@ -42,7 +42,7 @@ module.exports = class Email {
       from: this.from,
       to: this.to,
       subject,
-      html,
+      html, 
       text: htmlToText(html),
     };
     await this.newTransport().sendMail(mailOptions);
