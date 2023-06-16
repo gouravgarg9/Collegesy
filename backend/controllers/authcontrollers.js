@@ -146,8 +146,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetKey = await user.createPassResetKey();
 
   //generate url and send mail
-  const resetRoute = "api/users/resetPassword";
-  const resetUrl = `${req.protocol}://${req.hostname}/${resetRoute}/${resetKey}`;
+  const resetRoute = "reset-password";
+  const resetUrl = `${req.protocol}://${req.hostname}:3000/${resetRoute}/?${resetKey}`;
   try {
     new Mail(user).sendResetPasswordURL({ resetUrl });
     //await new Mail(user).sendResetPasswordURL({ resetUrl });
@@ -170,7 +170,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   
   const hashtoken = crypto
     .createHash("sha256")
-    .update(req.params.token)
+    .update(req.body.token.substr(1))
     .digest("hex");
   const user = await User.findOne({ passwordResetToken: hashtoken }).select("+password");
 
