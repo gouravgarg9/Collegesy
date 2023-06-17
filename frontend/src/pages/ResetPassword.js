@@ -10,6 +10,8 @@ const ResetPassword = () => {
         passwordConfirm:"",
     })
 
+    const [messaged,setMessage]=useState({messaged:""});
+
     const getdata=(e)=>{
         // console.log(e.target.value);
         const {value,name}=e.target;
@@ -21,9 +23,11 @@ const ResetPassword = () => {
           }
         })
       }
+
     
       const addData=async(e)=>{
         e.preventDefault();
+        setMessage({messaged:""});
         const {email,password,passwordConfirm}=input
         if(email==="") alert("Please enter Email")
         else if(!email.includes("@")) alert("Please enter valid Email")
@@ -41,10 +45,12 @@ const ResetPassword = () => {
               if(res.status===200) navigate("/")
             })*/
           } catch(e){
-            console.log(e);
-          }
+            // console.log(e);
+            setMessage({messaged: e.response.data.message})          }
         }
       }
+
+      const print=Object.values(messaged);
 
   return (
     <>
@@ -101,6 +107,9 @@ const ResetPassword = () => {
                   />
                 </svg>
               </button>
+              <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
+                {print}
+              </label>
             </div>
           </div>
         </div>

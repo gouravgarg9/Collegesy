@@ -11,6 +11,7 @@ const LogIn = () => {
     rememberMe:false
   })
   // console.log(input)
+  const [messaged,setMessage]=useState({messaged:""});
 
 
   const getdata=(e)=>{
@@ -27,6 +28,7 @@ const LogIn = () => {
 
   const addData=async(e)=>{
     e.preventDefault();
+    setMessage({messaged:""});
     const {email,password,rememberMe}=input
     if(email==="") alert("Please enter Email")
     else if(!email.includes("@")) alert("Please enter valid Email")
@@ -41,11 +43,12 @@ const LogIn = () => {
           if(res.status===200) navigate("/")
         })
       } catch(e){
+        setMessage({messaged: e.response.data.message})
         console.log(e);
       }
     }
   }
-   
+  const print=Object.values(messaged);
   const forgot=()=>{
     navigate("/forgot-password")
   }
@@ -98,6 +101,9 @@ const LogIn = () => {
                   />
                 </svg>
               </button>
+              <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
+                {print}
+            </label>
             </div>
             <div className="py-5">
               <div className="grid grid-cols-2 gap-1">

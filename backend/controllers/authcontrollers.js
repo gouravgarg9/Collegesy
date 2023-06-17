@@ -293,7 +293,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
   const rememberMe = false;
   if(req.body?.rememberMe) rememberMe = true;
-  console.log(rememberMe)
+  // console.log(rememberMe)
   user.updateOne({active:true})
   //await user.updateOne({active:true})
   //save some time dude

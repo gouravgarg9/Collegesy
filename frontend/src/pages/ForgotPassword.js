@@ -7,7 +7,7 @@ const ForgotPassword = () => {
     const [input,setInput]=useState({
         email:"",
     })
-    const [message,setMessage]=useState({message:""});
+    const [messaged,setMessage]=useState({messaged:""});
 
     const getdata=(e)=>{
         // console.log(e.target.value);
@@ -23,6 +23,7 @@ const ForgotPassword = () => {
     
       const addData=async(e)=>{
         e.preventDefault();
+        setMessage({messaged:""});
         const {email}=input
         if(email==="") alert("Please enter Email")
         else if(!email.includes("@")) alert("Please enter valid Email")
@@ -31,13 +32,18 @@ const ForgotPassword = () => {
             await axios.post('http://localhost:5000/api/users/forgotPassword',{
               email,
             }).then((res)=>{
-              setMessage({message: res.message})
+              // console.log(res)
+              setMessage({messaged: res.data.message})
             })
           } catch(e){
             console.log(e);
           }
         }
       }
+
+
+        const print=Object.values(messaged);
+
   return (
     <>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
@@ -75,10 +81,9 @@ const ForgotPassword = () => {
                   />
                 </svg>
               </button>
-              {/* <label className="font-semibold text-sm text-gray-600 pb-1 block"> */}
-              {/* {message.map(mess => <div>{mess.name}</div>)} */}
-              {/* <strong>{message}</strong> */}
-              {/* </label> */}
+              <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
+                {print}
+              </label>
             </div>
           </div>
         </div>

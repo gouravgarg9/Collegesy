@@ -12,6 +12,8 @@ const SignUp = () => {
     passwordconfirm: "",
   });
 
+  const [messaged,setMessage]=useState({messaged:""});
+
   const getdata = (e) => {
     // console.log(e.target.value);
     const { value, name } = e.target;
@@ -26,13 +28,13 @@ const SignUp = () => {
 
   const addData = async (e) => {
     e.preventDefault();
+    setMessage({messaged:""});
     const { email, username, password, passwordConfirm } = input;
     if (email === "") alert("Please enter Email");
-    else if (!email.includes("@")) alert("Please enter valid Email");
+    else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
     else if (username === "") alert("Please enter Username");
     else if (password === "") alert("Please enter Password");
-    else if (password.length < 8)
-      alert("Password length shoul be greater than 5");
+    else if (password.length < 8) alert("Password length shoul be greater than 5");
     else if (passwordConfirm === "") alert("Please confirm your Password");
     else if (passwordConfirm !== password)
       alert("Confirm Password doesn't match");
@@ -51,10 +53,12 @@ const SignUp = () => {
             }
           });
       } catch (e) {
-        console.log(e);
-      }
+        // console.log(e);
+        setMessage({messaged: e.response.data.message})
+            }
     }
   };
+  const print=Object.values(messaged);
 
   return (
     <>
@@ -120,6 +124,9 @@ const SignUp = () => {
                   />
                 </svg>
               </button>
+              <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
+                {print}
+              </label>
             </div>
             {/* <div className="py-5">
               <div className="grid grid-cols-2 gap-1">
