@@ -35,6 +35,7 @@ router.patch(
   userControllers.userPhotoReOrg,
   userControllers.updateMe
 );
+router.get('/checkLoggedIn',authControllers.protect,authControllers.checkLoggedIn);
 router.post('/login', authControllers.logIn);
 router.post('/logout', authControllers.protect,authControllers.logOut);
 router.post('/logoutAllDevices', authControllers.protect,authControllers.logOutAllDevices);

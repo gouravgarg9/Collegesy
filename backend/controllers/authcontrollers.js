@@ -214,6 +214,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   
 });
 
+exports.checkLoggedIn = (req, res)=>{
+  res.status(200).json({
+    status : "success",
+    data : {
+      user : req.user
+    }
+  })
+}
+
 exports.updatePassword = catchAsync(async (req, res, next) => {
   //1.get user
   const user = await User.findById(req.user.id).select("+password");
