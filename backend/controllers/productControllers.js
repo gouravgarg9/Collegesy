@@ -124,10 +124,11 @@ exports.deleteProduct = catchAsync(async (req,res,next)=>{
 })
 
 exports.createProduct = catchAsync(async (req,res,next)=>{
+    // console.log(req);
     const product = new Product({
-        title : req.body.product.title,
-        description : req.body.product.description,
-        price : req.body.product.price,
+        title : req.body.title,
+        description : req.body.description,
+        price : req.body.price,
         sellerId : req.user._id
     });
 

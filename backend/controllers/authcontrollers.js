@@ -291,8 +291,9 @@ exports.logIn = catchAsync(async (req, res, next) => {
   //     return next(new AppError('Wrong Password',401));
 
 
-  const rememberMe = false;
-  if(req.body?.rememberMe) rememberMe = true;
+  // const rememberMe = false;
+  // if(req.body?.rememberMe) rememberMe = true;
+  rememberMe=req.body.rememberMe;
   // console.log(rememberMe)
   user.updateOne({active:true})
   //await user.updateOne({active:true})
@@ -305,6 +306,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   //get token and check if exists
   let token;
+  // console.log(req)
   if (req.cookies?.jwt) token = req.cookies.jwt;
   else if (req.headers?.authorization?.split(" ")[0] === "Bearer")
     token = req.headers.authorization.split(" ")[1];
@@ -334,6 +336,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = freshUser;
   req.token = token;
   //res.locals.user = freshUser;
+  // console.log(freshUser)
   next();
 });
 

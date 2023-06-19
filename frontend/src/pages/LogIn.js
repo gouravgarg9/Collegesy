@@ -1,9 +1,13 @@
 import {useState} from 'react'
 import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
+axios.defaults.withCredentials=true
+// import Cookies from 'universal-cookie'
+// import jwt from 'jwt-decode'
 
 const LogIn = () => {
 
+  // const cookies =new Cookies();
   const navigate = useNavigate();
   const [input,setInput]=useState({
     email:"",
@@ -12,7 +16,7 @@ const LogIn = () => {
   })
   // console.log(input)
   const [messaged,setMessage]=useState({messaged:""});
-
+  // const [user,setUser]=useState(null)
 
   const getdata=(e)=>{
     // console.log(e.target.value);
@@ -26,20 +30,39 @@ const LogIn = () => {
     })
   }
 
+  const rememberChecked=()=>{
+    if(input.rememberMe===true) setInput({
+      ...input,
+      rememberMe:false
+    })
+    else setInput({
+      ...input,
+      rememberMe:true
+    });
+  }
   const addData=async(e)=>{
     e.preventDefault();
     setMessage({messaged:""});
     const {email,password,rememberMe}=input
+    // console.log(email,password,rememberMe)
     if(email==="") alert("Please enter Email")
-    else if(!email.includes("@")) alert("Please enter valid Email")
+    // else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
     else if(password==="") alert("Please enter Password")
     else{
+      console.log(rememberMe)
       try{
         await axios.post('http://localhost:5000/api/users/logIn',{
           email,
           password,
           rememberMe
         }).then((res)=>{
+          console.log(res)
+          // const decoded = jwt(res.data.token)
+          // console.log(document.cookie)
+          // setUser({user: decoded})
+          // cookies.set("jwt_authorization",document.cookie,{
+          //   expires: new Date(decoded.expires*1000),
+          // })
           if(res.status===200) navigate("/")
         })
       } catch(e){
@@ -78,8 +101,8 @@ const LogIn = () => {
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
-              <input type="checkbox" name="rememberMe" value="true"></input>
-              <label for="vehicle1" className="inline-block ml-1 my-3">Remember me</label><br></br>
+              <input type="checkbox" onChange={rememberChecked}></input>
+              <label /*htmlFor="vehicle1"*/ className="inline-block ml-1 my-3">Remember me</label><br></br>
               <button
                 type="button"
                 onClick={addData}
