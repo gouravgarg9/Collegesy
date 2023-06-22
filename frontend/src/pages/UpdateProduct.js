@@ -1,10 +1,12 @@
-import setProdIdState from "./CreateProduct";
 import { useState } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateProduct = () => {
+  const location =useLocation();
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: "",
@@ -12,7 +14,6 @@ const UpdateProduct = () => {
     price: "",
   });
 
-  const [prodId,setProdId] =setProdIdState()
   const [files, setFiles] = useState();
   const [messaged, setMessage] = useState({ messaged: "" });
 
@@ -22,7 +23,7 @@ const UpdateProduct = () => {
       files: e.target.files,
     });
   };
-
+  // console.log(files);
   const getdata = (e) => {
     // console.log(e.target.value);
     const { value, name } = e.target;
@@ -37,39 +38,73 @@ const UpdateProduct = () => {
 
   const addData = async (e) => {
     e.preventDefault();
+    // console.log(location)
+    const formdata = new FormData();
+    // console.log(formdata)
+    Array.from(files.files).forEach(item=>{
+      // console.log(item)
+      formdata.append('productImages', item)
+    })
+
     setMessage({ messaged: "" });
     const { title, description, price } = input;
-    const { productImages } = files;
+    formdata.append('title', title);
+    formdata.append('description', description);
+    formdata.append('price', price);
+    for (var key of formdata.entries()) {
+      console.log(key[0] + ', ' + key[1]);
+    }
+    // const { productImages } = files;
     // console.log(title, description, price);
-    if (title === "") alert("Please enter Title");
-    else if (description === "") alert("Please enter Description");
-    else if (price === "") alert("Please enter Price");
-    else {
+    // const id=location.state.prodId;
+    // if (title === "") alert("Please enter Title");
+    // else if (description === "") alert("Please enter Description");
+    // else if (price === "") alert("Please enter Price");
+    // else {
+      // console.log(formdata)
       try {
         await axios
-          .post("http://localhost:5000/api/products/updateProduct", {
-            productImages,
-            title,
+          .put("http://localhost:5000/api/products/updateProduct/"+location.state,
+            // productImages: files,
+            formdata,
+            /*title,
             description,
-            price,
-          })
+            price,*/
+          { headers: {
+            'Content-Type': 'multipart/form-data'
+          }})
           .then((res) => {
             if (res.status === 200) {
               //   setProdId({prodId:res.data.data.product._id})
               // console.log(prodId)
-              navigate("/");
+              toast.success("Product Updated Successfully")
+              setTimeout(() => {
+                navigate('/');
+              }, 1000);   
             }
           });
       } catch (e) {
         console.log(e);
         setMessage({ messaged: e.response.data.message });
       }
-    }
+    // }
   };
   const print = Object.values(messaged);
 
+  // {
+  //   Array.from(files).map(photo=>{
+  //     return{
+  //       <span>
+  //         <img
+  //           src={photo? URL.createObjectURL(photo): null} />
+  //       </span>
+  //     }
+  //   })
+  // }
+
   return (
     <>
+              
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -85,6 +120,7 @@ const UpdateProduct = () => {
                 onChange={getphotos}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
+              
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Title
               </label>
@@ -117,7 +153,7 @@ const UpdateProduct = () => {
                 onClick={addData}
                 className="transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
               >
-                <span className="inline-block mr-2">Create Product</span>
+                <span className="inline-block mr-2">Update Product</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -140,6 +176,7 @@ const UpdateProduct = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };

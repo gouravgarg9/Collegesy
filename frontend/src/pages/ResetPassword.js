@@ -1,6 +1,8 @@
 import {useState} from 'react'
 // import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ResetPassword = () => {
 
@@ -29,10 +31,10 @@ const ResetPassword = () => {
         e.preventDefault();
         setMessage({messaged:""});
         const {email,password,passwordConfirm}=input
-        if(email==="") alert("Please enter Email")
-        else if(!email.includes("@")) alert("Please enter valid Email")
-        else if(password==="") alert("Please enter Password")
-        else if(password.length<8) alert("Password is too short")
+        if(email==="") toast.warning("Please enter Email")
+        else if(!email.includes("@")) toast.warning("Please enter valid Email")
+        else if(password==="") toast.warning("Please enter Password")
+        else if(password.length<8) toast.warning("Password is too short")
         else{
           try{
             // console.log(window.location.search)
@@ -114,6 +116,7 @@ const ResetPassword = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   )
 }

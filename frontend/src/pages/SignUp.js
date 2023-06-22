@@ -2,6 +2,8 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -30,14 +32,14 @@ const SignUp = () => {
     e.preventDefault();
     setMessage({messaged:""});
     const { email, username, password, passwordConfirm } = input;
-    if (email === "") alert("Please enter Email");
-    else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
-    else if (username === "") alert("Please enter Username");
-    else if (password === "") alert("Please enter Password");
-    else if (password.length < 8) alert("Password length shoul be greater than 5");
-    else if (passwordConfirm === "") alert("Please confirm your Password");
+    if (email === "") toast.warning("Please enter Email");
+    else if (!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email");
+    else if (username === "") toast.warning("Please enter Username");
+    else if (password === "") toast.warning("Please enter Password");
+    else if (password.length < 8) toast.warning("Password length shoul be greater than 5");
+    else if (passwordConfirm === "") toast.warning("Please confirm your Password");
     else if (passwordConfirm !== password)
-      alert("Confirm Password doesn't match");
+      toast.warning("Confirm Password doesn't match");
     else {
       try {
         await axios
@@ -49,7 +51,10 @@ const SignUp = () => {
           })
           .then((res) => {
             if (res.status === 404 || res.status === 200) {
-              navigate("/askotp");
+              toast.success("User Registered Successfully")
+              setTimeout(() => {
+                navigate('/askotp');
+              }, 1000);   
             }
           });
       } catch (e) {
@@ -179,6 +184,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };

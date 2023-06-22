@@ -2,6 +2,8 @@ import { useState } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import userToken from "./LogIn";
 
 const CreateProduct = () => {
@@ -14,7 +16,7 @@ const CreateProduct = () => {
   });
 
   const [messaged, setMessage] = useState({ messaged: "" });
-    const [prodId,setProdId]=useState({prodId:""});
+    // const [prodId,setProdId]=useState();
 
   const getdata = (e) => {
     // console.log(e.target.value);
@@ -33,9 +35,9 @@ const CreateProduct = () => {
     setMessage({ messaged: "" });
     const { title, description, price } = input;
     // console.log(title, description, price);
-    if (title === "") alert("Please enter Title");
-    else if (description === "") alert("Please enter Description");
-    else if (price === "") alert("Please enter Price");
+    if (title === "") toast.warning("Please enter Title");
+    else if (description === "") toast.warning("Please enter Description");
+    else if (price === "") toast.warning("Please enter Price");
     else {
       try {
         await axios
@@ -49,9 +51,15 @@ const CreateProduct = () => {
           )
           .then((res) => {
             if (res.status === 200) {
-              setProdId({prodId:res.data.data.product._id})
+              // setProdId({ prodId: res.data.data.product._id });
               // console.log(prodId)
-              navigate("/update-product");
+              // console.log(res.data.data.product._id)
+              const prodId=res.data.data.product._id;
+              // console.log(prodId)
+              toast.success("Product Created")
+              setTimeout(() => {
+                navigate("/update-product",{state:prodId});
+              }, 1000);   
             }
           });
       } catch (e) {
@@ -124,6 +132,7 @@ const CreateProduct = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };

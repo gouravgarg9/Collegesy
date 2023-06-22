@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const AskOTP = () => {
   const navigate = useNavigate();
 
@@ -22,10 +24,10 @@ const AskOTP = () => {
   const addData = async (e) => {
     e.preventDefault();
     const { email, otp } = input;
-    if (email === "") alert("Please enter Email");
-    else if (!email.includes("@")) alert("Please enter valid Email");
-    else if (otp === "") alert("Please enter OTP");
-    else if (otp.length !== 6) alert("Please enter valid OTP");
+    if (email === "") toast.warning("Please enter Email");
+    else if (!email.includes("@")) toast.warning("Please enter valid Email");
+    else if (otp === "") toast.warning("Please enter OTP");
+    else if (otp.length !== 6) toast.warning("Please enter valid OTP");
     else {
       try {
         axios
@@ -34,7 +36,12 @@ const AskOTP = () => {
             otp,
           })
           .then((res) => {
-            if (res.status === 200) navigate("/login");
+            if (res.status === 200){
+              toast.success("User Verification Successfull")
+              setTimeout(() => {
+                navigate('/login');
+              }, 1000);   
+            }
           });
       } catch (e) {
         console.log(e);
@@ -92,6 +99,7 @@ const AskOTP = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };

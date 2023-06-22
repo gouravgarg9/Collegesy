@@ -1,6 +1,8 @@
 import {useState} from 'react'
 // import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
 
@@ -25,14 +27,15 @@ const ForgotPassword = () => {
         e.preventDefault();
         setMessage({messaged:""});
         const {email}=input
-        if(email==="") alert("Please enter Email")
-        else if(!email.includes("@")) alert("Please enter valid Email")
+        if(email==="") toast.warning("Please enter Email")
+        else if(!email.includes("@")) toast.warning("Please enter valid Email")
         else{
           try{
             await axios.post('http://localhost:5000/api/users/forgotPassword',{
               email,
             }).then((res)=>{
               // console.log(res)
+              toast.success(res.data.message);
               setMessage({messaged: res.data.message})
             })
           } catch(e){
@@ -88,6 +91,7 @@ const ForgotPassword = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   )
 }

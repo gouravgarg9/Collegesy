@@ -1,6 +1,8 @@
 import {useState} from 'react'
 import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 axios.defaults.withCredentials=true
 // import Cookies from 'universal-cookie'
 // import jwt from 'jwt-decode'
@@ -45,9 +47,9 @@ const LogIn = () => {
     setMessage({messaged:""});
     const {email,password,rememberMe}=input
     // console.log(email,password,rememberMe)
-    if(email==="") alert("Please enter Email")
+    if(email==="") toast.warning("Please enter Email")
     // else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
-    else if(password==="") alert("Please enter Password")
+    else if(password==="") toast.warning("Please enter Password")
     else{
       console.log(rememberMe)
       try{
@@ -56,14 +58,22 @@ const LogIn = () => {
           password,
           rememberMe
         }).then((res)=>{
-          console.log(res)
+          // console.log(res)
           // const decoded = jwt(res.data.token)
           // console.log(document.cookie)
           // setUser({user: decoded})
           // cookies.set("jwt_authorization",document.cookie,{
           //   expires: new Date(decoded.expires*1000),
           // })
-          if(res.status===200) navigate("/")
+          
+          if(res.status===200){
+            // console.log(res)
+            // setMessage({messaged: res.data.message})
+            toast.success("Login Successful")
+            setTimeout(() => {
+              navigate('/');
+            }, 1000);     
+          }
         })
       } catch(e){
         setMessage({messaged: e.response.data.message})
@@ -180,6 +190,7 @@ const LogIn = () => {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </>
   );
 };
