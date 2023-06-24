@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import {user} from "./Home"
+import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 const AskOTP = () => {
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ const AskOTP = () => {
     otp: "",
   });
 
+  const [messaged,setMessage]=useState({messaged:""});
   const getdata = (e) => {
     const { value, name } = e.target;
     setInput(() => {
@@ -21,8 +24,9 @@ const AskOTP = () => {
     });
   };
 
-  const addData = async (e) => {
+  const addData = async(e) => {
     e.preventDefault();
+    setMessage({messaged:""});
     const { email, otp } = input;
     if (email === "") toast.warning("Please enter Email");
     else if (!email.includes("@")) toast.warning("Please enter valid Email");
@@ -30,27 +34,29 @@ const AskOTP = () => {
     else if (otp.length !== 6) toast.warning("Please enter valid OTP");
     else {
       try {
-        axios
+        const res=await axios
           .post("http://localhost:5000/api/users/verifySignUpOTP", {
             email,
             otp,
           })
-          .then((res) => {
+
             if (res.status === 200){
               toast.success("User Verification Successfull")
               setTimeout(() => {
                 navigate('/login');
               }, 1000);   
             }
-          });
       } catch (e) {
+        setMessage({messaged: e.response.data.message})
         console.log(e);
       }
     }
   };
 
+  const print=Object.values(messaged);
   return (
     <>
+    <Navigation user={user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -95,6 +101,9 @@ const AskOTP = () => {
                   />
                 </svg>
               </button>
+              <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
+                {print}
+            </label>
             </div>
           </div>
         </div>

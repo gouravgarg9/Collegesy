@@ -2,6 +2,8 @@ import {useState} from 'react'
 // import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
+import {user} from "./Home"
+import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPassword = () => {
@@ -23,7 +25,7 @@ const ForgotPassword = () => {
         })
       }
     
-      const addData=async(e)=>{
+      const addData=(e)=>{
         e.preventDefault();
         setMessage({messaged:""});
         const {email}=input
@@ -31,7 +33,7 @@ const ForgotPassword = () => {
         else if(!email.includes("@")) toast.warning("Please enter valid Email")
         else{
           try{
-            await axios.post('http://localhost:5000/api/users/forgotPassword',{
+             axios.post('http://localhost:5000/api/users/forgotPassword',{
               email,
             }).then((res)=>{
               // console.log(res)
@@ -49,6 +51,7 @@ const ForgotPassword = () => {
 
   return (
     <>
+    <Navigation user={user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

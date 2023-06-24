@@ -2,6 +2,8 @@ import {useState} from 'react'
 import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
+import {user} from "./Home"
+import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 axios.defaults.withCredentials=true
 // import Cookies from 'universal-cookie'
@@ -51,30 +53,20 @@ const LogIn = () => {
     // else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
     else if(password==="") toast.warning("Please enter Password")
     else{
-      console.log(rememberMe)
+      // console.log(rememberMe)
       try{
-        await axios.post('http://localhost:5000/api/users/logIn',{
+        const res=await axios.post('http://localhost:5000/api/users/login',{
           email,
           password,
           rememberMe
-        }).then((res)=>{
-          // console.log(res)
-          // const decoded = jwt(res.data.token)
-          // console.log(document.cookie)
-          // setUser({user: decoded})
-          // cookies.set("jwt_authorization",document.cookie,{
-          //   expires: new Date(decoded.expires*1000),
-          // })
+        })
           
           if(res.status===200){
-            // console.log(res)
-            // setMessage({messaged: res.data.message})
             toast.success("Login Successful")
             setTimeout(() => {
               navigate('/');
             }, 1000);     
           }
-        })
       } catch(e){
         setMessage({messaged: e.response.data.message})
         console.log(e);
@@ -88,6 +80,7 @@ const LogIn = () => {
 
   return (
     <>
+    <Navigation user={user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

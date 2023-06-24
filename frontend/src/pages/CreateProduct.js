@@ -1,8 +1,10 @@
 import { useState } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,NavLink } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import {user} from "./Home"
+import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 // import userToken from "./LogIn";
 
@@ -30,7 +32,7 @@ const CreateProduct = () => {
     });
   };
 
-  const addData = async (e) => {
+  const addData = (e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
     const { title, description, price } = input;
@@ -40,7 +42,7 @@ const CreateProduct = () => {
     else if (price === "") toast.warning("Please enter Price");
     else {
       try {
-        await axios
+        axios
           .post(
             "http://localhost:5000/api/products/createProduct",
             {
@@ -70,8 +72,20 @@ const CreateProduct = () => {
   };
   const print = Object.values(messaged);
   // const print = Object.values(prodId);
+
+  // console.log("hi"+user)
+  if(!user){
+    // console.log("hit")
+    return(
+      <>
+        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+      </>
+    )
+  }
+  else{
   return (
     <>
+    <Navigation user={user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -135,6 +149,7 @@ const CreateProduct = () => {
       <ToastContainer/>
     </>
   );
+  }
 };
 // export {prodId}
 export default CreateProduct;

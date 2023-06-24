@@ -1,8 +1,10 @@
 import { useState } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,NavLink } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import {user} from "./Home"
+import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 
 const UpdateProduct = () => {
@@ -36,7 +38,7 @@ const UpdateProduct = () => {
     });
   };
 
-  const addData = async (e) => {
+  const addData = (e) => {
     e.preventDefault();
     // console.log(location)
     const formdata = new FormData();
@@ -63,7 +65,7 @@ const UpdateProduct = () => {
     // else {
       // console.log(formdata)
       try {
-        await axios
+        axios
           .put("http://localhost:5000/api/products/updateProduct/"+location.state,
             // productImages: files,
             formdata,
@@ -102,9 +104,18 @@ const UpdateProduct = () => {
   //   })
   // }
 
+  if(!user){
+    // console.log("hit")
+    return(
+      <>
+        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+      </>
+    )
+  }
+
   return (
     <>
-              
+              <Navigation user={user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

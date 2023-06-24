@@ -1,21 +1,26 @@
-import './App.css';
-import Navigation from './components/Navigation'
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Home from './pages/Home'
-import SignUp from './pages/SignUp';
-import LogIn from './pages/LogIn';
-import AskOTP from './pages/AskOTP';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import CreateProduct from './pages/CreateProduct';
-import LogOut from './pages/LogOut';
-import UpdateProduct from './pages/UpdateProduct';
+import "./App.css";
 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import SignUp from "./pages/SignUp";
+import LogIn from "./pages/LogIn";
+import AskOTP from "./pages/AskOTP";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import CreateProduct from "./pages/CreateProduct";
+import LogOut from "./pages/LogOut";
+import UpdateProduct from "./pages/UpdateProduct";
+import { useEffect, useState} from "react";
+import axios from "axios";
+let user
 function App() {
+  // const [user, setUser] = useState();
+  // const [loading, setloading] = useState(true);
+
   return (
-    <> 
-        <Router>
-        <Navigation/>
+    <>
+      <Router>
+          
           <Routes>
             <Route exact path="/" Component={Home}></Route>
             <Route path="/signup" Component={SignUp}></Route>
@@ -27,7 +32,7 @@ function App() {
             <Route path="/update-product" Component={UpdateProduct}></Route>
             <Route path="/logout" Component={LogOut}></Route>
           </Routes>
-        </Router>
+      </Router>
     </>
   );
 }
