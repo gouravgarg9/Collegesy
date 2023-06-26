@@ -1,11 +1,29 @@
 import { useLocation } from "react-router-dom";
 import { user } from "./Home";
 import Navigation from "../components/Navigation";
+import { useEffect,useState } from "react";
+import Carousel from 'react-elastic-carousel';
 
 const ShowProduct = (props) => {
+
+  const breakPoints = [
+    { width: 1, itemsToShow: 1 },
+    { width: 550, itemsToShow: 2 },
+    { width: 768, itemsToShow: 3 },
+    { width: 1200, itemsToShow: 4 },
+  ];
+
+  // let photo;
+  const [photo,setPhoto] = useState();
+  useEffect(()=>{
+    setPhoto(location.state.data.images[0]);
+    // photo=location.state.data.images[0]
+    // console.log("hi"+photo)
+  },[]);
+
   const location = useLocation();
   const product = location.state.data
-  // console.log(location.state.data)
+  // console.log(location.state.data.images)
   return (
     <>
       {/* component */}
@@ -23,11 +41,28 @@ const ShowProduct = (props) => {
               <div className="relative">
                 <img
                   crossOrigin="anonymous"
-                  src={`http://localhost:5000/images/products/${product.images[0]}`}
-                  className="w-full relative z-10"
+                  // src={`http://localhost:5000/images/products/${product.images[0]}`}
+                  src={`http://localhost:5000/images/products/${photo}`}
+                  className="w-full h-96 border-4 rounded-lg relative z-10"
                   alt="productImage"
                 />
                 <div className="border-4 border-yellow-200 absolute top-10 bottom-10 left-10 right-10 z-0" />
+              </div>
+              <div className="flex">
+                <Carousel itemsToShow={3}>
+                {
+                // let arr=location.state.data.images
+                location.state.data.images?.map((image) => (
+                  <img
+                  crossOrigin="anonymous"
+                  src={`http://localhost:5000/images/products/${image}`}
+                  className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
+                  alt="productImage"
+                  cursor="pointer"
+                  onClick={()=>setPhoto(image)}
+                />
+               ))}
+                </Carousel>
               </div>
             </div>
             <div className="w-full md:w-1/2 px-10">
@@ -37,12 +72,6 @@ const ShowProduct = (props) => {
                 </h1>
                 <p className="text-sm">
                   {product.description}
-                  {/* <a
-                    href="#"
-                    className="opacity-50 text-gray-900 hover:opacity-100 inline-block text-xs leading-none border-b border-gray-900"
-                  >
-                    MORE <i className="mdi mdi-arrow-right" />
-                  </a> */}
                 </p>
               </div>
               <div>
@@ -53,9 +82,6 @@ const ShowProduct = (props) => {
                   <span className="font-bold text-5xl leading-none align-baseline">
                     {product.price}
                   </span>
-                  {/* <span className="text-2xl leading-none align-baseline">
-                    .99
-                  </span> */}
                 </div>
                 <div className="inline-block align-bottom">
                   <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
