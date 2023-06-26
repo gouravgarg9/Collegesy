@@ -1,29 +1,36 @@
-import { useLocation } from "react-router-dom";
+import { useLocation,NavLink } from "react-router-dom";
 import { user } from "./Home";
 import Navigation from "../components/Navigation";
 import { useEffect,useState } from "react";
 import Carousel from 'react-elastic-carousel';
 
-const ShowProduct = (props) => {
+const ShowProduct = () => {
 
-  const breakPoints = [
-    { width: 1, itemsToShow: 1 },
-    { width: 550, itemsToShow: 2 },
-    { width: 768, itemsToShow: 3 },
-    { width: 1200, itemsToShow: 4 },
-  ];
-
-  // let photo;
+  // let userTemp=user;
   const [photo,setPhoto] = useState();
   useEffect(()=>{
+    // console.log(userTemp)
+    // if(localStorage.getItem('name')) {
+    //   user=localStorage.getItem('name');
+    // }
     setPhoto(location.state.data.images[0]);
-    // photo=location.state.data.images[0]
-    // console.log("hi"+photo)
   },[]);
+  // useEffect(()=>{
+  //   localStorage.setItem("name", user);
+  // },[user])
 
   const location = useLocation();
   const product = location.state.data
   // console.log(location.state.data.images)
+
+  if(!user){
+    // console.log("hit")
+    return(
+      <>
+        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+      </>
+    )
+  }
   return (
     <>
       {/* component */}
