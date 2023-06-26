@@ -62,6 +62,8 @@ app.use(compression());
 
 //serve static files
 app.use(express.static(path.join(__dirname,'public')));
+app.use("./images/products",express.static(path.join(__dirname,'/images')));
+app.use("./images/users",express.static(path.join(__dirname,'/images')));
 
 // routes
 // const upcLookup = require('./utils/upcLookUp');

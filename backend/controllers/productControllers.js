@@ -17,7 +17,7 @@ exports.putProductOnReq = catchAsync(async (req,res,next)=>{
     
     const productId = req.params.productId;
     const product = await Product.findById(productId);
-    console.log(req.body)
+    // console.log(req.body)
     
     if(!product) return next(new AppError('No Product with providede id',404));
     req.product = product;

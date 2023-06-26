@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Navigation = (props) => {
   // console.log(props.user)
-  console.log(props)
+  // console.log(props)
   if (props.user) {
     return (
       <>
@@ -11,6 +11,7 @@ const Navigation = (props) => {
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <Link to="https://flowbite.com/" className="flex items-center">
               <img
+                crossOrigin="anonymous"
                 src="https://flowbite.com/docs/images/logo.svg"
                 className="h-8 mr-3"
                 alt="Flowbite Logo"

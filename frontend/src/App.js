@@ -10,8 +10,10 @@ import ResetPassword from "./pages/ResetPassword";
 import CreateProduct from "./pages/CreateProduct";
 import LogOut from "./pages/LogOut";
 import UpdateProduct from "./pages/UpdateProduct";
-import { useEffect, useState} from "react";
-import axios from "axios";
+// import { useEffect, useState} from "react";
+// import axios from "axios";
+// import Demo from "./pages/Demo";
+import ShowProduct from "./pages/ShowProduct";
 let user
 function App() {
   // const [user, setUser] = useState();
@@ -31,6 +33,8 @@ function App() {
             <Route path="/create-product" Component={CreateProduct}></Route>
             <Route path="/update-product" Component={UpdateProduct}></Route>
             <Route path="/logout" Component={LogOut}></Route>
+            {/* <Route path="/demo" Component={Demo}></Route> */}
+            <Route path="/show-product" Component={ShowProduct}></Route>
           </Routes>
       </Router>
     </>
