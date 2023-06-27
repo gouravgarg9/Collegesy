@@ -14,7 +14,9 @@ import UpdateProduct from "./pages/UpdateProduct";
 // import axios from "axios";
 // import Demo from "./pages/Demo";
 import ShowProduct from "./pages/ShowProduct";
-let user
+import UserPage from "./pages/UserPage";
+
+// let user
 function App() {
   // const [user, setUser] = useState();
   // const [loading, setloading] = useState(true);
@@ -35,6 +37,7 @@ function App() {
             <Route path="/logout" Component={LogOut}></Route>
             {/* <Route path="/demo" Component={Demo}></Route> */}
             <Route path="/show-product" Component={ShowProduct}></Route>
+            <Route path="/user" Component={UserPage}></Route>
           </Routes>
       </Router>
     </>

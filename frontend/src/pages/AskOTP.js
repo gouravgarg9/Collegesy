@@ -29,7 +29,7 @@ const AskOTP = () => {
     setMessage({messaged:""});
     const { email, otp } = input;
     if (email === "") toast.warning("Please enter Email");
-    else if (!email.includes("@")) toast.warning("Please enter valid Email");
+    else if (!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email");
     else if (otp === "") toast.warning("Please enter OTP");
     else if (otp.length !== 6) toast.warning("Please enter valid OTP");
     else {
