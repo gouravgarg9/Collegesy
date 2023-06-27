@@ -26,7 +26,7 @@ exports.putProductOnReq = catchAsync(async (req,res,next)=>{
 })
 
 exports.getAllProducts = catchAsync(async (req,res,next)=>{
-
+    console.log(req.query)
     //removing field that can't be served directly-sorting,pagination,etc
     let queryObj = {...req.query};
     const excludeFields = ['sort','page','limit','fields'];
@@ -52,7 +52,7 @@ exports.getAllProducts = catchAsync(async (req,res,next)=>{
     
     //pagination
     const page = req.query.page * 1 || 1;
-    const lim = req.query.limit * 1 || 50;
+    const lim = req.query.limit * 1 || 12;
     const docsToSkip = (page*1-1)*lim;
     productQuery = productQuery.skip(docsToSkip).limit(lim);
 
@@ -61,8 +61,9 @@ exports.getAllProducts = catchAsync(async (req,res,next)=>{
     res.status(200).json({
         status:'success',
         data:{
-            products
-        }
+            products,
+            hasNextPage : products.length >= lim ? true : false
+        },
     });
 })
 
