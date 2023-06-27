@@ -26,7 +26,48 @@ exports.putProductOnReq = catchAsync(async (req,res,next)=>{
 })
 
 exports.getAllProducts = catchAsync(async (req,res,next)=>{
-    const products = await Product.find();
+
+    //removing field that can't be served directly-sorting,pagination,etc
+    let queryObj = {...req.query};
+    const excludeFields = ['sort','page','limit','fields'];
+    excludeFields.forEach(el=>delete queryObj[el]);
+
+    //replacing gte with $gte in e.g. {price : { gte : 7}}
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lt|lte)\b/g, el=>`$${el}`);
+    queryObj = JSON.parse(queryStr);
+
+    let productQuery = Product.find(queryObj);
+
+    //sorting
+    req.query.sort = req.query.sort || '-createdAt';
+    const sortByStr = req.query.sort.split(',').join(' ');
+    productQuery = productQuery.sort(sortByStr);
+    
+    //field limiting
+    if(req.query.fields){
+        const filterFields = req.query.fields.split(',').join(' ');
+        productQuery = productQuery.select(filterFields);
+    }
+    
+    //pagination
+    const page = req.query.page * 1 || 1;
+    const lim = req.query.limit * 1 || 50;
+    const docsToSkip = (page*1-1)*lim;
+    productQuery = productQuery.skip(docsToSkip).limit(lim);
+
+
+    const products = await productQuery;
+    res.status(200).json({
+        status:'success',
+        data:{
+            products
+        }
+    });
+})
+
+exports.getAllProductsByUserId = catchAsync(async (req,res,next)=>{
+    const products = await Product.find({sellerId : req.user._id});
     res.status(200).json({
         status:'success',
         data:{
@@ -78,6 +119,7 @@ exports.updateProduct = catchAsync(async (req,res,next)=>{
     req.product.title = req.body?.title || req.product.title;
     req.product.description = req.body?.description || req.product.description;
     req.product.price = req.body?.price || req.product.price;
+    req.product.category = req.body?.category || req.product.category;
     await Product.findByIdAndUpdate(req.product._id,req.product);
     res.status(200).json({
         status:'success',
@@ -127,10 +169,11 @@ exports.deleteProduct = catchAsync(async (req,res,next)=>{
 exports.createProduct = catchAsync(async (req,res,next)=>{
     // console.log(req);
     const product = new Product({
-        title : req.body.title,
-        description : req.body.description,
+        title : req.body.title || 'No title',
+        description : req.body.description || 'No description',
         price : req.body.price,
-        sellerId : req.user._id
+        sellerId : req.user._id,
+        category : req.body.category || 'Others'
     });
 
     await product.save();

@@ -7,18 +7,20 @@ const productSchema = new mongoose.Schema({
     },
     description : String,
     price : {
-        type : String,
-        require : true
+        type : Number,
+        require : true,
+        minimum: [0, 'Not a valid price.']
     },
     sellerId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
         require : true
     },
-
-    //categories -  Books/Vehicle/Calculator/Stationary/Mattress/Others
-
-
+    category : {
+        type : String,
+        enum : ['Books','Vehicle','Calculator','Stationary','Mattress','Others'],
+        default : 'Others'
+    },
     images : [String]
 },{timestamps:true});
 
