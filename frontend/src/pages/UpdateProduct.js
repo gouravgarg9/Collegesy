@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, useLocation,NavLink } from "react-router-dom";
@@ -38,6 +38,13 @@ const UpdateProduct = () => {
     });
   };
 
+  useEffect(()=>{
+    setInput({
+      title: location.state.title,
+      description: location.state.description,
+      price: location.state.price
+    })
+  },[]);
   const addData = (e) => {
     e.preventDefault();
     // console.log(location)
@@ -66,7 +73,7 @@ const UpdateProduct = () => {
       // console.log(formdata)
       try {
         axios
-          .put("http://localhost:5000/api/products/updateProduct/"+location.state,
+          .put("http://localhost:5000/api/products/updateProduct/"+location.state._id,
             // productImages: files,
             formdata,
             /*title,
@@ -138,6 +145,7 @@ const UpdateProduct = () => {
               <input
                 type="text"
                 name="title"
+                value={input.title}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -147,6 +155,7 @@ const UpdateProduct = () => {
               <input
                 type="text"
                 name="description"
+                value={input.description}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -156,6 +165,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 name="price"
+                value={input.price}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

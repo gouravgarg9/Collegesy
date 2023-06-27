@@ -40,6 +40,7 @@ const CreateProduct = () => {
     if (title === "") toast.warning("Please enter Title");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
+    else if (price<0) toast.warning("Please enter valid Price");
     else {
       try {
         axios
@@ -56,11 +57,11 @@ const CreateProduct = () => {
               // setProdId({ prodId: res.data.data.product._id });
               // console.log(prodId)
               // console.log(res.data.data.product._id)
-              const prodId=res.data.data.product._id;
+              const prod=res.data.data.product;
               // console.log(prodId)
               toast.success("Product Created")
               setTimeout(() => {
-                navigate("/update-product",{state:prodId});
+                navigate("/update-product",{state:prod});
               }, 1000);   
             }
           });
