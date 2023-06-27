@@ -16,10 +16,11 @@ const productSchema = new mongoose.Schema({
         ref : "User",
         require : true
     },
-
-    //categories -  Books/Vehicle/Calculator/Stationary/Mattress/Others
-
-
+    category : {
+        type : String,
+        enum : ['Books','Vehicle','Calculator','Stationary','Mattress','Others'],
+        default : 'Others'
+    },
     images : [String]
 },{timestamps:true});
 
