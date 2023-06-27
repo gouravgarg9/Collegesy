@@ -17,7 +17,7 @@ const productRouter = require('./routes/productRouter')
 const messageRouter = require('./routes/messageRouter')
 const cors=require('cors')
 const limiter = rateLimit({
-    max: 100,
+    max: 10000,
     windowMs : 60*60*1000,
     message : '100 Request Limit crossed for this hour'
 });
