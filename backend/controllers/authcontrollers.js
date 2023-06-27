@@ -42,19 +42,16 @@ const createAndSendToken = async (user, statusCode,time, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const email =  req.body?.email;
-  // console.log(email)
   if (!email)
     return next(new AppError("Bad Request.No mail recieved.", 404));
   const user = await User.findOne({ email });
   if (user && user.verified)
     return next(new AppError("Account exists. Just Login to use", 404));
-  if (user && !user.verified)
-    return next(
-      new AppError(
-        "Account exists but not verfied. Verify by post request with email at /api/users/verifySignUpOTP",
-        404
-      )
-    );
+  if (user && !user.verified){
+    req.body.email = user.email;
+    return next();
+  }
+   
 
   const newUser = await User.create({
     email: req.body.email,
@@ -62,7 +59,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-  console.log(newUser)
   if (!newUser) next(new AppError(`Account can't be created`), 404);
   req.body.email = newUser.email;
   //to send signup otp

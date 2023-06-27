@@ -35,6 +35,16 @@ exports.getAllProducts = catchAsync(async (req,res,next)=>{
     });
 })
 
+exports.getAllProductsByUserId = catchAsync(async (req,res,next)=>{
+    const products = await Product.find({sellerId : req.user._id});
+    res.status(200).json({
+        status:'success',
+        data:{
+            products
+        }
+    });
+})
+
 exports.getProduct = catchAsync(async (req,res,next)=>{
     res.status(200).json({
         status:'success',

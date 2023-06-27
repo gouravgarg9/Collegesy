@@ -7,8 +7,9 @@ const productSchema = new mongoose.Schema({
     },
     description : String,
     price : {
-        type : String,
-        require : true
+        type : Number,
+        require : true,
+        minimum: [0, 'Not a valid price.']
     },
     sellerId : {
         type : mongoose.Schema.Types.ObjectId,
