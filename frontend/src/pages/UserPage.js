@@ -1,10 +1,43 @@
 // import { user } from "./Home";
 import Navigation from "../components/Navigation";
-import { useLocation, Link } from "react-router-dom";
-
+import { useLocation, Link,NavLink } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+let products;
 const UserPage = () => {
-    const location=useLocation();
-    console.log(location.state.data)
+
+  const location = useLocation();
+  // console.log(location.state.data)
+
+  const getAllProducts = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/products//getAllProductsByUserId"
+      );
+      console.log(res.data.data.products);
+      products = res.data.data.products;
+      //   console.log(products[5].images[0]);
+      console.log(
+        `http://localhost:5000/images/products/${products[5].images[0]}`
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
+  if(!location.state.data){
+    // console.log("hit")
+    return(
+      <>
+        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+      </>
+    )
+  }
+
   return (
     <>
       {/* component */}
@@ -27,11 +60,11 @@ const UserPage = () => {
                     <img
                       alt="..."
                       crossOrigin="anonymous"
-                        src={`http://localhost:5000/images/users/${location.state.data.photo}`}
-                    //   src="http://localhost:5000/images/users/xyz.png"
-                    //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
+                      src={`http://localhost:5000/images/users/${location.state.data.photo}`}
+                      //   src="http://localhost:5000/images/users/xyz.png"
+                      //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
                       className="shadow-xl rounded-full h-52 align-middle border-none"
-                    //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
+                      //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
                     />
                   </div>
                 </div>
@@ -63,7 +96,7 @@ const UserPage = () => {
               <div className="text-center mt-12">
                 <h3 className="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
                   {location.state.data.username}
-                                  </h3>
+                </h3>
                 <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                   <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400" />
                   MNNIT Allahabad, Prayagraj
@@ -127,37 +160,38 @@ const UserPage = () => {
             </div>
           </div>
         </footer> */}
-      </section>
+        </section>
       <section>
-      <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
-      
-      {products?.map((product) => (
-        <Link to="./show-product" 
-        state={{
-          data: product,
-        }}>
-          <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
-            <img
-              className="rounded-t-lg h-52 w-auto"
-              //  {`../../../backend/images/products/${product.images[0]}`}
-              //  src={require(`../../../backend/images/products/${product.images[0]}`)}
-              crossOrigin="anonymous"
-              // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
-              src={`http://localhost:5000/images/products/${product.images[0]}`}
-              alt=""
-            />
-            <div className="p-5">
-              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {product.title}
-              </h5>
-              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                {product.description}
-              </p>
-            </div>
-          </div>
-          </Link>
-      ))}
-    </div>
+        <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
+          {products?.map((product) => (
+            <Link
+              to="./show-product"
+              state={{
+                data: product,
+              }}
+            >
+              <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
+                <img
+                  className="rounded-t-lg h-52 w-auto"
+                  //  {`../../../backend/images/products/${product.images[0]}`}
+                  //  src={require(`../../../backend/images/products/${product.images[0]}`)}
+                  crossOrigin="anonymous"
+                  // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
+                  src={`http://localhost:5000/images/products/${product.images[0]}`}
+                  alt=""
+                />
+                <div className="p-5">
+                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {product.title}
+                  </h5>
+                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                    {product.description}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
     </>
   );
