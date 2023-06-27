@@ -1,6 +1,6 @@
-import { user } from "./Home";
+// import { user } from "./Home";
 import Navigation from "../components/Navigation";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const UserPage = () => {
     const location=useLocation();
@@ -8,14 +8,15 @@ const UserPage = () => {
   return (
     <>
       {/* component */}
-      <link
+      {/* <link
         rel="stylesheet"
         href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
       />
       <link
         rel="stylesheet"
         href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
-      />
+      /> */}
+      <Navigation user={location.state.data} />
       <section className="pt-16 bg-blueGray-50">
         <div className="w-full lg:w-4/12 px-4 mx-auto">
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
@@ -25,12 +26,16 @@ const UserPage = () => {
                   <div className="relative">
                     <img
                       alt="..."
-                      src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
-                      className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
+                      crossOrigin="anonymous"
+                        src={`http://localhost:5000/images/users/${location.state.data.photo}`}
+                    //   src="http://localhost:5000/images/users/xyz.png"
+                    //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
+                      className="shadow-xl rounded-full h-52 align-middle border-none"
+                    //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
                     />
                   </div>
                 </div>
-                <div className="w-full px-4 text-center mt-20">
+                <div className="w-full px-4 text-center mt-10">
                   <div className="flex justify-center py-4 lg:pt-4 pt-8">
                     <div className="mr-4 p-3 text-center">
                       <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
@@ -57,11 +62,11 @@ const UserPage = () => {
               </div>
               <div className="text-center mt-12">
                 <h3 className="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-                  Jenna Stones
-                </h3>
+                  {location.state.data.username}
+                                  </h3>
                 <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                   <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400" />
-                  Los Angeles, California
+                  MNNIT Allahabad, Prayagraj
                 </div>
                 <div className="mb-2 text-blueGray-600 mt-10">
                   <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400" />
@@ -72,7 +77,7 @@ const UserPage = () => {
                   University of Computer Science
                 </div>
               </div>
-              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+              {/* <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                 <div className="flex flex-wrap justify-center">
                   <div className="w-full lg:w-9/12 px-4">
                     <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
@@ -90,11 +95,11 @@ const UserPage = () => {
                     </a>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
-        <footer className="relative  pt-8 pb-6 mt-8">
+        {/* <footer className="relative  pt-8 pb-6 mt-8">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center md:justify-between justify-center">
               <div className="w-full md:w-6/12 px-4 mx-auto text-center">
@@ -121,7 +126,38 @@ const UserPage = () => {
               </div>
             </div>
           </div>
-        </footer>
+        </footer> */}
+      </section>
+      <section>
+      <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
+      
+      {products?.map((product) => (
+        <Link to="./show-product" 
+        state={{
+          data: product,
+        }}>
+          <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
+            <img
+              className="rounded-t-lg h-52 w-auto"
+              //  {`../../../backend/images/products/${product.images[0]}`}
+              //  src={require(`../../../backend/images/products/${product.images[0]}`)}
+              crossOrigin="anonymous"
+              // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
+              src={`http://localhost:5000/images/products/${product.images[0]}`}
+              alt=""
+            />
+            <div className="p-5">
+              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {product.title}
+              </h5>
+              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                {product.description}
+              </p>
+            </div>
+          </div>
+          </Link>
+      ))}
+    </div>
       </section>
     </>
   );
