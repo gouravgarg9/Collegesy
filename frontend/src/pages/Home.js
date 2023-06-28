@@ -52,7 +52,7 @@ const Home = () => {
 
   useEffect(() => {
     setTimeout(()=>getUser(), 500);
-    getAllProducts();
+     getAllProducts();
   },[]);
 
 
@@ -98,6 +98,16 @@ const Home = () => {
       </>
     );
   }
+
+  if(!user){
+    return(
+      <>
+      <Navigation user={user} />
+      <h1>Not Logged in</h1>
+      </>
+    )
+  }
+
   return (
     <>
       <Navigation user={user} />

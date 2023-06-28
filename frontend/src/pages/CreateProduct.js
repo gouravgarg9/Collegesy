@@ -1,14 +1,15 @@
 import { useState } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { useNavigate,NavLink } from "react-router-dom";
+import { useNavigate,NavLink,useLocation } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
+// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 // import userToken from "./LogIn";
 
 const CreateProduct = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [input, setInput] = useState({
     title: "",
@@ -16,6 +17,7 @@ const CreateProduct = () => {
     price: "",
     // _id: userToken,
   });
+
 
   const [messaged, setMessage] = useState({ messaged: "" });
     // const [prodId,setProdId]=useState();
@@ -61,7 +63,7 @@ const CreateProduct = () => {
               // console.log(prodId)
               toast.success("Product Created")
               setTimeout(() => {
-                navigate("/update-product",{state:prod});
+                navigate("/update-product",{state:prod, user:location.state.data});
               }, 1000);   
             }
           });
@@ -75,7 +77,7 @@ const CreateProduct = () => {
   // const print = Object.values(prodId);
 
   // console.log("hi"+user)
-  if(!user){
+  if(!location.state.data){
     // console.log("hit")
     return(
       <>
@@ -86,7 +88,7 @@ const CreateProduct = () => {
   else{
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation user={location.state.data}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

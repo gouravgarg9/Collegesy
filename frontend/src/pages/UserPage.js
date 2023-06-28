@@ -1,12 +1,13 @@
 // import { user } from "./Home";
 import Navigation from "../components/Navigation";
 import { useLocation, Link,NavLink } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import axios from "axios";
-let products;
+// let products;
 const UserPage = () => {
 
   const location = useLocation();
+  const [products,setProduct] = useState([]);
   // console.log(location.state.data)
 
   const getAllProducts = async () => {
@@ -15,7 +16,7 @@ const UserPage = () => {
         "http://localhost:5000/api/products//getAllProductsByUserId"
       );
       console.log(res.data.data.products);
-      products = res.data.data.products;
+      setProduct(res.data.data.products);
       //   console.log(products[5].images[0]);
       console.log(
         `http://localhost:5000/images/products/${products[5].images[0]}`
