@@ -65,6 +65,7 @@ const CreateProduct = () => {
                   state: { data: prod, user: location.state.data },
                 });
               }, 1000);
+
             }
           });
       } catch (e) {

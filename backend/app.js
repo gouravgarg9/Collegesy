@@ -32,6 +32,7 @@ app.set('view engine','pug');
 
 //set secuirty header
 app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 //development logging
 if(process.env.NODE_ENV === 'development')

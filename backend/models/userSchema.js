@@ -11,7 +11,6 @@ const UserSchema = new mongoose.Schema({
     },
     username : {
         type : String,
-        unique : [true,"Username already exists in database"],
     },
     email : {
         type : String,
@@ -22,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     photo: {
         type : String,
-        default : 'xyz.jpg'
+        default : 'xyz.png'
     },
     oauthId : String,
 
