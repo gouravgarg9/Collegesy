@@ -33,6 +33,9 @@ exports.getChatbyProduct = catchAsync(async (req,res,next)=>{
         });
         //create chat if don't exist already
         if(!chat){
+            if(! req.product.interestedViews)req.product.interestedViews = 0;
+            req.product.interestedViews++;
+            Product.findByIdAndUpdate(req.product._id,req.product);
             chat = await Chat.create({
                 buyerId : req.user._id,
                 productId : req.product._id,

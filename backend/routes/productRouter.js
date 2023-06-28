@@ -15,8 +15,8 @@ router.put(
   productControllers.putProductOnReq,
   productControllers.checkIfSeller,
   productControllers.productPhotoUpload,
-  productControllers.productPhotoReOrg,
-  productControllers.updateProduct
+  productControllers.deleteProductImages,
+  productControllers.updateProduct  
 );
 router.put(
   "/deleteAllProductImages/:productId",

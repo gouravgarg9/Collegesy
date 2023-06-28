@@ -32,11 +32,11 @@ exports.userPhotoUpload = upload.single("userImage");
 
 exports.userPhotoReOrg = (req, res, next) => {
   if (!req.file) return next();
-  req.file.filename = `${req.user._id}.jpeg`;
+  const ext = file.originalname.substr(file.originalname.lastIndexOf('.'))
+  req.file.filename = `${req.user._id}.${ext}`;
   const filePath = path.join(process.env.USER_IMAGE_LOCATION,req.file.filename);
   sharp(req.file.buffer)
     .resize(500, 500, { fit: "fill" })
-    .toFormat("jpeg")
     .jpeg({ quality: 90 })
     .toFile(filePath);
 
@@ -47,7 +47,7 @@ exports.userPhotoReOrg = (req, res, next) => {
 exports.updateMe = catchAsync(async (req, res, next) => {
   //filter fields applicable
   const applicableFieldsObj = FilterObject(req.body, false, "username");
-
+  
   if (req.file) applicableFieldsObj.photo = req.file.filename;
 
   //change fields and update

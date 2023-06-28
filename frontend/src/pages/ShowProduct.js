@@ -1,8 +1,9 @@
 import { useLocation, NavLink, Link } from "react-router-dom";
 // import { user } from "./Home";
 import Navigation from "../components/Navigation";
-import { useEffect, useState } from "react";
-import Carousel from "react-elastic-carousel";
+
+import { useEffect,useState } from "react";
+import Carousel from 'react-elastic-carousel';
 
 const ShowProduct = () => {
   // let userTemp=user;
@@ -113,7 +114,8 @@ const ShowProduct = () => {
                 </div>
                 {/* <div className="inline-block align-bottom">
                   <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
-                    <i className="mdi mdi-cart -ml-2 mr-2" /> BUY NOW
+                    <i className="mdi mdi-cart -ml-2 mr-2" /><Link to="/update-product" 
+          state={product}> BUY NOW </ Link>
                   </button>
                 </div> */}
               </div>

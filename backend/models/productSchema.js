@@ -21,6 +21,14 @@ const productSchema = new mongoose.Schema({
         enum : ['Books','Vehicle','Calculator','Stationary','Mattress','Others'],
         default : 'Others'
     },
+    imgCount : {
+        type : Number,
+        default : 0
+    },
+    interestedViews : {
+        type : Number,
+        default : 0
+    },
     images : [String]
 },{timestamps:true});
 

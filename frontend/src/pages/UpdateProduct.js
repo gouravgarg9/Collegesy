@@ -18,20 +18,18 @@ const UpdateProduct = () => {
     category: ""
   });
 
-  const [files, setFiles] = useState();
+  const [prevImages, setPrevImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
+
   const [messaged, setMessage] = useState({ messaged: "" });
 
   const getphotos = (e) => {
-    setFiles({
-      ...files,
-      files: e.target.files,
-    });
+    const files = e.target.files; 
+    setNewImages((prev) => [...prev,...files]);
   };
-  // console.log(files);
+
   const getdata = (e) => {
-    // console.log(e.target.value);
     const { value, name } = e.target;
-    // console.log(value,name)
     setInput(() => {
       return {
         ...input,
@@ -40,32 +38,41 @@ const UpdateProduct = () => {
     });
   };
 
-  useEffect(() => {
+  useEffect(()=>{
+    setPrevImages(location.state.data.images);
     setInput({
       title: location.state.data.title,
       description: location.state.data.description,
       price: location.state.data.price,
       category: location.state.data.category,
     });
-  }, []);
+    
+  },[]);
+
   const addData = (e) => {
     e.preventDefault();
-    // console.log(location)
+
     const formdata = new FormData();
-    // console.log(formdata)
-    Array.from(files.files).forEach((item) => {
-      // console.log(item)
-      formdata.append("productImages", item);
-    });
+
+    newImages.forEach(item=>{
+      formdata.append('productImages', item)
+    })
+    //formdata.append('productImages', newImages)
+
+    prevImages.forEach(item=>{
+      formdata.append('prevImages', item)
+    })
+    //formdata.append('prevImages', JSON.stringify(prevImages))
 
     setMessage({ messaged: "" });
+
     const { title, description, price,category } = input;
-    formdata.append("title", title);
-    formdata.append("description", description);
-    formdata.append("price", price);
+    formdata.append('title', title);
+    formdata.append('description', description);
+    formdata.append('price', price);
     formdata.append("category", category);
     for (var key of formdata.entries()) {
-      console.log(key[0] + ", " + key[1]);
+     console.log(key[0] + ', ' + key[1]);
     }
     // const { productImages } = files;
     // console.log(title, description, price);
@@ -139,6 +146,33 @@ const UpdateProduct = () => {
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
+
+              <div>
+                {prevImages && prevImages.length>0 && prevImages.map((image,index)=>{
+                  return (<div key={image}>
+                    <img src={`http://localhost:5000/images/products/${image}`} alt={image} height="50" width ="50" />
+                    <button onClick={()=>{setPrevImages((prev)=>{
+                      const newPrevImages = prev.filter((img)=>{
+                        return img !== image;
+                      })
+                      return newPrevImages;
+                    })}}>✕</button>
+                  </div>)
+                })}
+
+                {newImages && newImages.map((image,index)=>{
+                  return (<div key={image}>
+                    <img src={URL.createObjectURL(image)} alt={image} height="50" width ="50" />
+                    <button onClick={()=>{setNewImages((prev)=>{
+                      const newNewImages = prev.filter((img)=>{
+                        return img !== image;
+                      })
+                      return newNewImages;
+                    })}}>✕</button>
+                  </div>)
+                })}
+
+              </div>
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Upload Photos
               </label>
