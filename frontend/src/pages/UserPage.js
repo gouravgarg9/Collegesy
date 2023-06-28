@@ -8,6 +8,7 @@ const UserPage = () => {
 
   const location = useLocation();
   const [products,setProduct] = useState([]);
+  const [number,setNumber] = useState();
   // console.log(location.state.data)
 
   const getAllProducts = async () => {
@@ -16,6 +17,7 @@ const UserPage = () => {
         "http://localhost:5000/api/products//getAllProductsByUserId"
       );
       console.log(res.data.data.products);
+      setNumber(res.data.data.products.length)
       setProduct(res.data.data.products);
       //   console.log(products[5].images[0]);
       console.log(
@@ -73,23 +75,9 @@ const UserPage = () => {
                   <div className="flex justify-center py-4 lg:pt-4 pt-8">
                     <div className="mr-4 p-3 text-center">
                       <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                        22
+                        {number}
                       </span>
-                      <span className="text-sm text-blueGray-400">Friends</span>
-                    </div>
-                    <div className="mr-4 p-3 text-center">
-                      <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                        10
-                      </span>
-                      <span className="text-sm text-blueGray-400">Photos</span>
-                    </div>
-                    <div className="lg:mr-4 p-3 text-center">
-                      <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                        89
-                      </span>
-                      <span className="text-sm text-blueGray-400">
-                        Comments
-                      </span>
+                      <span className="text-sm text-blueGray-400">Products</span>
                     </div>
                   </div>
                 </div>

@@ -90,9 +90,14 @@ const ShowProduct = () => {
                     {product.price}
                   </span>
                 </div>
-                <div className="inline-block align-bottom">
+                {/* <div className="inline-block align-bottom">
                   <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
                     <i className="mdi mdi-cart -ml-2 mr-2" /> BUY NOW
+                  </button>
+                </div> */}
+                <div className="inline-block align-bottom">
+                  <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
+                    <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
                   </button>
                 </div>
               </div>

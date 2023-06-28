@@ -1,8 +1,8 @@
 import {useState} from 'react'
-import {NavLink, useNavigate} from 'react-router-dom'
+import {NavLink, useLocation, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
+// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 axios.defaults.withCredentials=true
@@ -12,6 +12,7 @@ axios.defaults.withCredentials=true
 const LogIn = () => {
 
   // const cookies =new Cookies();
+  const location=useLocation();
   const navigate = useNavigate();
   const [input,setInput]=useState({
     email:"",
@@ -80,7 +81,7 @@ const LogIn = () => {
 
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation user={location.state.user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -92,6 +93,7 @@ const LogIn = () => {
               <input
                 type="email"
                 name="email"
+                value={input.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -101,6 +103,7 @@ const LogIn = () => {
               <input
                 type="password"
                 name="password"
+                value={input.password}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

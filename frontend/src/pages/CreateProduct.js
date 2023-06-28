@@ -63,7 +63,7 @@ const CreateProduct = () => {
               // console.log(prodId)
               toast.success("Product Created")
               setTimeout(() => {
-                navigate("/update-product",{state:prod, user:location.state.data});
+                navigate("/update-product",{state:{prod:prod, user:location.state.data}});
               }, 1000);   
             }
           });

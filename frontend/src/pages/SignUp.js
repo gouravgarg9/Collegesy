@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink,useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
+// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const location=useLocation();
   const [input, setInput] = useState({
     email: "",
     username: "",
@@ -69,7 +70,7 @@ const SignUp = () => {
 
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation user={location.state.user}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -81,6 +82,7 @@ const SignUp = () => {
               <input
                 type="email"
                 name="email"
+                value={input.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -90,6 +92,7 @@ const SignUp = () => {
               <input
                 type="text"
                 name="username"
+                value={input.username}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -99,6 +102,7 @@ const SignUp = () => {
               <input
                 type="password"
                 name="password"
+                value={input.password}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -108,6 +112,7 @@ const SignUp = () => {
               <input
                 type="password"
                 name="passwordConfirm"
+                value={input.passwordconfirm}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

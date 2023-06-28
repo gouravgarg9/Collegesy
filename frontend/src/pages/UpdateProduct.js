@@ -1,15 +1,16 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 // import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { useNavigate, useLocation,NavLink } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 // import {user} from "./Home"
 import Navigation from "../components/Navigation";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdateProduct = () => {
-  const location =useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
+  // console.log(location);
   const [input, setInput] = useState({
     title: "",
     description: "",
@@ -38,30 +39,30 @@ const UpdateProduct = () => {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setInput({
-      title: location.state.title,
-      description: location.state.description,
-      price: location.state.price
-    })
-  },[]);
+      title: location.state.prod.title,
+      description: location.state.prod.description,
+      price: location.state.prod.price,
+    });
+  }, []);
   const addData = (e) => {
     e.preventDefault();
     // console.log(location)
     const formdata = new FormData();
     // console.log(formdata)
-    Array.from(files.files).forEach(item=>{
+    Array.from(files.files).forEach((item) => {
       // console.log(item)
-      formdata.append('productImages', item)
-    })
+      formdata.append("productImages", item);
+    });
 
     setMessage({ messaged: "" });
     const { title, description, price } = input;
-    formdata.append('title', title);
-    formdata.append('description', description);
-    formdata.append('price', price);
+    formdata.append("title", title);
+    formdata.append("description", description);
+    formdata.append("price", price);
     for (var key of formdata.entries()) {
-      console.log(key[0] + ', ' + key[1]);
+      console.log(key[0] + ", " + key[1]);
     }
     // const { productImages } = files;
     // console.log(title, description, price);
@@ -70,32 +71,37 @@ const UpdateProduct = () => {
     // else if (description === "") alert("Please enter Description");
     // else if (price === "") alert("Please enter Price");
     // else {
-      // console.log(formdata)
-      try {
-        axios
-          .put("http://localhost:5000/api/products/updateProduct/"+location.state._id,
-            // productImages: files,
-            formdata,
-            /*title,
+    // console.log(formdata)
+    try {
+      axios
+        .put(
+          "http://localhost:5000/api/products/updateProduct/" +
+            location.state.prod._id,
+          // productImages: files,
+          formdata,
+          /*title,
             description,
             price,*/
-          { headers: {
-            'Content-Type': 'multipart/form-data'
-          }})
-          .then((res) => {
-            if (res.status === 200) {
-              //   setProdId({prodId:res.data.data.product._id})
-              // console.log(prodId)
-              toast.success("Product Updated Successfully")
-              setTimeout(() => {
-                navigate('/');
-              }, 1000);   
-            }
-          });
-      } catch (e) {
-        console.log(e);
-        setMessage({ messaged: e.response.data.message });
-      }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            //   setProdId({prodId:res.data.data.product._id})
+            // console.log(prodId)
+            toast.success("Product Updated Successfully");
+            setTimeout(() => {
+              navigate("/");
+            }, 1000);
+          }
+        });
+    } catch (e) {
+      console.log(e);
+      setMessage({ messaged: e.response.data.message });
+    }
     // }
   };
   const print = Object.values(messaged);
@@ -111,18 +117,20 @@ const UpdateProduct = () => {
   //   })
   // }
 
-  if(!location.user){
+  if (!location.state.user) {
     // console.log("hit")
-    return(
+    return (
       <>
-        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+        <h1>
+          User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink>{" "}
+        </h1>
       </>
-    )
+    );
   }
 
   return (
     <>
-              <Navigation user={location.user}/>
+      <Navigation user={location.state.user} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -138,7 +146,7 @@ const UpdateProduct = () => {
                 onChange={getphotos}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
-              
+
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Title
               </label>
@@ -197,7 +205,7 @@ const UpdateProduct = () => {
           </div>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };
