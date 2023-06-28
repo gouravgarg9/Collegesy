@@ -11,7 +11,6 @@ const UserSchema = new mongoose.Schema({
     },
     username : {
         type : String,
-        unique : [true,"Username already exists in database"],
     },
     email : {
         type : String,

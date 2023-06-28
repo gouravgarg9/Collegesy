@@ -62,7 +62,7 @@ const CreateProduct = () => {
               toast.success("Product Created")
               setTimeout(() => {
                 navigate("/update-product",{state:prod});
-              }, 1000);   
+              }, 100);   
             }
           });
       } catch (e) {

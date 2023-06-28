@@ -17,16 +17,17 @@ exports.putProductOnReq = catchAsync(async (req,res,next)=>{
     
     const productId = req.params.productId;
     const product = await Product.findById(productId);
-    // console.log(req.body)
     
     if(!product) return next(new AppError('No Product with providede id',404));
+    if(!product.images) product.images =[];
+    if(!product.imgCount) product.imgCount = product.images.length;
     req.product = product;
 
     return next();
 })
 
 exports.getAllProducts = catchAsync(async (req,res,next)=>{
-    console.log(req.query)
+
     //removing field that can't be served directly-sorting,pagination,etc
     let queryObj = {...req.query};
     const excludeFields = ['sort','page','limit','fields'];
@@ -90,9 +91,12 @@ const multerDestination = (req,file,cb)=>{
     cb(null,process.env.PRODUCT_IMAGES_LOCATION)
 }
 const multerFilename = (req,file,cb)=>{
+    const index = req.product.imgCount++;
     const ext = file.originalname.substr(file.originalname.lastIndexOf('.'))
-    const filename = `${req.product._id}_${req.product.images.length}${ext}`;
+    const filename = `${req.product._id}_${index}${ext}`;
     req.product.images.push(filename);
+    if(!req.body?.prevImages)req.body.prevImages = [];
+    req.body.prevImages.push(filename);
     cb(null,filename);
 }
 const multerFilter = (req,file,cb)=>{
@@ -111,10 +115,6 @@ const multerUpload = multer({
 })
 
 exports.productPhotoUpload = multerUpload.array('productImages',10);
-exports.productPhotoReOrg = catchAsync(async (req,res,next)=>{
-    await Product.findByIdAndUpdate(req.product._id,req.product);
-    return next();
-})
 
 exports.updateProduct = catchAsync(async (req,res,next)=>{
     req.product.title = req.body?.title || req.product.title;
@@ -129,6 +129,17 @@ exports.updateProduct = catchAsync(async (req,res,next)=>{
         }
     });
 })
+
+exports.deleteProductImages = catchAsync(async (req,res,next)=>{
+    const toKeep = req.body.prevImages || [];
+    for(const filename of req.product.images){
+        if(toKeep.includes(filename))continue;
+        const filePath = path.join(process.env.PRODUCT_IMAGES_LOCATION,filename);
+        fs.unlink(filePath,(err)=>{if(err)console.log(err)});
+    }
+    req.product.images = toKeep;
+    return next();
+});
 
 exports.deleteAllProductImages = catchAsync(async (req,res,next)=>{
     for(const filename of req.product.images){
@@ -168,7 +179,6 @@ exports.deleteProduct = catchAsync(async (req,res,next)=>{
 })
 
 exports.createProduct = catchAsync(async (req,res,next)=>{
-    // console.log(req);
     const product = new Product({
         title : req.body.title || 'No title',
         description : req.body.description || 'No description',
