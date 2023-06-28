@@ -16,6 +16,7 @@ import UpdateProduct from "./pages/UpdateProduct";
 import ShowProduct from "./pages/ShowProduct";
 import UserPage from "./pages/UserPage";
 import Chat from "./pages/Chat";
+import UpdateUser from "./pages/UpdateUser";
 
 // let user
 function App() {
@@ -40,6 +41,7 @@ function App() {
             <Route path="/show-product" Component={ShowProduct}></Route>
             <Route path="/user" Component={UserPage}></Route>
             <Route path="/chat" Component={Chat}></Route>
+            <Route path="/update-user" Component={UpdateUser}></Route>
           </Routes>
       </Router>
     </>

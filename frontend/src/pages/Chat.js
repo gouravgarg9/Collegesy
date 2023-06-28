@@ -4,16 +4,20 @@ import { useLocation } from "react-router-dom";
 
 const Chat = () => {
   const location = useLocation();
-  const [buying,setBuying] = useState([]);
-  const [selling,setSelling] = useState([]);
-  console.log(location)
-  useEffect(async()=>{
-    const res=await axios.get("http://localhost:5000/api/chats/getchats")
-    setBuying(res.data.data.buyingChats)
-    setSelling(res.data.data.sellingChats)
-    console.log(res.data.data)
-  },[]);
-  
+  const [buying, setBuying] = useState([]);
+  const [selling, setSelling] = useState([]);
+  console.log(location);
+  useEffect(async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/chats/getchats");
+      setBuying(res.data.data.buyingChats);
+      setSelling(res.data.data.sellingChats);
+      console.log(res.data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   return (
     <>
       <>

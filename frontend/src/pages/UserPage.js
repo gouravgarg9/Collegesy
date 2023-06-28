@@ -1,42 +1,48 @@
 // import { user } from "./Home";
 import Navigation from "../components/Navigation";
-import { useLocation, Link,NavLink } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { useLocation, Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
 // let products;
 const UserPage = () => {
-
   const location = useLocation();
-  const [products,setProduct] = useState([]);
-  const [number,setNumber] = useState();
-  const [designation,setDesignation] = useState();
+  const [products, setProduct] = useState([]);
+  const [number, setNumber] = useState();
+  const [designation, setDesignation] = useState();
   // console.log(location.state.data)
 
-  const setCourse=()=>{
-    let email = location.state.data.email
+  const setCourse = () => {
+    let email = location.state.data.email;
     // console.log(email)
     // let email="harshitgoel.20214200@mnnit.ac.in"
     let regNo;
-    if(email.includes("CA")){
-      regNo=email.substring(email.length-21,email.length-12)
-      if(new Date().getMonth()+1>5){
-        let course=("MCA "+(new Date().getFullYear()-regNo.substring(0,4)+1)+" year")
-        setDesignation(course)
+    if (email.includes("CA")) {
+      regNo = email.substring(email.length - 21, email.length - 12);
+      if (new Date().getMonth() + 1 > 5) {
+        let course =
+          "MCA " +
+          (new Date().getFullYear() - regNo.substring(0, 4) + 1) +
+          " year";
+        setDesignation(course);
+      } else {
+        let course =
+          "MCA " + (new Date().getFullYear() - regNo.substring(0, 4)) + " year";
+        setDesignation(course);
       }
-      else{
-        let course=("MCA "+(new Date().getFullYear()-regNo.substring(0,4))+" year")
-        setDesignation(course)
-      }
-    }
-    else{
-      regNo=email.substring(email.length-20,email.length-12)
-      if(new Date().getMonth()+1>5){
-        let course=("B Tech "+(new Date().getFullYear()-regNo.substring(0,4)+1)+" year")
-        setDesignation(course)
-      }
-      else{
-        let course=("B Tech "+(new Date().getFullYear()-regNo.substring(0,4))+" year")
-        setDesignation(course)
+    } else {
+      regNo = email.substring(email.length - 20, email.length - 12);
+      if (new Date().getMonth() + 1 > 5) {
+        let course =
+          "B Tech " +
+          (new Date().getFullYear() - regNo.substring(0, 4) + 1) +
+          " year";
+        setDesignation(course);
+      } else {
+        let course =
+          "B Tech " +
+          (new Date().getFullYear() - regNo.substring(0, 4)) +
+          " year";
+        setDesignation(course);
       }
     }
     // console.log(new Date().getFullYear())
@@ -44,8 +50,7 @@ const UserPage = () => {
     // console.log(new Date().getDate())
     // console.log(regNo.substring(0,4))
     // console.log(designation)
-    
-  }
+  };
 
   const getAllProducts = async () => {
     try {
@@ -53,7 +58,7 @@ const UserPage = () => {
         "http://localhost:5000/api/products//getAllProductsByUserId"
       );
       // console.log(res.data.data.products);
-      setNumber(res.data.data.products.length)
+      setNumber(res.data.data.products.length);
       setProduct(res.data.data.products);
       //   console.log(products[5].images[0]);
       // console.log(
@@ -69,13 +74,15 @@ const UserPage = () => {
     getAllProducts();
   }, []);
 
-  if(!location.state.data){
+  if (!location.state.data) {
     // console.log("hit")
-    return(
+    return (
       <>
-        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+        <h1>
+          User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink>{" "}
+        </h1>
       </>
-    )
+    );
   }
 
   return (
@@ -108,13 +115,23 @@ const UserPage = () => {
                     />
                   </div>
                 </div>
+                <div className="flex mt-6">
+                  <button class="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
+                    Upload Photo
+                  </button>
+                  <button class="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
+                    Remove Photo
+                  </button>
+                </div>
                 <div className="w-full px-4 text-center mt-10">
                   <div className="flex justify-center py-4 lg:pt-4 pt-8">
                     <div className="mr-4 p-3 text-center">
                       <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                         {number}
                       </span>
-                      <span className="text-sm text-blueGray-400">Products</span>
+                      <span className="text-sm text-blueGray-400">
+                        Products
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -186,7 +203,7 @@ const UserPage = () => {
             </div>
           </div>
         </footer> */}
-        </section>
+      </section>
       <section>
         <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
           {products?.map((product) => (
@@ -194,7 +211,7 @@ const UserPage = () => {
               to="/show-product"
               state={{
                 data: product,
-                user: location.state.data
+                user: location.state.data,
               }}
             >
               <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">

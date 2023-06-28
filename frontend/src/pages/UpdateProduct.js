@@ -42,10 +42,10 @@ const UpdateProduct = () => {
 
   useEffect(() => {
     setInput({
-      title: location.state.prod.title,
-      description: location.state.prod.description,
-      price: location.state.prod.price,
-      category: location.state.prod.category,
+      title: location.state.data.title,
+      description: location.state.data.description,
+      price: location.state.data.price,
+      category: location.state.data.category,
     });
   }, []);
   const addData = (e) => {
@@ -79,7 +79,7 @@ const UpdateProduct = () => {
       axios
         .put(
           "http://localhost:5000/api/products/updateProduct/" +
-            location.state.prod._id,
+            location.state.data._id,
           // productImages: files,
           formdata,
           /*title,
