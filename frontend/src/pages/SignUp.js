@@ -82,7 +82,7 @@ const SignUp = () => {
               <input
                 type="email"
                 name="email"
-                value={input.email}
+                // value={input.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -92,7 +92,7 @@ const SignUp = () => {
               <input
                 type="text"
                 name="username"
-                value={input.username}
+                // value={input.username}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -102,7 +102,7 @@ const SignUp = () => {
               <input
                 type="password"
                 name="password"
-                value={input.password}
+                // value={input.password}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
@@ -112,7 +112,7 @@ const SignUp = () => {
               <input
                 type="password"
                 name="passwordConfirm"
-                value={input.passwordconfirm}
+                // value={input.passwordconfirm}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

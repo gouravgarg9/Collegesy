@@ -4,7 +4,7 @@ import { Link} from "react-router-dom";
 const Navigation = (props) => {
 
   // console.log(props.user)
-  console.log(props)
+  // console.log(props)
   
 
 

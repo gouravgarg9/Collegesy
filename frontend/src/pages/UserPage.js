@@ -9,26 +9,63 @@ const UserPage = () => {
   const location = useLocation();
   const [products,setProduct] = useState([]);
   const [number,setNumber] = useState();
+  const [designation,setDesignation] = useState();
   // console.log(location.state.data)
+
+  const setCourse=()=>{
+    let email = location.state.data.email
+    // console.log(email)
+    // let email="harshitgoel.20214200@mnnit.ac.in"
+    let regNo;
+    if(email.includes("CA")){
+      regNo=email.substring(email.length-21,email.length-12)
+      if(new Date().getMonth()+1>5){
+        let course=("MCA "+(new Date().getFullYear()-regNo.substring(0,4)+1)+" year")
+        setDesignation(course)
+      }
+      else{
+        let course=("MCA "+(new Date().getFullYear()-regNo.substring(0,4))+" year")
+        setDesignation(course)
+      }
+    }
+    else{
+      regNo=email.substring(email.length-20,email.length-12)
+      if(new Date().getMonth()+1>5){
+        let course=("B Tech "+(new Date().getFullYear()-regNo.substring(0,4)+1)+" year")
+        setDesignation(course)
+      }
+      else{
+        let course=("B Tech "+(new Date().getFullYear()-regNo.substring(0,4))+" year")
+        setDesignation(course)
+      }
+    }
+    // console.log(new Date().getFullYear())
+    // console.log(new Date().getMonth())
+    // console.log(new Date().getDate())
+    // console.log(regNo.substring(0,4))
+    // console.log(designation)
+    
+  }
 
   const getAllProducts = async () => {
     try {
       const res = await axios.get(
         "http://localhost:5000/api/products//getAllProductsByUserId"
       );
-      console.log(res.data.data.products);
+      // console.log(res.data.data.products);
       setNumber(res.data.data.products.length)
       setProduct(res.data.data.products);
       //   console.log(products[5].images[0]);
-      console.log(
-        `http://localhost:5000/images/products/${products[5].images[0]}`
-      );
+      // console.log(
+      //   `http://localhost:5000/images/products/${products[5].images[0]}`
+      // );
     } catch (e) {
       console.log(e);
     }
   };
 
   useEffect(() => {
+    setCourse();
     getAllProducts();
   }, []);
 
@@ -92,12 +129,12 @@ const UserPage = () => {
                 </div>
                 <div className="mb-2 text-blueGray-600 mt-10">
                   <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400" />
-                  Solution Manager - Creative Tim Officer
+                  {designation}
                 </div>
-                <div className="mb-2 text-blueGray-600">
+                {/* <div className="mb-2 text-blueGray-600">
                   <i className="fas fa-university mr-2 text-lg text-blueGray-400" />
                   University of Computer Science
-                </div>
+                </div> */}
               </div>
               {/* <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                 <div className="flex flex-wrap justify-center">
@@ -154,9 +191,10 @@ const UserPage = () => {
         <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
           {products?.map((product) => (
             <Link
-              to="./show-product"
+              to="/show-product"
               state={{
                 data: product,
+                user: location.state.data
               }}
             >
               <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">

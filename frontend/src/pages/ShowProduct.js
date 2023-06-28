@@ -1,40 +1,62 @@
-import { useLocation,NavLink } from "react-router-dom";
-import { user } from "./Home";
+import { useLocation, NavLink, Link } from "react-router-dom";
+// import { user } from "./Home";
 import Navigation from "../components/Navigation";
-import { useEffect,useState } from "react";
-import Carousel from 'react-elastic-carousel';
+import { useEffect, useState } from "react";
+import Carousel from "react-elastic-carousel";
 
 const ShowProduct = () => {
-
   // let userTemp=user;
-  const [photo,setPhoto] = useState();
-  useEffect(()=>{
+  const [photo, setPhoto] = useState();
+  useEffect(() => {
     // console.log(userTemp)
     // if(localStorage.getItem('name')) {
     //   user=localStorage.getItem('name');
     // }
     setPhoto(location.state.data.images[0]);
-  },[]);
+  }, []);
   // useEffect(()=>{
   //   localStorage.setItem("name", user);
   // },[user])
 
   const location = useLocation();
-  const product = location.state.data
-  // console.log(location.state.data.images)
+  const product = location.state.data;
+  console.log(location.state.data);
 
-  if(!user){
+  if (!location.state.user) {
     // console.log("hit")
-    return(
+    return (
       <>
-        <h1>User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink> </h1>
+        <h1>
+          User not Logged In. Please go to <NavLink to="/login">LogIn</NavLink>{" "}
+        </h1>
       </>
-    )
+    );
   }
+  const displayUpdate = () => {
+    if (location.state.user._id === product.sellerId) {
+      return (
+        <>
+          <div className="inline-block align-bottom">
+            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
+              <Link
+                to="/user"
+                state={{
+                  data: location.state.data,
+                  user: location.state.user,
+                }}
+              >
+                <i className="mdi mdi-wrench -ml-2 mr-2" /> Update Product
+              </Link>
+            </button>
+          </div>
+        </>
+      );
+    }
+  };
   return (
     <>
       {/* component */}
-      <Navigation user={user} />
+      <Navigation user={location.state.user} />
       <style
         dangerouslySetInnerHTML={{
           __html:
@@ -57,34 +79,33 @@ const ShowProduct = () => {
               </div>
               <div className="flex">
                 <Carousel itemsToShow={3}>
-                {
-                // let arr=location.state.data.images
-                location.state.data.images?.map((image) => (
-                  <img
-                  crossOrigin="anonymous"
-                  src={`http://localhost:5000/images/products/${image}`}
-                  className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
-                  alt="productImage"
-                  cursor="pointer"
-                  onClick={()=>setPhoto(image)}
-                />
-               ))}
+                  {
+                    // let arr=location.state.data.images
+                    location.state.data.images?.map((image) => (
+                      <img
+                        crossOrigin="anonymous"
+                        src={`http://localhost:5000/images/products/${image}`}
+                        className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
+                        alt="productImage"
+                        cursor="pointer"
+                        onClick={() => setPhoto(image)}
+                      />
+                    ))
+                  }
                 </Carousel>
               </div>
             </div>
             <div className="w-full md:w-1/2 px-10">
               <div className="mb-10">
                 <h1 className="font-bold uppercase text-2xl mb-5">
-                 {product.title}
+                  {product.title}
                 </h1>
-                <p className="text-sm">
-                  {product.description}
-                </p>
+                <p className="text-sm">{product.description}</p>
               </div>
               <div>
                 <div className="inline-block align-bottom mr-5">
                   <span className="text-2xl leading-none align-baseline">
-                    Rs
+                    ₹
                   </span>
                   <span className="font-bold text-5xl leading-none align-baseline">
                     {product.price}
@@ -95,12 +116,21 @@ const ShowProduct = () => {
                     <i className="mdi mdi-cart -ml-2 mr-2" /> BUY NOW
                   </button>
                 </div> */}
-                <div className="inline-block align-bottom">
+              </div>
+              <div className="inline-block align-bottom">
                   <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
-                    <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
+                    <Link
+                      to="/chat"
+                      state={{
+                        data: location.state.data,
+                        user: location.state.user,
+                      }}
+                    >
+                      <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
+                    </Link>
                   </button>
                 </div>
-              </div>
+                {displayUpdate()}
             </div>
           </div>
         </div>

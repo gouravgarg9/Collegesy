@@ -15,6 +15,7 @@ const UpdateProduct = () => {
     title: "",
     description: "",
     price: "",
+    category: ""
   });
 
   const [files, setFiles] = useState();
@@ -44,6 +45,7 @@ const UpdateProduct = () => {
       title: location.state.prod.title,
       description: location.state.prod.description,
       price: location.state.prod.price,
+      category: location.state.prod.category,
     });
   }, []);
   const addData = (e) => {
@@ -57,10 +59,11 @@ const UpdateProduct = () => {
     });
 
     setMessage({ messaged: "" });
-    const { title, description, price } = input;
+    const { title, description, price,category } = input;
     formdata.append("title", title);
     formdata.append("description", description);
     formdata.append("price", price);
+    formdata.append("category", category);
     for (var key of formdata.entries()) {
       console.log(key[0] + ", " + key[1]);
     }
@@ -145,6 +148,7 @@ const UpdateProduct = () => {
                 name="productImages"
                 onChange={getphotos}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                required
               />
 
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
@@ -177,6 +181,22 @@ const UpdateProduct = () => {
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
+              <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                  Category
+                </label>
+                <select
+                  name="category"
+                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                  value={input.category}
+                  onChange={getdata}
+                >
+                  <option value="Books">Books</option>
+                  <option value="Vehicle">Vehicle</option>
+                  <option value="Calculator">Calculator</option>
+                  <option value="Stationary">Stationary</option>
+                  <option value="Mattress">Mattress</option>
+                  <option value="Others">Others</option>
+                </select>
               <button
                 type="button"
                 onClick={addData}
