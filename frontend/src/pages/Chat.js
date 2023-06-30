@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import {socket} from "../socket"
+import { socket } from "../socket";
 
 const Chat = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [mess, setMess] = useState();
   console.log(location);
-  useEffect(async () => {
+  const loadChat = async () => {
     try {
       const res = await axios.get(
         "http://localhost:5000/api/chats/getChat/" + location.state.data._id
@@ -29,16 +29,22 @@ const Chat = () => {
       setMessages(res1.data.data.messages);
       // console.log(res1.data.data.messages)
       // console.log("chat"+res.data.data.chat._id)
-      socket.emit('joinChat',{chatId: res.data.data.chat._id,role: location.state.user.role})
-
+      socket.emit("joinChat", {
+        chatId: res.data.data.chat._id,
+        role: location.state.user.role,
+      });
     } catch (e) {
       console.log(e);
     }
+  };
+
+  useEffect(() => {
+    loadChat();
   }, []);
 
   const showMessages = () => {
     messages?.map((message) => {
-      if (message?.senderId===location.state.user._id) {
+      if (message?.senderId === location.state.user._id) {
         return (
           <>
             <div className="chat-message">
@@ -84,26 +90,26 @@ const Chat = () => {
     });
   };
 
-  const inputMessage=(e)=>{
-    console.log(e.target.value)
-    setMess(e.target.value)
-    // let mess=e.target.value
-  }
+  // const inputMessage=(e)=>{
+  //   console.log(e.target.value)
+  //   setMess(e.target.value)
+  //   let mess=e.target.value
+  // }
 
-  const sendMessages=()=>{
-    setMessages(()=>{
-      return[
+  const sendMessages = () => {
+    setMessages(() => {
+      return [
         ...messages,
-        mess
+        mess,
         // e.target.value
-      ]
-    })
+      ];
+    });
     // const size=messages.length
-    console.log(messages)
+    console.log(messages);
     // console.log(mess)
-    socket.emit("message",mess)
-    setMess("")
-  }
+    socket.emit("message", mess);
+    setMess("");
+  };
 
   return (
     <>
@@ -223,7 +229,7 @@ const Chat = () => {
                 type="text"
                 placeholder="Write your message!"
                 value={mess}
-                onChange={inputMessage}
+                onChange={(e) => setMess(e.target.value)}
                 className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
               />
               <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">

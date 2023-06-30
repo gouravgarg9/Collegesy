@@ -116,10 +116,10 @@ const UserPage = () => {
                   </div>
                 </div>
                 <div className="flex mt-6">
-                  <button class="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
+                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
                     Upload Photo
                   </button>
-                  <button class="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
+                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
                     Remove Photo
                   </button>
                 </div>
@@ -207,7 +207,8 @@ const UserPage = () => {
       <section>
         <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
           {products?.map((product) => (
-            <Link
+            <div key={product._id}>
+              <Link
               to="/show-product"
               state={{
                 data: product,
@@ -234,6 +235,7 @@ const UserPage = () => {
                 </div>
               </div>
             </Link>
+            </div>
           ))}
         </div>
       </section>

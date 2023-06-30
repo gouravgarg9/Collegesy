@@ -125,7 +125,8 @@ const Home = () => {
       <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between ">
       
         {products?.map((product) => (
-          <Link to="./show-product" 
+           <div key={product._id}>
+            <Link to="./show-product" 
           state={{
             data: product,
             user: user
@@ -156,6 +157,8 @@ const Home = () => {
               </div>
             </div>
             </Link>
+           </div>
+          
         ))}
       </div>
     </>
