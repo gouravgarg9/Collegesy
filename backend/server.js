@@ -57,7 +57,7 @@ io.on('connection',(socket)=>{
     //to send a message client will emit message event
     
     //as soon as client enters the site he emit a recieve event
-    //also client will listen to message event to recieve a message
+    //also client will listen to message event to recieve a message 
     //and in callback will emit a recieve event to inform server
     socket.on('message',(message)=>{
         const chatId = socketToChatIdMap[socket.id].chatId;

@@ -5,7 +5,7 @@ const chatControllers = require("./../controllers/chatControllers");
 const productControllers = require("./../controllers/productControllers");
 const router = express.Router();
 router.get("/getChats", authControllers.protect, chatControllers.getChats);
-router.post("/getChat/:productId",authControllers.protect,
+router.get("/getChat/:productId",authControllers.protect,
   productControllers.putProductOnReq,
   chatControllers.getChatbyProduct
 );

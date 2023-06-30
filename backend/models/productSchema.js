@@ -18,12 +18,15 @@ const productSchema = new mongoose.Schema({
     },
     category : {
         type : String,
-        enum : ['Books','Vehicle','Calculator','Stationary','Mattress','Others'],
+        enum : ['Books','SmartPhones','Fashion','Health','Accessories','Fitness','Routers','Furniture','Elctronics','Vehicle','Calculator','Stationary','Others'],
         default : 'Others'
     },
     imgCount : {
         type : Number,
         default : 0
+    },
+    age : {
+        type : Number
     },
     interestedViews : {
         type : Number,
