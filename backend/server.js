@@ -24,7 +24,7 @@ const server = app.listen(port,() => console.log("Server running on port :",port
 const io = require('socket.io')(server,{
     pingTimeout : 60000,
     cors : {
-        origin : `http://localhost:${port}`
+        origin : `http://localhost:3000`
     }
 })
 
@@ -61,7 +61,8 @@ io.on('connection',(socket)=>{
     //and in callback will emit a recieve event to inform server
     socket.on('message',(message)=>{
         const chatId = socketToChatIdMap[socket.id].chatId;
-        io.to(chatId).broadcast('message',message);
+        // io.to(chatId).broadcast.to('message',message);
+        socket.broadcast.to(chatId).emit('message',message);
     });
 
     //client will listen to recieve event to mark its sent messages delivered
