@@ -1,6 +1,8 @@
 require('dotenv').config();
 const path = require('path');
 const mongoose = require('mongoose');
+const Message = require('./models/messgaeSchema')
+
 process.on('uncaughtException',(err)=>{
     console.log(err);
     process.exit(1);
@@ -33,12 +35,14 @@ io.on('connection',(socket)=>{
     console.log('a new socket joined');
     //need userId to be passed
     socket.on('joinAllChats',async(userId)=>{
-        (await Chat.find({buyerId : userId})).forEach((chat)=>{
+        let chat=await Chat.find({buyerId : userId})
+        chat.forEach((chat)=>{
             socket.join(chat._id);
             socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'buyer'};
         })
 
-        (await Chat.find({sellerId : userId})).forEach((chat)=>{
+        chat=await Chat.find({sellerId : userId})
+            chat.forEach((chat)=>{
             socket.join(chat._id);
             socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'seller'};
         })
@@ -49,8 +53,10 @@ io.on('connection',(socket)=>{
     //chatId and current user role i.e. - 'buyer'/'seller'
     socket.on('joinChat',(data)=>{
         const {chatId,role} = data;
-        socket.join({chatId});
+        socket.join(chatId);
+        // console.log(chatId)
         socketToChatIdMap[socket.id] = {chatId,role};
+        // console.log(socketToChatIdMap[socket.id])
     })
     
 
@@ -59,10 +65,18 @@ io.on('connection',(socket)=>{
     //as soon as client enters the site he emit a recieve event
     //also client will listen to message event to recieve a message
     //and in callback will emit a recieve event to inform server
-    socket.on('message',(message)=>{
+    socket.on('message',async (data)=>{
+        const {content, userId} = data;
+        // console.log(data)
+        // console.log(socketToChatIdMap[socket.id])
         const chatId = socketToChatIdMap[socket.id].chatId;
-        // io.to(chatId).broadcast.to('message',message);
-        socket.broadcast.to(chatId).emit('message',message);
+        // console.log(chatId)
+        const message = await Message.create({
+            senderId : userId,
+            content,
+            chatId
+        })
+        io.to(chatId).emit('message1',message);
     });
 
     //client will listen to recieve event to mark its sent messages delivered

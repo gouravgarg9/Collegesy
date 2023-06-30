@@ -2,8 +2,8 @@ import { useLocation, NavLink, Link } from "react-router-dom";
 // import { user } from "./Home";
 import Navigation from "../components/Navigation";
 
-import { useEffect,useState } from "react";
-import Carousel from 'react-elastic-carousel';
+import { useEffect, useState } from "react";
+import Carousel from "react-elastic-carousel";
 
 const ShowProduct = () => {
   // let userTemp=user;
@@ -47,6 +47,46 @@ const ShowProduct = () => {
                 }}
               >
                 <i className="mdi mdi-wrench -ml-2 mr-2" /> Update Product
+              </Link>
+            </button>
+          </div>
+        </>
+      );
+    }
+  };
+
+  const displayChat = () => {
+    if (location.state.user._id === location.state.data.sellerId) {
+      return (
+        <>
+          <div className="inline-block align-bottom">
+            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
+              <Link
+                to="/chat-list"
+                state={{
+                  data: location.state.data,
+                  user: location.state.user,
+                }}
+              >
+                <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
+              </Link>
+            </button>
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div className="inline-block align-bottom">
+            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
+              <Link
+                to="/chat"
+                state={{
+                  data: location.state.data,
+                  user: location.state.user,
+                }}
+              >
+                <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
               </Link>
             </button>
           </div>
@@ -119,20 +159,8 @@ const ShowProduct = () => {
                   </button>
                 </div> */}
               </div>
-              <div className="inline-block align-bottom">
-                  <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
-                    <Link
-                      to="/chat"
-                      state={{
-                        data: location.state.data,
-                        user: location.state.user,
-                      }}
-                    >
-                      <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
-                    </Link>
-                  </button>
-                </div>
-                {displayUpdate()}
+              {displayChat()}
+              {displayUpdate()}
             </div>
           </div>
         </div>

@@ -43,8 +43,10 @@ const Chat = () => {
   }, []);
 
   const showMessages = () => {
-    messages?.map((message) => {
+    // console.log(messages)
+    const show = messages?.map((message) => {
       if (message?.senderId === location.state.user._id) {
+        console.log(message.content);
         return (
           <>
             <div className="chat-message">
@@ -66,6 +68,7 @@ const Chat = () => {
           </>
         );
       } else {
+        // console.log(message)
         return (
           <>
             <div className="chat-message">
@@ -88,6 +91,7 @@ const Chat = () => {
         );
       }
     });
+    return show;
   };
 
   // const inputMessage=(e)=>{
@@ -97,19 +101,28 @@ const Chat = () => {
   // }
 
   const sendMessages = () => {
+    // setMessages(() => {
+    //   return [
+    //     ...messages,
+    //     mess,
+    //   ];
+    // });
+    // const size=messages.length
+    // console.log(messages);
+    // console.log(mess)
+    socket.emit("message", { content: mess, userId: location.state.user._id });
+    setMess("");
+  };
+
+  socket.on("message1", (msg) => {
     setMessages(() => {
       return [
         ...messages,
-        mess,
+        msg,
         // e.target.value
       ];
     });
-    // const size=messages.length
-    console.log(messages);
-    // console.log(mess)
-    socket.emit("message", mess);
-    setMess("");
-  };
+  });
 
   return (
     <>

@@ -17,6 +17,7 @@ import ShowProduct from "./pages/ShowProduct";
 import UserPage from "./pages/UserPage";
 import Chat from "./pages/Chat";
 import UpdateUser from "./pages/UpdateUser";
+import ChatList from "./pages/ChatList";
 
 // let user
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/user" Component={UserPage}></Route>
             <Route path="/chat" Component={Chat}></Route>
             <Route path="/update-user" Component={UpdateUser}></Route>
+            <Route path="/chat-list" Component={ChatList}></Route>
           </Routes>
       </Router>
     </>

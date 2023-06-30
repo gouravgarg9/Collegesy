@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import Navigation from "../components/Navigation";
 import { Link } from "react-router-dom";
+import {socket} from "../socket"
 
 let user;
 
@@ -53,9 +54,15 @@ const Home = () => {
   useEffect(() => {
     setTimeout(()=>getUser(), 500);
      getAllProducts();
+    //  console.log(user)
+     
   },[]);
 
 
+ if(user){
+  console.log(user)
+  socket.emit('joinAllChats',user._id)
+ }
   const handleScroll = ()=>{
     if((window.innerHeight + document.documentElement.scrollTop + 2) > document.documentElement.scrollHeight)
       setpage((prev)=>prev+1);
