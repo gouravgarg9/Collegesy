@@ -1,19 +1,110 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import {socket} from "../socket"
 
 const Chat = () => {
   const location = useLocation();
-  const [buying,setBuying] = useState([]);
-  const [selling,setSelling] = useState([]);
-  console.log(location)
-  useEffect(async()=>{
-    const res=await axios.get("http://localhost:5000/api/chats/getchats")
-    setBuying(res.data.data.buyingChats)
-    setSelling(res.data.data.sellingChats)
-    console.log(res.data.data)
-  },[]);
-  
+  // const [buying, setBuying] = useState([]);
+  // const [selling, setSelling] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [mess, setMess] = useState();
+  console.log(location);
+  useEffect(async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/chats/getChat/" + location.state.data._id
+      );
+      // setBuying(res.data.data.buyingChats);
+      // setSelling(res.data.data.sellingChats);
+      console.log(res);
+      console.log(res.data.data.chat._id);
+      const res1 = await axios.post(
+        "http://localhost:5000/api/messages/getMessages",
+        {
+          chatId: res.data.data.chat._id,
+        }
+      );
+      console.log(res1);
+      setMessages(res1.data.data.messages);
+      // console.log(res1.data.data.messages)
+      // console.log("chat"+res.data.data.chat._id)
+      socket.emit('joinChat',{chatId: res.data.data.chat._id,role: location.state.user.role})
+
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const showMessages = () => {
+    messages?.map((message) => {
+      if (message?.senderId===location.state.user._id) {
+        return (
+          <>
+            <div className="chat-message">
+              <div className="flex items-end justify-end">
+                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+                  <div>
+                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
+                      {message.content}
+                    </span>
+                  </div>
+                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
+                  alt="My profile"
+                  className="w-6 h-6 rounded-full order-2"
+                />
+              </div>
+            </div>
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div className="chat-message">
+              <div className="flex items-end">
+                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                  <div>
+                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                      {message.content}
+                    </span>
+                  </div>
+                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
+                  alt="My profile"
+                  className="w-6 h-6 rounded-full order-1"
+                />
+              </div>
+            </div>
+          </>
+        );
+      }
+    });
+  };
+
+  const inputMessage=(e)=>{
+    console.log(e.target.value)
+    setMess(e.target.value)
+    // let mess=e.target.value
+  }
+
+  const sendMessages=()=>{
+    setMessages(()=>{
+      return[
+        ...messages,
+        mess
+        // e.target.value
+      ]
+    })
+    // const size=messages.length
+    console.log(messages)
+    // console.log(mess)
+    socket.emit("message",mess)
+    setMess("")
+  }
+
   return (
     <>
       <>
@@ -103,200 +194,11 @@ const Chat = () => {
             id="messages"
             className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
           >
-            <div className="chat-message">
-              <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                      Can be verified on any platform using docker
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-1"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end justify-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
-                      Your error message says permission denied, npm global
-                      installs must be given root privileges.
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-2"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      Command was run with root privileges. I'm sure about that.
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      I've update the description so it's more obviously now
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      FYI https://askubuntu.com/a/700266/510172
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                      Check the line above (it ends with a # so, I'm running it
-                      as root )<pre># npm install -g @vue/devtools</pre>
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-1"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end justify-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
-                      Any updates on this issue? I'm getting the same error when
-                      trying to install devtools. Thanks
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-2"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                      Thanks for your message David. I thought I'm alone with
-                      this issue. Please, ? the issue to support it :)
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-1"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end justify-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-blue-600 text-white ">
-                      Are you using sudo?
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
-                      Run this command sudo chown -R `whoami` /Users/{"{"}
-                      {"{"}your_user_profile{"}"}
-                      {"}"}/.npm-global/ then install the package globally
-                      without using sudo
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-2"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      It seems like you are from Mac OS world. There is no
-                      /Users/ folder on linux ?
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                      I have no issue with any other packages installed with
-                      root permission globally.
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-1"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end justify-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
-                      yes, I have a mac. I never had issues with root permission
-                      as well, but this helped me to solve the problem
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-2"
-                />
-              </div>
-            </div>
-            <div className="chat-message">
-              <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      I get the same error on Arch Linux (also with sudo)
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-                      I also have this issue, Here is what I was doing until
-                      now: #1076
-                    </span>
-                  </div>
-                  <div>
-                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                      even i am facing
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=144&h=144"
-                  alt="My profile"
-                  className="w-6 h-6 rounded-full order-1"
-                />
-              </div>
-            </div>
+            {showMessages()}
           </div>
           <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
             <div className="relative flex">
-              <span className="absolute inset-y-0 flex items-center">
+              {/* <span className="absolute inset-y-0 flex items-center">
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -316,14 +218,16 @@ const Chat = () => {
                     />
                   </svg>
                 </button>
-              </span>
+              </span> */}
               <input
                 type="text"
                 placeholder="Write your message!"
+                value={mess}
+                onChange={inputMessage}
                 className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
               />
               <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-                <button
+                {/* <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
@@ -341,8 +245,8 @@ const Chat = () => {
                       d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
                     />
                   </svg>
-                </button>
-                <button
+                </button> */}
+                {/* <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
                 >
@@ -366,7 +270,7 @@ const Chat = () => {
                       d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                </button>
+                </button> */}
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -389,6 +293,7 @@ const Chat = () => {
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                  onClick={sendMessages}
                 >
                   <span className="font-bold">Send</span>
                   <svg

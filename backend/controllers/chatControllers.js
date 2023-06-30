@@ -1,6 +1,7 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Chat = require('./../models/chatSchema');
+const Product = require('../models/productSchema')
 
 
 exports.getChats = catchAsync(async (req,res,next)=>{

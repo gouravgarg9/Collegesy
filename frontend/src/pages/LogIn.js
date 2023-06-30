@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {NavLink, useLocation, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
+import {socket} from "../socket"
 // import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
@@ -64,6 +65,7 @@ const LogIn = () => {
           
           if(res.status===200){
             toast.success("Login Successful")
+            socket.emit('joinAllChats',location.state.data._id)
             setTimeout(() => {
               navigate('/');
             }, 1000);     
