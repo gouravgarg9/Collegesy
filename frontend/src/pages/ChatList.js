@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate,Link } from "react-router-dom";
 import axios from "axios";
+import Navigation from "../components/Navigation";
+
 axios.defaults.withCredentials=true
 const ChatList = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  let product = location.state.data;
+  let user = location.state.user;
+  //if(!product)navigate('/');
+
   const [chats, setChats] = useState([]);
   const loadChat = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/chats/getChatByProductId/" + location.state.data._id
+        "http://localhost:5000/api/chats/getChatByProductId/" + product._id
       );
       setChats(res.data.data.chat);
     } catch (e) {
@@ -17,6 +24,13 @@ const ChatList = () => {
   };
   useEffect(() => {
     loadChat();
+    const timeOut = setTimeout(() => {
+      navigate('/show-product',{state: {user,data:product}});
+    }, 40000);
+
+    return ()=>{
+      clearTimeout(timeOut);
+    }
   }, []);
   const getLocalTime = (date)=>{
     if(!date)return;
@@ -28,6 +42,7 @@ const ChatList = () => {
   }
   return (
     <>
+    <Navigation user={user}/>
       <div className="py-10 h-screen bg-gray-300 px-2">
         <div className="max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden md:max-w-lg">
           <div className="md:flex">
@@ -46,8 +61,8 @@ const ChatList = () => {
                   <Link key={chat._id}
                     to="/chat"
                     state={{
-                      user: location.state.user,
-                      chat: chat,
+                      user,
+                      chat
                     }}
                   >
                     <li

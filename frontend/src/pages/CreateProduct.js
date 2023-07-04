@@ -10,6 +10,8 @@ const CreateProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = location.state.user;
+  //if(!user)navigate('/');
+
   const [input, setInput] = useState({
     title: "",
     description: "",
@@ -62,9 +64,7 @@ const CreateProduct = () => {
     }
   };
   const print = Object.values(messaged);
-  // const print = Object.values(prodId);
 
-  // console.log("hi"+user)
   if (!user) {
     return (
       <>

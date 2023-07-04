@@ -26,6 +26,7 @@ const Home = () => {
   const [sortValue,setsortValue] = useState();
   const [user,setUser] = useState(null); 
   const navigate = useNavigate();
+  
   const getUser = async () => {
     try {
       const res = await axios.get(
@@ -105,9 +106,6 @@ const Home = () => {
     );
   }
 }
-
-  if(!user){
-  }
 
   return (
     <>

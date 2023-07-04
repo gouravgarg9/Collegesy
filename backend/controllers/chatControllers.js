@@ -5,12 +5,12 @@ const Product = require("../models/productSchema");
 
 exports.getChats = catchAsync(async (req, res, next) => {
   const buyingChats = await Chat.find({ buyerId: req.user._id }).populate({
-      path: "sellerId buyerId",
+      path: "sellerId buyerId latestMessage",
       //match : {bothReveal : true}
     }).sort("-latestMessage.createdAt");
   
   const sellingChats = await Chat.find({ sellerId: req.user._id }).populate({
-      path: "sellerId buyerId",
+      path: "sellerId buyerId latestMessage",
       //match : {bothReveal : true}
     }).sort("-latestMessage.createdAt");
 
@@ -29,7 +29,7 @@ exports.getChatbyProduct = catchAsync(async (req, res, next) => {
   if (req.product.sellerId.equals(req.user._id)) {
     //give all chats with product_id
     chat = await Chat.find({ productId: req.product._id }).populate({
-      path: "sellerId buyerId",
+      path: "sellerId buyerId latestMessage",
       //match : {bothReveal : true}
     }).sort("-latestMessage.createdAt");;
   } else {
@@ -41,7 +41,7 @@ exports.getChatbyProduct = catchAsync(async (req, res, next) => {
         { productId: { $eq: req.product._id } },
       ],
     }).populate({
-      path: "sellerId buyerId",
+      path: "sellerId buyerId latestMessage",
       //match : {bothReveal : true}
     });
 
@@ -68,7 +68,7 @@ exports.getChatbyProduct = catchAsync(async (req, res, next) => {
 
 exports.reveal = catchAsync(async (req, res, next) => {
   const { chatId } = req.body;
-  let chat = await Chat.findById(chatId);
+  let chat = await Chat.findById(chatId).populate('latestMessage');
   if (
     !chat ||
     !chat.active ||
@@ -80,7 +80,7 @@ exports.reveal = catchAsync(async (req, res, next) => {
   if(chat.sReveal && chat.bReveal) chat.bothReveal = true;
   await chat.save();
   if (chat.bothReveal)
-    chat = await Chat.findById(chat._id).populate({ path: "sellerId buyerId" });
+    chat = await Chat.findById(chat._id).populate({ path: "sellerId buyerId latestMessage" });
   res.status(200).json({
     status: "success",
     data: {
@@ -94,7 +94,7 @@ exports.getChatbyChatId = catchAsync(async (req,res,next)=>{
   if(!chat || !(chat.sellerId.equals(req.user._id) || chat.buyerId.equals(req.user._id)))
     return next(new AppError('Forbidden',403));
   if(chat.bothReveal)
-    chat = await Chat.findById(chat._id).populate({ path: "sellerId buyerId" });
+    chat = await Chat.findById(chat._id).populate({ path: "sellerId buyerId latestMessage" });
 
     res.status(200).json({
       status: "success",

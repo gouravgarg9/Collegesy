@@ -158,10 +158,11 @@ UserSchema.methods.passwordChangedAfter = function(JWTtimestamp){
 UserSchema.methods.createPassResetKey = async function(){
     const resetKey = crypto.randomBytes(16).toString('hex');
     const passwordResetToken = crypto.createHash('sha256').update(resetKey).digest('hex');
+    console.log(passwordResetToken);
     const passwordResetExpires = Date.now() + 10 * 60 * 1000;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetExpires = passwordResetExpires;
-    await this.save({ validateBeforeSave: false }); 
+    console.log(await this.save({ validateBeforeSave: false })); 
     return resetKey;
 }
 

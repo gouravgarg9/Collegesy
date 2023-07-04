@@ -32,18 +32,26 @@ const io = require('socket.io')(server,{
 })
 
 const mapping = {};
-io.on('connection',(socket)=>{
-    console.log('a new socket joined -',socket.id);
-    
+io.on('connection',(socket)=>{    
     //need userId to be passed
     socket.on('join',async (userId)=>{
-        console.log('joining room - ',userId)
         socket.join(userId);
         socket.emit('connected');
         let chat = await Chat.find({buyerId : userId});
-        chat.forEach((ch)=>{io.in(ch.sellerId).emit('recieve',ch._id)});
+        const nDate = new Date(Date.now());
+
+        for(let ch of chat){
+            ch.lastRecieveByBuyer = nDate;
+            await Chat.findByIdAndUpdate(ch._id,ch);
+            io.to(ch.sellerId).emit('recieve',ch._id)
+        };
+
         chat = await Chat.find({sellerId : userId});
-        chat.forEach((ch)=>{io.in(ch.buyerId).emit('recieve',ch._id)});
+        for(let ch of chat){
+            ch.lastRecieveBySeller = nDate;
+            await Chat.findByIdAndUpdate(ch._id,ch);
+            io.to(ch.buyerId).emit('recieve',ch._id)
+        };
     });
     
     socket.on('message',async (data)=>{
@@ -53,7 +61,7 @@ io.on('connection',(socket)=>{
             content,
             chatId
         })
-        await Chat.findByIdAndUpdate(chatId,{latestMessage : message})
+        await Chat.findByIdAndUpdate(chatId,{latestMessage : message._id})
         io.to(senderId).emit('message1',message);
         io.to(recieverId).emit('message1',message);
     });
@@ -70,18 +78,17 @@ io.on('connection',(socket)=>{
         const role = (chat.sellerId ==recieverId)?'Seller':'Buyer';
         const x = {}
         x[`lastSeenBy${role}`] = new Date(Date.now());
-        chat = await Chat.findByIdAndUpdate(chat._id,{$set:x},{new:true});
+        console.log(await Chat.findByIdAndUpdate(chat._id,x,{new:true}));
         io.to(senderId).emit('seen',chatId);
     })
     
     socket.on('reveal',async(data)=>{
         const {chatId,senderId,recieverId} = data;
-        console.log(data);
         let chat = await Chat.findById(chatId);
         if (senderId == chat.sellerId) chat.sReveal = true;
         if (senderId == chat.buyerId) chat.bReveal = true;
         if(chat.sReveal && chat.bReveal) chat.bothReveal = true;
-        await chat.save();
+        console.log(await chat.save());
         if (chat.bothReveal) io.to(senderId).emit('reveal',chatId);
         if (chat.bothReveal) io.to(recieverId).emit('reveal',chatId);
     })
@@ -91,8 +98,8 @@ io.on('connection',(socket)=>{
         const {chatId,senderId,recieverId} = data;
         const chat = await Chat.findById(chatId);
         const role = (chat.sellerId == recieverId)?'Seller':'Buyer';
-        chat[`lastRecieveBy${role}`] = Date.now();
-        await Chat.findByIdAndUpdate(chat._id,chat);
+        chat[`lastRecieveBy${role}`] = new Date(Date.now());
+        console.log(await Chat.findByIdAndUpdate(chat._id,chat,{new:true}));
         io.to(senderId).emit('recieve',chatId);
     });
 

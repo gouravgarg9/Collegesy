@@ -9,6 +9,8 @@ const Chat = () => {
   const navigate = useNavigate();
   let chat = location.state.chat;
   let user = location.state.user;
+  //if(!user || !chat)navigate('/');
+
   const getOther = () => {
     if (chat.sellerId?._id) {
       if (chat.sellerId._id == user._id)
@@ -57,16 +59,18 @@ const Chat = () => {
 
   const loadChat = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/messages/getMessages/" + chat._id
-      );
-      const previous = res.data.data.messages.reverse();
-      setMessages(previous);
       const res2 = await axios.get(
         "http://localhost:5000/api/chats/getChat/" + chat._id
       );
       chat = res2.data.data.chat;
       other = getOther();
+      if(other.lastSeen != lastSeenTime)setLastSeenTime(new Date(Date.parse(other.lastSeen)));
+      if(other.lastRecieve != lastRecieveTime)setLastRecieveTime(new Date(Date.parse(other.lastRecieve)));
+      const res = await axios.get(
+        "http://localhost:5000/api/messages/getMessages/" + chat._id
+      );
+      const previous = res.data.data.messages.reverse();
+      setMessages(previous);
     } catch (e) {
       console.log(e);
     }

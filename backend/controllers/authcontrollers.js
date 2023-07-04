@@ -163,11 +163,14 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 // recieves key verify it and set new passsword
 exports.resetPassword = catchAsync(async (req, res, next) => {
   //hash token and get user
-  console.log(req.body.token.substr(1));
+  console.log(req.body.token);
+  
   const hashtoken = crypto
     .createHash("sha256")
     .update(req.body.token.substr(1))
     .digest("hex");
+
+  
   const user = await User.findOne({ passwordResetToken: hashtoken }).select("+password");
 
   if (!user) return next(new AppError("Token is invalid", 404));

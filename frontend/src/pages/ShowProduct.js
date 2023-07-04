@@ -6,9 +6,12 @@ import axios from "axios";
 const ShowProduct = () => {
   const [photo, setPhoto] = useState();
   const location = useLocation();
+  const navigate = useNavigate();
   let product = location.state.data;
   let user = location.state.user;
-  const navigate = useNavigate();
+
+  //if(!user || !product)navigate('/');
+
   useEffect(() => {
     setPhoto(product.images[0]);
   }, []);

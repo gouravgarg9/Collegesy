@@ -4,9 +4,10 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
-
+    const navigate = useNavigate();
     const [input,setInput]=useState({
         email:"",
         password:"",
@@ -28,7 +29,7 @@ const ResetPassword = () => {
       }
 
     
-      const addData=(e)=>{
+      const addData= async(e)=>{
         e.preventDefault();
         setMessage({messaged:""});
         const {email,password,passwordConfirm}=input
@@ -37,22 +38,17 @@ const ResetPassword = () => {
         else if(password==="") toast.warning("Please enter Password")
         else if(password.length<8) toast.warning("Password is too short")
         else{
-          try{
-            // console.log(window.location.search)
-            axios.post('http://localhost:5000/api/users/resetPassword',{
+            const res = await axios.post('http://localhost:5000/api/users/resetPassword',{
               email,
               password,
               passwordConfirm,
               token: window.location.search
-            })/*.then((res)=>{
-              if(res.status===200) navigate("/")
-            })*/
-          } catch(e){
-            // console.log(e);
-            setMessage({messaged: e.response.data.message})          }
+            });
+              
+            if(res.status===200) navigate("/");
+            else setMessage({messaged: e.response.data.message});
         }
       }
-
       const print=Object.values(messaged);
 
   return (

@@ -11,6 +11,7 @@ const UpdateProduct = () => {
   const navigate = useNavigate();
   let product = location.state.data;
   let user = location.state.user;
+  //if(!product || !user)navigate('/');
   const [input, setInput] = useState({
     title: "",
     description: "",

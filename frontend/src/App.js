@@ -9,18 +9,14 @@ import ResetPassword from "./pages/ResetPassword";
 import CreateProduct from "./pages/CreateProduct";
 import LogOut from "./pages/LogOut";
 import UpdateProduct from "./pages/UpdateProduct";
-// import { useEffect, useState} from "react";
-// import axios from "axios";
-// import Demo from "./pages/Demo";
+import Info from "./pages/Info";
 import ShowProduct from "./pages/ShowProduct";
 import UserPage from "./pages/UserPage";
 import Chat from "./pages/Chat";
 import UpdateUser from "./pages/UpdateUser";
 import ChatList from "./pages/ChatList";
-import Info from "./pages/Info";
 import AllChatList from "./pages/AllChatList"
-import { useEffect } from "react";
-// let user
+
 function App() {
   // const [user, setUser] = useState();
   // const [loading, setloading] = useState(true);
