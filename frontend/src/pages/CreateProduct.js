@@ -1,31 +1,26 @@
 import { useState } from "react";
-// import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
-// import userToken from "./LogIn";
+axios.defaults.withCredentials=true
 
 const CreateProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = location.state.user;
   const [input, setInput] = useState({
     title: "",
     description: "",
     price: "",
     category: ""
-    // _id: userToken,
   });
 
   const [messaged, setMessage] = useState({ messaged: "" });
-  // const [prodId,setProdId]=useState();
 
   const getdata = (e) => {
-    // console.log(e.target.value);
     const { value, name } = e.target;
-    // console.log(value,name)
     setInput(() => {
       return {
         ...input,
@@ -38,7 +33,6 @@ const CreateProduct = () => {
     e.preventDefault();
     setMessage({ messaged: "" });
     const { title, description, price,category } = input;
-    // console.log(title, description, price);
     if (title === "") toast.warning("Please enter Title");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
@@ -54,18 +48,11 @@ const CreateProduct = () => {
           })
           .then((res) => {
             if (res.status === 200) {
-              // setProdId({ prodId: res.data.data.product._id });
-              // console.log(prodId)
-              // console.log(res.data.data.product._id)
               const prod = res.data.data.product;
-              // console.log(prodId)
               toast.success("Product Created");
-              setTimeout(() => {
-                navigate("/update-product", {
-                  state: { data: prod, user: location.state.data },
-                });
-              }, 1000);
-
+              navigate("/update-product", {
+                state: { data: prod, user },
+              });
             }
           });
       } catch (e) {
@@ -78,8 +65,7 @@ const CreateProduct = () => {
   // const print = Object.values(prodId);
 
   // console.log("hi"+user)
-  if (!location.state.data) {
-    // console.log("hit")
+  if (!user) {
     return (
       <>
         <h1>
@@ -90,7 +76,7 @@ const CreateProduct = () => {
   } else {
     return (
       <>
-        <Navigation user={location.state.data} />
+        <Navigation user={user} />
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
           <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
             <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
@@ -171,5 +157,4 @@ const CreateProduct = () => {
     );
   }
 };
-// export {prodId}
 export default CreateProduct;

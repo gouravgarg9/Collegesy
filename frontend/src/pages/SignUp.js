@@ -3,10 +3,9 @@ import { NavLink,useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
-
+axios.defaults.withCredentials=true;
 const SignUp = () => {
   const navigate = useNavigate();
   const location=useLocation();
@@ -20,9 +19,7 @@ const SignUp = () => {
   const [messaged,setMessage]=useState({messaged:""});
 
   const getdata = (e) => {
-    // console.log(e.target.value);
     const { value, name } = e.target;
-    // console.log(value,name)
     setInput(() => {
       return {
         ...input,
@@ -36,7 +33,7 @@ const SignUp = () => {
     setMessage({messaged:""});
     const { email, username, password, passwordConfirm } = input;
     if (email === "") toast.warning("Please enter Email");
-    else if (!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email");
+    //else if (!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email");
     else if (username === "") toast.warning("Please enter Username");
     else if (password === "") toast.warning("Please enter Password");
     else if (password.length < 8) toast.warning("Password length shoul be greater than 5");

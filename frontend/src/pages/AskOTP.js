@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+axios.defaults.withCredentials=true
 const AskOTP = () => {
   const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ const AskOTP = () => {
   const print=Object.values(messaged);
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

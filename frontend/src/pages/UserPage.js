@@ -1,20 +1,16 @@
-// import { user } from "./Home";
 import Navigation from "../components/Navigation";
 import { useLocation, Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-// let products;
+axios.defaults.withCredentials=true;
 const UserPage = () => {
   const location = useLocation();
   const [products, setProduct] = useState([]);
   const [number, setNumber] = useState();
   const [designation, setDesignation] = useState();
-  // console.log(location.state.data)
-
+  let user = location.state.user;
   const setCourse = () => {
-    let email = location.state.data.email;
-    // console.log(email)
-    // let email="harshitgoel.20214200@mnnit.ac.in"
+    let email = user.email;
     let regNo;
     if (email.includes("CA")) {
       regNo = email.substring(email.length - 21, email.length - 12);
@@ -74,7 +70,7 @@ const UserPage = () => {
     getAllProducts();
   }, []);
 
-  if (!location.state.data) {
+  if (!user) {
     // console.log("hit")
     return (
       <>
@@ -96,7 +92,7 @@ const UserPage = () => {
         rel="stylesheet"
         href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
       /> */}
-      <Navigation user={location.state.data} />
+      <Navigation user={user} />
       <section className="pt-16 bg-blueGray-50">
         <div className="w-full lg:w-4/12 px-4 mx-auto">
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
@@ -107,7 +103,7 @@ const UserPage = () => {
                     <img
                       alt="..."
                       crossOrigin="anonymous"
-                      src={`http://localhost:5000/images/users/${location.state.data.photo}`}
+                      src={`http://localhost:5000/images/users/${user.photo}`}
                       //   src="http://localhost:5000/images/users/xyz.png"
                       //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
                       className="shadow-xl rounded-full h-52 align-middle border-none"
@@ -138,7 +134,7 @@ const UserPage = () => {
               </div>
               <div className="text-center mt-12">
                 <h3 className="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-                  {location.state.data.username}
+                  {user.username}
                 </h3>
                 <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                   <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400" />
@@ -212,7 +208,7 @@ const UserPage = () => {
               to="/show-product"
               state={{
                 data: product,
-                user: location.state.data,
+                user,
               }}
             >
               <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">

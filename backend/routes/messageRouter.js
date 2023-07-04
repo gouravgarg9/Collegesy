@@ -3,8 +3,8 @@ const messageControllers = require('./../controllers/messageControllers')
 const authControllers = require("../controllers/authControllers");
 const router = express.Router();
 
-router.post(
-  "/getMessages",
+router.get(
+  "/getMessages/:chatId",
   authControllers.protect,
   messageControllers.getMessages
 );

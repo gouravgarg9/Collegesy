@@ -7,29 +7,21 @@ import Navigation from "../components/Navigation";
 import ClipLoader from "react-spinners/ClipLoader";
 axios.defaults.withCredentials = true;
 
-let user = null;
-
 const LogOut = () => {
   const [loading, setloading] = useState(true);
   const navigate = useNavigate();
   const deleteUser = () => {
     try {
       axios
-        .post("http://localhost:5000/api/users/logout", {
-          Credentials: "include",
-        })
+        .post("http://localhost:5000/api/users/logout")
         .then((res) => {
           if (res.status === 200) {
-            toast.success("Logged out Successfully");
-            setTimeout(() => {
-              setloading(false);
-              navigate("/");
-            }, 500);
+            navigate('/login')
           }
         });
     } catch (e) {
-      console.log("hit");
       console.log(e);
+      navigate('/login')
     }
   };
   useEffect(() => {
@@ -46,8 +38,7 @@ const LogOut = () => {
   }
   return (
     <>
-      <Navigation user={user} />
-
+      <Navigation />
       <ToastContainer />
     </>
   );

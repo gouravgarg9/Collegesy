@@ -23,6 +23,7 @@ mongoose.connect(DB,{
 
 const port = process.env.PORT;
 const server = app.listen(port,() => console.log("Server running on port :",port));
+    
 const io = require('socket.io')(server,{
     pingTimeout : 60000,
     cors : {
@@ -30,86 +31,84 @@ const io = require('socket.io')(server,{
     }
 })
 
-const socketToChatIdMap = {};
+const mapping = {};
 io.on('connection',(socket)=>{
-    console.log('a new socket joined');
+    console.log('a new socket joined -',socket.id);
+    
     //need userId to be passed
-    socket.on('joinAllChats',async(userId)=>{
-        let chat=await Chat.find({buyerId : userId})
-        chat.forEach((chat)=>{
-            socket.join(chat._id);
-            socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'buyer'};
-        })
-
-        chat=await Chat.find({sellerId : userId})
-            chat.forEach((chat)=>{
-            socket.join(chat._id);
-            socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'seller'};
-        })
-
+    socket.on('join',async (userId)=>{
+        console.log('joining room - ',userId)
+        socket.join(userId);
+        socket.emit('connected');
+        let chat = await Chat.find({buyerId : userId});
+        chat.forEach((ch)=>{io.in(ch.sellerId).emit('recieve',ch._id)});
+        chat = await Chat.find({sellerId : userId});
+        chat.forEach((ch)=>{io.in(ch.buyerId).emit('recieve',ch._id)});
     });
-
-    //while emitting joinChat,client needs to send object containing 
-    //chatId and current user role i.e. - 'buyer'/'seller'
-    socket.on('joinChat',(data)=>{
-        const {chatId,role} = data;
-        socket.join(chatId);
-        // console.log(chatId)
-        socketToChatIdMap[socket.id] = {chatId,role};
-        // console.log(socketToChatIdMap[socket.id])
-    })
     
-
-    //to send a message client will emit message event
-    
-    //as soon as client enters the site he emit a recieve event
-    //also client will listen to message event to recieve a message
-    //and in callback will emit a recieve event to inform server
     socket.on('message',async (data)=>{
-        const {content, userId} = data;
-        // console.log(data)
-        // console.log(socketToChatIdMap[socket.id])
-        const chatId = socketToChatIdMap[socket.id].chatId;
-        // console.log(chatId)
+        const {content, senderId,recieverId, chatId} = data;
         const message = await Message.create({
-            senderId : userId,
+            senderId,
             content,
             chatId
         })
-        io.to(chatId).emit('message1',message);
+        await Chat.findByIdAndUpdate(chatId,{latestMessage : message})
+        io.to(senderId).emit('message1',message);
+        io.to(recieverId).emit('message1',message);
     });
+
+    socket.on('typing',(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        socket.in(senderId).emit('disableTyping',chatId);
+        io.to(recieverId).emit('typing',chatId);
+    })
+
+    socket.on('seen',async(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        let chat = await Chat.findById(chatId);
+        const role = (chat.sellerId ==recieverId)?'Seller':'Buyer';
+        const x = {}
+        x[`lastSeenBy${role}`] = new Date(Date.now());
+        chat = await Chat.findByIdAndUpdate(chat._id,{$set:x},{new:true});
+        io.to(senderId).emit('seen',chatId);
+    })
+    
+    socket.on('reveal',async(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        console.log(data);
+        let chat = await Chat.findById(chatId);
+        if (senderId == chat.sellerId) chat.sReveal = true;
+        if (senderId == chat.buyerId) chat.bReveal = true;
+        if(chat.sReveal && chat.bReveal) chat.bothReveal = true;
+        await chat.save();
+        if (chat.bothReveal) io.to(senderId).emit('reveal',chatId);
+        if (chat.bothReveal) io.to(recieverId).emit('reveal',chatId);
+    })
 
     //client will listen to recieve event to mark its sent messages delivered
-    socket.on('recieve',()=>{
-        const {chatId,role} = socketToChatIdMap[socket.id];
-        const roleStandardized = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-        const field = {};
-        field[`lastRecieveBy${roleStandardized}`] = Date.now();
-        Chat.findByIdAndUpdate(chatId,field);
-        io.to(chatId).broadcast('recieve');
-        
+    socket.on('recieve',async (data)=>{
+        const {chatId,senderId,recieverId} = data;
+        const chat = await Chat.findById(chatId);
+        const role = (chat.sellerId == recieverId)?'Seller':'Buyer';
+        chat[`lastRecieveBy${role}`] = Date.now();
+        await Chat.findByIdAndUpdate(chat._id,chat);
+        io.to(senderId).emit('recieve',chatId);
     });
 
-    //client as soon as open chat will emit read event 
-    //to mark blue tick he will listen to read events
-    socket.on('read',()=>{
-        const {chatId,role} = socketToChatIdMap[socket.id];
-        const roleStandardized = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-        const field = {};
-        field[`lastSeenBy${roleStandardized}`] = Date.now();
-        Chat.findByIdAndUpdate(chatId,field);
-        io.to(chatId).broadcast('read');
-    })
+    // //client as soon as open chat will emit read event 
+    // //to mark blue tick he will listen to read events
+    // socket.on('read',async (data)=>{
+    //     const {chatId,userId} = data;
+    //     const chat = await Chat.findById(chatId);
+    //     const role = (chat.sellerId ==userId)?'Seller':'Buyer';
+    //     chat[`lastSeenBy${role}`] = Date.now();
+    //     await Chat.findByIdAndUpdate(chat._id,chat);
+    //     socket.broadcast.to(chatId).emit('read1');
+    // })
 
-    socket.on('disconnect',()=>{
-        delete socketToChatIdMap[socket.id];
-    })
+    socket.on('disconnect',()=>{})
 })
-
-io.on('message',(chatId,content)=>{
-    io.to()
-})
-
 
 process.on('unhandledRejection',(err)=>{
     console.log(err);

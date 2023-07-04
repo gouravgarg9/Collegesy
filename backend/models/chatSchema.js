@@ -1,33 +1,59 @@
 const mongoose = require('mongoose');
+const User = require('./userSchema');
+const Product = require('./productSchema')
+const Message = require('./messgaeSchema')
+const messageSchema = new mongoose.Schema({
+    senderId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User"
+    },
+    content : {
+        type : String,
+        require : true
+    },
+    chatId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Chat"
+    }
+},{timestamps : true});
 
 const chatSchema = new mongoose.Schema({
     buyerId : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "User",
+        ref :   User,
         require : true
     },
     sellerId : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "User",
+        ref : User,
         require : true
     },
     productId : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : "Product",
+        ref : Product,
         require : true
     },
     active : {
         type : Boolean,
         default : true
     },
-    latestMessage : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "Message",
+    latestMessage : messageSchema,
+    sReveal : {
+        type : Boolean,
+        default : false
     },
-    latestRecieveBySeller : Date,
-    latestRecieveByBuyer : Date,
-    latestSeenBySeller : Date,
-    latestSeenByBuyer : Date,
+    bReveal : {
+        type : Boolean,
+        default : false
+    },
+    bothReveal : {
+        type : Boolean,
+        deafult : false
+    },
+    lastRecieveBySeller : Date,
+    lastRecieveByBuyer : Date,
+    lastSeenBySeller : Date,
+    lastSeenByBuyer : Date,
 
 },{timestamps : true});
 

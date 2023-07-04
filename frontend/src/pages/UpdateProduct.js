@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-// import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
+axios.defaults.withCredentials=true;
 
 const UpdateProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // console.log(location);
+  let product = location.state.data;
+  let user = location.state.user;
   const [input, setInput] = useState({
     title: "",
     description: "",
@@ -20,7 +20,6 @@ const UpdateProduct = () => {
 
   const [prevImages, setPrevImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
-
   const [messaged, setMessage] = useState({ messaged: "" });
 
   const getphotos = (e) => {
@@ -39,12 +38,12 @@ const UpdateProduct = () => {
   };
 
   useEffect(()=>{
-    setPrevImages(location.state.data.images);
+    setPrevImages(product.images);
     setInput({
-      title: location.state.data.title,
-      description: location.state.data.description,
-      price: location.state.data.price,
-      category: location.state.data.category,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      category: product.category,
     });
     
   },[]);
@@ -57,12 +56,10 @@ const UpdateProduct = () => {
     newImages.forEach(item=>{
       formdata.append('productImages', item)
     })
-    //formdata.append('productImages', newImages)
 
     prevImages.forEach(item=>{
       formdata.append('prevImages', item)
     })
-    //formdata.append('prevImages', JSON.stringify(prevImages))
 
     setMessage({ messaged: "" });
 
@@ -76,7 +73,7 @@ const UpdateProduct = () => {
     }
     // const { productImages } = files;
     // console.log(title, description, price);
-    // const id=location.state.prodId;
+    // const id=prodId;
     // if (title === "") alert("Please enter Title");
     // else if (description === "") alert("Please enter Description");
     // else if (price === "") alert("Please enter Price");
@@ -86,8 +83,7 @@ const UpdateProduct = () => {
       axios
         .put(
           "http://localhost:5000/api/products/updateProduct/" +
-            location.state.data._id,
-          // productImages: files,
+            product._id,
           formdata,
           /*title,
             description,
@@ -97,17 +93,14 @@ const UpdateProduct = () => {
               "Content-Type": "multipart/form-data",
             },
           }
-        )
-        .then((res) => {
+        ).then((res) => {
           if (res.status === 200) {
-            //   setProdId({prodId:res.data.data.product._id})
-            // console.log(prodId)
             toast.success("Product Updated Successfully");
             setTimeout(() => {
               navigate("/");
             }, 1000);
           }
-        });
+        });  
     } catch (e) {
       console.log(e);
       setMessage({ messaged: e.response.data.message });
@@ -127,7 +120,7 @@ const UpdateProduct = () => {
   //   })
   // }
 
-  if (!location.state.user) {
+  if (!user) {
     // console.log("hit")
     return (
       <>
@@ -140,7 +133,7 @@ const UpdateProduct = () => {
 
   return (
     <>
-      <Navigation user={location.state.user} />
+      <Navigation user={user} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

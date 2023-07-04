@@ -1,32 +1,24 @@
-import {useState} from 'react'
-import {NavLink, useLocation, useNavigate} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
-// import {user} from "./Home"
+import ClipLoader from "react-spinners/ClipLoader";
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
 axios.defaults.withCredentials=true
-// import Cookies from 'universal-cookie'
-// import jwt from 'jwt-decode'
 
 const LogIn = () => {
-
-  // const cookies =new Cookies();
-  const location=useLocation();
-  const navigate = useNavigate();
   const [input,setInput]=useState({
     email:"",
     password:"",
     rememberMe:false
   })
-  // console.log(input)
+  const [loading, setloading] = useState(false);
   const [messaged,setMessage]=useState({messaged:""});
-  // const [user,setUser]=useState(null)
+  const navigate = useNavigate();
 
   const getdata=(e)=>{
-    // console.log(e.target.value);
     const {value,name}=e.target;
-    // console.log(value,name)
     setInput(()=>{
       return{
         ...input,
@@ -49,31 +41,26 @@ const LogIn = () => {
     e.preventDefault();
     setMessage({messaged:""});
     const {email,password,rememberMe}=input
-    // console.log(email,password,rememberMe)
     if(email==="") toast.warning("Please enter Email")
-    // else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
     else if(password==="") toast.warning("Please enter Password")
     else{
-      // console.log(rememberMe)
       try{
-        const res=await axios.post('http://localhost:5000/api/users/login',{
+        const res= await axios.post('http://localhost:5000/api/users/login',{
           email,
           password,
           rememberMe
         })
-          // console.log(res)
-          if(res.status===200){
-            toast.success("Login Successful")
-            // console.log(location)
-            
-            setTimeout(() => {
-              navigate('/');
-            }, 1000);     
-          }
-      } catch(e){
+        if(res.status===200){
+          toast.success("Login Successful")
+          setTimeout(()=>{
+          navigate('/')
+          },1000);     
+        }
+      }catch(e){
         setMessage({messaged: e.response.data.message})
         console.log(e);
       }
+      setloading(false);
     }
   }
   const print=Object.values(messaged);
@@ -81,9 +68,18 @@ const LogIn = () => {
     navigate("/forgot-password")
   }
 
+  if (loading) {
+    return (
+      <>
+        <h1>
+          ...loading <ClipLoader color="#000000" />
+        </h1>
+      </>
+    );
+  }
   return (
     <>
-    <Navigation user={location.state.user}/>
+    <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>

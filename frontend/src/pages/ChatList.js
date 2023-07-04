@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-
+axios.defaults.withCredentials=true
 const ChatList = () => {
   const location = useLocation();
   const [chats, setChats] = useState([]);
   const loadChat = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/chats/getChat/" + location.state.data._id
+        "http://localhost:5000/api/chats/getChatByProductId/" + location.state.data._id
       );
-      // setBuying(res.data.data.buyingChats);
-      // setSelling(res.data.data.sellingChats);
-      console.log(res);
       setChats(res.data.data.chat);
-      console.log(chats);
-      console.log(res.data.data.chat);
     } catch (e) {
       console.log(e);
     }
@@ -23,7 +18,14 @@ const ChatList = () => {
   useEffect(() => {
     loadChat();
   }, []);
-
+  const getLocalTime = (date)=>{
+    if(!date)return;
+    const newDate = new Date(Date.parse(date));
+    const day = `${newDate.getDate()}/${newDate.getMonth()+1}/${newDate.getFullYear()}`
+    const time = `${newDate.getHours()}:${newDate.getMinutes()}`;
+    return (<><div>{time}</div>
+        <div>{day}</div></>);
+  }
   return (
     <>
       <div className="py-10 h-screen bg-gray-300 px-2">
@@ -41,22 +43,21 @@ const ChatList = () => {
               </div>
               <ul>
                 {chats?.map((chat) => (
-                  <Link
+                  <Link key={chat._id}
                     to="/chat"
                     state={{
                       user: location.state.user,
                       chat: chat,
-                      data: location.state.data
                     }}
                   >
                     <li
                       className="flex justify-between items-center bg-white mt-2 p-2 hover:shadow-lg rounded cursor-pointer transition"
-                      key={chat._id}
                     >
                       <div className="flex ml-2">
                         {" "}
                         <img
-                          src="https://i.imgur.com/aq39RMA.jpg"
+                          alt=""
+                          src={`http://localhost:5000/images/users/${chat.buyerId?.photo || 'xyz.png'}`}
                           width={40}
                           height={40}
                           className="rounded-full"
@@ -64,16 +65,16 @@ const ChatList = () => {
                         <div className="flex flex-col ml-2">
                           {" "}
                           <span className="font-medium text-black">
-                            Jessica Koel
+                            {chat.buyerId?.username || 'User'}
                           </span>{" "}
                           <span className="text-sm text-gray-400 truncate w-32">
-                            Hey, Joel, I here to help you out please tell me
+                            {chat.latestMessage?.content}
                           </span>{" "}
                         </div>
                       </div>
                       <div className="flex flex-col items-center">
                         {" "}
-                        <span className="text-gray-300">11:26</span>{" "}
+                        <span className="text-gray-300">{getLocalTime(chat.latestMessage?.createdAt)}</span>{" "}
                         <i className="fa fa-star text-green-400" />{" "}
                       </div>
                     </li>

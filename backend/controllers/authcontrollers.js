@@ -14,29 +14,31 @@ const signToken = (id) => {
 
 const createAndSendToken = async (user, statusCode,time, res) => {
   if (!user) return next(new AppError("No user to generate Token",404));
-
-  const token = signToken(user._id);
-  const cookieOptions = {
-    httpOnly: true,
-  };
-  if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
-  if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
   try{
     // user.addJwtToken(token,time);
-    await user.addJwtToken(token,time);
+    //await user.addJwtToken(token,time);
     //trying to make things a bit fast. Don't need to wait to add token to user in db 
+    const token = signToken(user._id);
+    const cookieOptions = {
+    httpOnly: true,
+    };
+    if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
+    if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
+    res.cookie("jwt", token, cookieOptions);
+    res.status(statusCode).json({
+    status: "success",
+    token,
+    data : {
+      user
+    }
+  });
   }catch(err){
+    console.log(err);
     res.status(500).json({
       status: "Internal Error",
       message: "Can't log you in."
     })
   }
-
-  res.cookie("jwt", token, cookieOptions);
-  res.status(statusCode).json({
-    status: "success",
-    token
-  });
 };
 
 
@@ -119,7 +121,6 @@ exports.verifySignUpOTP = catchAsync(async (req, res, next) => {
   //await newUser.save({validateBeforeSave:false});
   //saving some time dude
 
-
   new Mail(newUser).sendVerified();
   res.status(200).json({
     status: "success",
@@ -162,7 +163,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 // recieves key verify it and set new passsword
 exports.resetPassword = catchAsync(async (req, res, next) => {
   //hash token and get user
-  
+  console.log(req.body.token.substr(1));
   const hashtoken = crypto
     .createHash("sha256")
     .update(req.body.token.substr(1))
@@ -309,13 +310,13 @@ exports.logIn = catchAsync(async (req, res, next) => {
 //protect
 exports.protect = catchAsync(async (req, res, next) => {
   //get token and check if exists
-  let token;
+  let token = null;
   // console.log(req)
   if (req.cookies?.jwt) token = req.cookies.jwt;
   else if (req.headers?.authorization?.split(" ")[0] === "Bearer")
     token = req.headers.authorization.split(" ")[1];
 
-  if (!token) return next(new AppError("Not logged in", 401));
+  if (!token || token == "logged out") return next(new AppError("Not logged in", 401));
 
   //validate and decode token
   //sign verify are synchronous but we will make verify promise by using promisify from native util module
@@ -333,7 +334,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError("Password changed recently"));
 
   //check if loggedOutFromAllDevices
-  if(! await freshUser.verifyJwtToken(token))
+  //if(! await freshUser.verifyJwtToken(token))
+  if(!( !freshUser.lastLogOutFromAllDevices || freshUser.lastLogOutFromAllDevices < decoded.iat))
     return next(new AppError("Please Log In Again"));
 
   //finally authorize access
@@ -341,14 +343,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.token = token;
   //res.locals.user = freshUser;
   // console.log(freshUser)
-  next();
+  return next();
 });
 
 
 //logout 
-exports.logOut = (req, res, next) => {
+exports.logOut = catchAsync(async (req, res, next) => {
   
-  req.user.removeToken(req.token);
+  //await req.user.removeToken(req.token);
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
@@ -356,7 +358,7 @@ exports.logOut = (req, res, next) => {
   res.status(200).json({
     status: "success",
   });
-};
+});
 
 exports.logOutAllDevices = catchAsync(async (req,res,next)=>{
   await LogOutFromAllDevices(req.user);
@@ -371,7 +373,8 @@ exports.logOutAllDevices = catchAsync(async (req,res,next)=>{
 //logoutfromalldevices
 const LogOutFromAllDevices = async(user)=>{
   try {
-    await User.findByIdAndUpdate(user._id,{jwtTokens : []});
+    //await User.findByIdAndUpdate(user._id,{jwtTokens : []});
+    await User.findByIdAndUpdate({lastLogOutFromAllDevices : Date.now()})
     return true;
   } catch (error) {
     return false;

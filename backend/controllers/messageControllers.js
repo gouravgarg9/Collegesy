@@ -27,12 +27,12 @@ exports.sendMessage = catchAsync(async (req,res,next)=>{
 })
 
 exports.getMessages = catchAsync(async (req,res,next)=>{
-    const {chatId} = req.body;
+    const chatId = req.params.chatId;
     if(!chatId)return next(new AppError('Bad Request',404));
     const chat = await Chat.findById(chatId);
     if(!chat || !(chat.buyerId.equals(req.user._id) || chat.sellerId.equals(req.user._id)))
         return next(new AppError('Bad Request',404));
-    const messages = await Message.find({chatId}).sort({createdAt : -1});
+    const messages = await Message.find({chatId}).sort('createdAt');
     res.status(200).json({
         status : 'success',
         data : {

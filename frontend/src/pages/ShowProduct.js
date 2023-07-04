@@ -1,30 +1,20 @@
-import { useLocation, NavLink, Link } from "react-router-dom";
-// import { user } from "./Home";
+import { useNavigate,useLocation, NavLink, Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
-
 import { useEffect, useState } from "react";
 import Carousel from "react-elastic-carousel";
-
+import axios from "axios";
 const ShowProduct = () => {
-  // let userTemp=user;
   const [photo, setPhoto] = useState();
-  useEffect(() => {
-    // console.log(userTemp)
-    // if(localStorage.getItem('name')) {
-    //   user=localStorage.getItem('name');
-    // }
-    setPhoto(location.state.data.images[0]);
-  }, []);
-  // useEffect(()=>{
-  //   localStorage.setItem("name", user);
-  // },[user])
-
   const location = useLocation();
-  const product = location.state.data;
-  console.log(location.state.data);
+  let product = location.state.data;
+  let user = location.state.user;
+  const navigate = useNavigate();
+  useEffect(() => {
+    setPhoto(product.images[0]);
+  }, []);
 
-  if (!location.state.user) {
-    // console.log("hit")
+ 
+  if (!user) {
     return (
       <>
         <h1>
@@ -33,8 +23,20 @@ const ShowProduct = () => {
       </>
     );
   }
+  const openChat = async()=>{
+    try {
+      const res = await axios.get("http://localhost:5000/api/chats/getChatByProductId/" + product._id);
+      navigate("/chat", {
+        state: {user: user,
+                chat : res.data.data.chat},
+      })
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
   const displayUpdate = () => {
-    if (location.state.user._id === product.sellerId) {
+    if (user._id === product.sellerId) {
       return (
         <>
           <div className="inline-block align-bottom">
@@ -42,8 +44,8 @@ const ShowProduct = () => {
               <Link
                 to="/update-product"
                 state={{
-                  data: location.state.data,
-                  user: location.state.user,
+                  data: product,
+                  user: user,
                 }}
               >
                 <i className="mdi mdi-wrench -ml-2 mr-2" /> Update Product
@@ -56,7 +58,7 @@ const ShowProduct = () => {
   };
 
   const displayChat = () => {
-    if (location.state.user._id === location.state.data.sellerId) {
+    if (user._id === product.sellerId) {
       return (
         <>
           <div className="inline-block align-bottom">
@@ -64,8 +66,8 @@ const ShowProduct = () => {
               <Link
                 to="/chat-list"
                 state={{
-                  data: location.state.data,
-                  user: location.state.user,
+                  data: product,
+                  user: user,
                 }}
               >
                 <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
@@ -78,16 +80,8 @@ const ShowProduct = () => {
       return (
         <>
           <div className="inline-block align-bottom">
-            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold">
-              <Link
-                to="/chat"
-                state={{
-                  data: location.state.data,
-                  user: location.state.user,
-                }}
-              >
+            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold" onClick={openChat}>
                 <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
-              </Link>
             </button>
           </div>
         </>
@@ -96,8 +90,7 @@ const ShowProduct = () => {
   };
   return (
     <>
-      {/* component */}
-      <Navigation user={location.state.user} />
+      <Navigation user={user} />
       <style
         dangerouslySetInnerHTML={{
           __html:
@@ -111,8 +104,7 @@ const ShowProduct = () => {
               <div className="relative">
                 <img
                   crossOrigin="anonymous"
-                  // src={`http://localhost:5000/images/products/${product.images[0]}`}
-                  src={`http://localhost:5000/images/products/${photo}`}
+                  src={{photo}?`http://localhost:5000/images/products/${photo}`:''}
                   className="w-full h-96 border-4 rounded-lg relative z-10"
                   alt="productImage"
                 />
@@ -121,14 +113,15 @@ const ShowProduct = () => {
               <div className="flex">
                 <Carousel itemsToShow={3}>
                   {
-                    // let arr=location.state.data.images
-                    location.state.data.images?.map((image) => (
+                    // let arr=product.images
+                    product.images?.map((image) => (
                       <img
                         crossOrigin="anonymous"
                         src={`http://localhost:5000/images/products/${image}`}
                         className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
                         alt="productImage"
                         cursor="pointer"
+                        key={image}
                         onClick={() => setPhoto(image)}
                       />
                     ))
