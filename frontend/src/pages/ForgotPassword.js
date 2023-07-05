@@ -3,9 +3,11 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from 'react-router-dom';
 
 const ForgotPassword = () => {
 
+    const location = useLocation();
     const [input,setInput]=useState({
         email:"",
     })
@@ -46,10 +48,10 @@ const ForgotPassword = () => {
 
   return (
     <>
-    <Navigation />
+    <Navigation user={location.state}/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
-        <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+        <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md mt-16">
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
@@ -58,6 +60,7 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 name="email"
+                value={location.state.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

@@ -74,7 +74,7 @@ const Home = () => {
     getUser();  
     window.addEventListener("scroll",handleScroll);
   },[]);
-
+  // console.log(user)
   useEffect(()=>{
     if(user)getAllProducts();
   },[user])

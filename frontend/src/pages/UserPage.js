@@ -1,14 +1,16 @@
 import Navigation from "../components/Navigation";
-import { useLocation, Link, NavLink } from "react-router-dom";
+import { useLocation, Link, NavLink,useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 axios.defaults.withCredentials=true;
 const UserPage = () => {
+  const navigate=useNavigate()
   const location = useLocation();
   const [products, setProduct] = useState([]);
   const [number, setNumber] = useState();
   const [designation, setDesignation] = useState();
   let user = location.state.user;
+  // console.log(location)
   const setCourse = () => {
     let email = user.email;
     let regNo;
@@ -112,11 +114,19 @@ const UserPage = () => {
                   </div>
                 </div>
                 <div className="flex mt-6">
-                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
-                    Upload Photo
+                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                  onClick={()=>{
+                    navigate("/update-user")
+                  }}>
+                    Update User
                   </button>
-                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded">
-                    Remove Photo
+                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                  onClick={()=>{
+                    navigate("/forgot-password",{
+                      state: user
+                    })
+                  }}>
+                    Reset Password
                   </button>
                 </div>
                 <div className="w-full px-4 text-center mt-10">

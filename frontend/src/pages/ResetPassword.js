@@ -4,9 +4,11 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 
 const ResetPassword = () => {
+    const location = useLocation();
+    console.log(location.state.user)
     const navigate = useNavigate();
     const [input,setInput]=useState({
         email:"",

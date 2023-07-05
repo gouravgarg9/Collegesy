@@ -32,7 +32,7 @@ exports.userPhotoUpload = upload.single("userImage");
 
 exports.userPhotoReOrg = (req, res, next) => {
   if (!req.file) return next();
-  const ext = file.originalname.substr(file.originalname.lastIndexOf('.'))
+  const ext = req.file.originalname.substr(req.file.originalname.lastIndexOf('.'))
   req.file.filename = `${req.user._id}.${ext}`;
   const filePath = path.join(process.env.USER_IMAGE_LOCATION,req.file.filename);
   sharp(req.file.buffer)
@@ -58,6 +58,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       message: "Field Changed",
+      user: req.user
     },
   });
 });

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "./../socket";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
 axios.defaults.withCredentials = true;
 const Chat = () => {
@@ -65,8 +65,10 @@ const Chat = () => {
       );
       chat = res2.data.data.chat;
       other = getOther();
-      if(other.lastSeen != lastSeenTime)setLastSeenTime(new Date(Date.parse(other.lastSeen)));
-      if(other.lastRecieve != lastRecieveTime)setLastRecieveTime(new Date(Date.parse(other.lastRecieve)));
+      if (other.lastSeen != lastSeenTime)
+        setLastSeenTime(new Date(Date.parse(other.lastSeen)));
+      if (other.lastRecieve != lastRecieveTime)
+        setLastRecieveTime(new Date(Date.parse(other.lastRecieve)));
       const res = await axios.get(
         "http://localhost:5000/api/messages/getMessages/" + chat._id
       );
@@ -111,36 +113,39 @@ const Chat = () => {
     });
   };
 
-
   const recieveHandler = (chatId) => {
-    console.log('recieve');
+    console.log("recieve");
     if (chat._id != chatId) return;
     setLastRecieveTime(new Date(Date.now()));
-  }
+  };
 
   const seenHandler = (chatId) => {
-    console.log('seen');
+    console.log("seen");
     if (chat._id != chatId) return;
     setLastSeenTime(new Date(Date.now()));
-  }
+  };
 
   const message1Handler = (msg) => {
-    console.log('message');
+    console.log("message");
     if (chat._id != msg.chatId) return;
-    if(msg.senderId != user._id)
-      socket.emit('seen',{chatId : chat._id,senderId : other._id, recieverId : user._id});
+    if (msg.senderId != user._id)
+      socket.emit("seen", {
+        chatId: chat._id,
+        senderId: other._id,
+        recieverId: user._id,
+      });
     setMessages((prev) => [msg, ...prev]);
-  }
+  };
 
   const disableTypingHandler = (chatId) => {
-    console.log('disable');
+    console.log("disable");
     if (chat._id != chatId) return;
     setCanType(false);
     setTimeout(() => setCanType(true), 2000);
-  }
+  };
 
   const revealHandler = async (chatId) => {
-    console.log('reveal');
+    console.log("reveal");
     if (chat._id != chatId) return;
     const newChat = await axios.get(
       "http://localhost:5000/api/chats/getChat" + chat._id
@@ -152,15 +157,15 @@ const Chat = () => {
         chat: newChat.data.data.chat,
       },
     });
-  }
+  };
 
   const typingHandler = (chatId) => {
-    console.log('typing');
+    console.log("typing");
     if (chat._id != chatId) return;
     setOtherTyping(true);
     setTimeout(() => setOtherTyping(false), 2000);
-  }
-   
+  };
+
   useEffect(() => {
     socket.emit("join", user._id);
 
@@ -188,12 +193,12 @@ const Chat = () => {
     socket.on("recieve", recieveHandler);
 
     return () => {
-      socket.off("recieve",recieveHandler);
-      socket.off("seen",seenHandler);
-      socket.off("message1",message1Handler);
-      socket.off("disableTyping",disableTypingHandler);
-      socket.off("reveal",revealHandler);
-      socket.off("typing",typingHandler);
+      socket.off("recieve", recieveHandler);
+      socket.off("seen", seenHandler);
+      socket.off("message1", message1Handler);
+      socket.off("disableTyping", disableTypingHandler);
+      socket.off("reveal", revealHandler);
+      socket.off("typing", typingHandler);
     };
   }, []);
 
@@ -252,39 +257,37 @@ const Chat = () => {
     return show;
   };
 
-  const [picker,setPicker] = useState(false);
+  const [picker, setPicker] = useState(false);
 
-  const enablePicker=()=>{
-    console.log(picker)
-    if(!picker){
-      setPicker(true)
+  const enablePicker = () => {
+    console.log(picker);
+    if (!picker) {
+      setPicker(true);
+    } else {
+      setPicker(false);
     }
-    else{
-      setPicker(false)
-    }
-  }
-  const displayEmoji=()=>{
-    if(picker){
-      return(
+  };
+  const displayEmoji = () => {
+    if (picker) {
+      return (
         <EmojiPicker
-        emojiStyle="facebook"
-        theme="dark"
-        height={300}
-        width={300}
-        previewConfig={{
-          showPreview:false
-        }}
-        onEmojiClick={(e)=>{
-          console.log(e.emoji)
-          setMess(mess+e.emoji)
-        }}
+          emojiStyle="facebook"
+          theme="dark"
+          height={300}
+          width={300}
+          previewConfig={{
+            showPreview: false,
+          }}
+          onEmojiClick={(e) => {
+            console.log(e.emoji);
+            setMess(mess + e.emoji);
+          }}
         />
-      )
+      );
+    } else {
+      return <></>;
     }
-    else{
-      return(<></>)
-    }
-  }
+  };
 
   return (
     <>
@@ -334,6 +337,31 @@ const Chat = () => {
               <button
                 type="button"
                 onClick={(e) => {
+                  navigate("/")
+                }}
+                className="inline-flex items-center justify-center rounded-lg border h-10 w-20 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+              >
+                <svg
+                  class="w-4 h-4 text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8v10a1 1 0 0 0 1 1h4v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h4a1 1 0 0 0 1-1V8M1 10l9-9 9 9"
+                  />
+                </svg>
+
+                <span>Home</span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
                   changeReveal();
                 }}
                 className="inline-flex items-center justify-center rounded-lg border h-10 w-20 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -370,7 +398,7 @@ const Chat = () => {
             ↓
           </button>
           <form action="#" disabled={!canType}>
-          {displayEmoji()}
+            {displayEmoji()}
             <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
               {otherTyping ? <div>Typing...</div> : <>.</>}
               {!canType ? (
@@ -461,7 +489,6 @@ const Chat = () => {
                   </svg>
                 </button> */}
 
-                  
                   <button
                     type="button"
                     className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -488,7 +515,7 @@ const Chat = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       sendMessages();
-                      setPicker(false)
+                      setPicker(false);
                     }}
                   >
                     <span className="font-bold">Send</span>
