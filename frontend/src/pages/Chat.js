@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "./../socket";
+import EmojiPicker from 'emoji-picker-react';
 
 axios.defaults.withCredentials = true;
 const Chat = () => {
@@ -251,6 +252,40 @@ const Chat = () => {
     return show;
   };
 
+  const [picker,setPicker] = useState(false);
+
+  const enablePicker=()=>{
+    console.log(picker)
+    if(!picker){
+      setPicker(true)
+    }
+    else{
+      setPicker(false)
+    }
+  }
+  const displayEmoji=()=>{
+    if(picker){
+      return(
+        <EmojiPicker
+        emojiStyle="facebook"
+        theme="dark"
+        height={300}
+        width={300}
+        previewConfig={{
+          showPreview:false
+        }}
+        onEmojiClick={(e)=>{
+          console.log(e.emoji)
+          setMess(mess+e.emoji)
+        }}
+        />
+      )
+    }
+    else{
+      return(<></>)
+    }
+  }
+
   return (
     <>
       <>
@@ -335,6 +370,7 @@ const Chat = () => {
             ↓
           </button>
           <form action="#" disabled={!canType}>
+          {displayEmoji()}
             <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
               {otherTyping ? <div>Typing...</div> : <>.</>}
               {!canType ? (
@@ -424,9 +460,12 @@ const Chat = () => {
                     />
                   </svg>
                 </button> */}
+
+                  
                   <button
                     type="button"
                     className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                    onClick={enablePicker}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -449,6 +488,7 @@ const Chat = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       sendMessages();
+                      setPicker(false)
                     }}
                   >
                     <span className="font-bold">Send</span>
