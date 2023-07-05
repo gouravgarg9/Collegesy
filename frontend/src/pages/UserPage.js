@@ -116,7 +116,7 @@ const UserPage = () => {
                 <div className="flex mt-6">
                   <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
                   onClick={()=>{
-                    navigate("/update-user")
+                    navigate("/update-user",{state: {user}})
                   }}>
                     Update User
                   </button>

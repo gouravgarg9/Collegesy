@@ -349,7 +349,7 @@ const Chat = () => {
                   viewBox="0 0 20 20"
                 >
                   <path
-                    stroke="currentColor"
+                    stroke="grey"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
@@ -357,7 +357,7 @@ const Chat = () => {
                   />
                 </svg>
 
-                <span>Home</span>
+                <span> Home</span>
               </button>
               <button
                 type="button"

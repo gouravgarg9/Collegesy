@@ -7,32 +7,29 @@ import ClipLoader from "react-spinners/ClipLoader";
 axios.defaults.withCredentials = true;
 
 const UpdateUser = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [loading, setloading] = useState(true);
   const [removePhoto, setRemovePhoto] = useState(false);
   const [user, setUser] = useState(null);
   const [photo, setPhoto] = useState();
   const [messaged, setMessage] = useState({ messaged: "" });
-  const [input, setInput] = useState({
-    username: "",
-  });
+  const [showPhoto,setShowPhoto] = useState();
+  const [input, setInput] = useState({username: ""});
 
   const getUser = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/users/checkLoggedIn"
-      );
+      const res = await axios.get("http://localhost:5000/api/users/checkLoggedIn");
       if (res.status === 200) {
         setUser(res.data.data.user);
+        setShowPhoto(`http://localhost:5000/images/users/${res.data.data.user.photo || 'xyz.png'}`);
       }
     } catch (e) {
       console.log(e);
       navigate("/info");
-      setUser(null);
     }
     setloading(false);
   };
+
   const getdata = (e) => {
     const { value, name } = e.target;
     setInput(() => {
@@ -42,17 +39,18 @@ const UpdateUser = () => {
       };
     });
   };
+
   const getphotos = (e) => {
     const files = e.target.files;
     setPhoto(files[0]);
-    // console.log(files[0])
+    setRemovePhoto(false);
+    setShowPhoto(URL.createObjectURL(files[0]));
   };
   const addData = (e) => {
     e.preventDefault();
-
     const formdata = new FormData();
 
-    formdata.append("userImage", photo);
+    if(photo) formdata.append("userImage", photo);
     formdata.append("removePhoto", removePhoto);
 
     setMessage({ messaged: "" });
@@ -68,9 +66,6 @@ const sendData=(formdata)=>{
       .patch(
         "http://localhost:5000/api/users/updateMe/",
         formdata,
-        /*title,
-          description,
-          price,*/
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -79,16 +74,14 @@ const sendData=(formdata)=>{
       )
       .then((res) => {
         if (res.status === 200) {
-          console.log(res)
           toast.success("User Updated Successfully");
-          setRemovePhoto(false)
           setTimeout(() => {
             navigate("/user", {
               state: {
                 user: res.data.data.user,
               },
             });
-          }, 1000);
+          },500);
         }
       });
   } catch (e) {
@@ -99,17 +92,7 @@ const sendData=(formdata)=>{
   const removePhotoFun=(e)=>{
     e.preventDefault();
     setRemovePhoto(true);
-
-    const formdata = new FormData();
-
-    formdata.append("userImage", photo);
-    formdata.append("removePhoto", removePhoto);
-
-    setMessage({ messaged: "" });
-
-    const { username } = input;
-    formdata.append("username", username);
-    sendData(formdata);
+    setShowPhoto();
   }
   const print = Object.values(messaged);
 
@@ -137,11 +120,12 @@ const sendData=(formdata)=>{
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="w-full px-4 flex justify-center">
               <div className="relative">
+                <button className="rounded-full border-2" onClick={removePhotoFun}>✕</button>
                 <img
                   alt="..."
                   crossOrigin="anonymous"
-                  src={`http://localhost:5000/images/users/${user.photo}`}
-                  //   src="http://localhost:5000/images/users/xyz.png"
+                  src={showPhoto || "http://localhost:5000/images/users/xyz.png"}
+                  //   src=
                   //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
                   className="shadow-xl rounded-full h-52 align-middle border-none"
                   //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
@@ -158,10 +142,6 @@ const sendData=(formdata)=>{
                 onChange={getphotos}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
-              
-              <button className="transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
-              onClick={removePhotoFun}
-              >Remove Photo</button>
 
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Username
