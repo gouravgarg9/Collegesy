@@ -26,6 +26,7 @@ router.patch(
 router.delete(
   "/deleteUser",
   authControllers.protect,
+  userControllers.disableUser,
   authControllers.deleteUser
 );
 router.patch(

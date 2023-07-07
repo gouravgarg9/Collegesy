@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema({
     },
     category : {
         type : String,
-        enum : ['Books','Vehicle','Calculator','Stationary','Mattress','Others'],
+        enum : ['Books','Mobiles','Electronics','Accessories','Vehicle','Health & Fitness','Furniture','Calculator','Stationary','Others'],
         default : 'Others'
     },
     imgCount : {
@@ -29,8 +29,20 @@ const productSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
-    images : [String]
+    age : Number,
+    images : [String],
+    active : {
+        type : Boolean,
+        default : true
+    }
 },{timestamps:true});
+
+
+// productSchema.pre(/^find/,function(next){
+//     this.find({active : {$ne : false}});
+//     next();
+// });
+
 
 const Product = mongoose.model('Product',productSchema);
 module.exports = Product;   

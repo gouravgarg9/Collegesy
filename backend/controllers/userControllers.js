@@ -67,3 +67,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+
+exports.disableUser = catchAsync(async(req,res,next)=>{
+  await Product.updateMany({sellerId : req.user._id},{active : false});
+  await Chat.updateMany({sellerId : req.user._id},{active : false});
+  await Chat.updateMany({buyerId : req.user._id},{active : false});
+  return next();
+})

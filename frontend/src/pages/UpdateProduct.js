@@ -109,7 +109,18 @@ const UpdateProduct = () => {
     // }
   };
   const print = Object.values(messaged);
-
+  const optionsArray = [
+    "Books",
+    "Mobiles",
+    "Electronics",
+    "Accessories",
+    "Vehicle",
+    "Health & Fitness",
+    "Furniture",
+    "Calculator",
+    "Stationary",
+    "Others",
+  ];
   // {
   //   Array.from(files).map(photo=>{
   //     return{
@@ -218,12 +229,9 @@ const UpdateProduct = () => {
                   value={input.category}
                   onChange={getdata}
                 >
-                  <option value="Books">Books</option>
-                  <option value="Vehicle">Vehicle</option>
-                  <option value="Calculator">Calculator</option>
-                  <option value="Stationary">Stationary</option>
-                  <option value="Mattress">Mattress</option>
-                  <option value="Others">Others</option>
+                  {optionsArray.map((val) => {
+                    return <option value={val}>{val}</option>;
+                  })}
                 </select>
               <button
                 type="button"

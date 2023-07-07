@@ -70,10 +70,10 @@ const UserSchema = new mongoose.Schema({
 },{timestamps:true});
 
 
-UserSchema.pre(/^find/,function(next){
-    this.find({active : {$ne : false}});
-    next();
-});
+// UserSchema.pre(/^find/,function(next){
+//     this.find({active : {$ne : false}});
+//     next();
+// });
 
 
 UserSchema.pre('save',async function(next){

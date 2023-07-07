@@ -54,7 +54,10 @@ exports.getChatbyProduct = catchAsync(async (req, res, next) => {
         buyerId: req.user._id,
         productId: req.product._id,
         sellerId: req.product.sellerId,
-      });
+      }).populate({
+        path: "sellerId buyerId latestMessage",
+        //match : {bothReveal : true}
+      });;
     }
   }
 

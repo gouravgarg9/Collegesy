@@ -147,16 +147,20 @@ const Chat = () => {
   const revealHandler = async (chatId) => {
     console.log("reveal");
     if (chat._id != chatId) return;
-    const newChat = await axios.get(
-      "http://localhost:5000/api/chats/getChat" + chat._id
-    );
-    navigate("/chat", {
-      state: {
-        user,
-        data: location.state.data,
-        chat: newChat.data.data.chat,
-      },
-    });
+    try{
+      const newChat = await axios.get(
+        "http://localhost:5000/api/chats/getChat" + chat._id
+      );
+      navigate("/chat", {
+        state: {
+          user,
+          data: location.state.data,
+          chat: newChat.data.data.chat,
+        },
+      });
+    }catch(e){
+      navigate('/');
+    }
   };
 
   const typingHandler = (chatId) => {

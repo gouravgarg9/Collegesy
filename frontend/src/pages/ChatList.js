@@ -20,6 +20,7 @@ const ChatList = () => {
       setChats(res.data.data.chat);
     } catch (e) {
       console.log(e);
+      navigate('/');
     }
   };
   useEffect(() => {

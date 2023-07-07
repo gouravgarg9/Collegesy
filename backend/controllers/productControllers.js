@@ -30,6 +30,7 @@ exports.getAllProducts = catchAsync(async (req,res,next)=>{
 
     //removing field that can't be served directly-sorting,pagination,etc
     let queryObj = {...req.query};
+    queryObj.active = true;
     const excludeFields = ['sort','page','limit','fields'];
     excludeFields.forEach(el=>delete queryObj[el]);
 
@@ -172,7 +173,7 @@ exports.deleteOneProductImage = catchAsync(async (req,res,next)=>{
 
 exports.deleteProduct = catchAsync(async (req,res,next)=>{
     await Chat.updateMany({productId : req.product._id},{"$set":{"active": false}});
-    await Product.findByIdAndDelete( req.product._id);
+    await Product.findByIdAndUpdate( req.product._id,{active : false});
     res.status(200).json({
         status:'success'
     });

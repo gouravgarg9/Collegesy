@@ -21,7 +21,7 @@ const LogOut = () => {
         });
     } catch (e) {
       console.log(e);
-      navigate('/login')
+      navigate('/')
     }
   };
   useEffect(() => {

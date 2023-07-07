@@ -40,19 +40,20 @@ const ResetPassword = () => {
         else if(password==="") toast.warning("Please enter Password")
         else if(password.length<8) toast.warning("Password is too short")
         else{
+          try{
             const res = await axios.post('http://localhost:5000/api/users/resetPassword',{
               email,
               password,
               passwordConfirm,
               token: window.location.search
             });
-              
             if(res.status===200) navigate("/");
-            else setMessage({messaged: e.response.data.message});
+          }catch(err) {
+              setMessage({messaged: err.response.data.message});
+            }
         }
       }
       const print=Object.values(messaged);
-
   return (
     <>
     <Navigation />

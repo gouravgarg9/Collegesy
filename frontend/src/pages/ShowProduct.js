@@ -36,6 +36,7 @@ const ShowProduct = () => {
     }
     catch(err){
       console.log(err);
+      
     }
   }
   const displayUpdate = () => {

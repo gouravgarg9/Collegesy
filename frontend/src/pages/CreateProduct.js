@@ -4,7 +4,7 @@ import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
-axios.defaults.withCredentials=true
+axios.defaults.withCredentials = true;
 
 const CreateProduct = () => {
   const location = useLocation();
@@ -16,7 +16,7 @@ const CreateProduct = () => {
     title: "",
     description: "",
     price: "",
-    category: ""
+    category: "",
   });
 
   const [messaged, setMessage] = useState({ messaged: "" });
@@ -34,7 +34,7 @@ const CreateProduct = () => {
   const addData = (e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
-    const { title, description, price,category } = input;
+    const { title, description, price, category } = input;
     if (title === "") toast.warning("Please enter Title");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
@@ -46,7 +46,7 @@ const CreateProduct = () => {
             title,
             description,
             price,
-            category
+            category,
           })
           .then((res) => {
             if (res.status === 200) {
@@ -64,7 +64,18 @@ const CreateProduct = () => {
     }
   };
   const print = Object.values(messaged);
-
+  const optionsArray = [
+    "Books",
+    "Mobiles",
+    "Electronics",
+    "Accessories",
+    "Vehicle",
+    "Health & Fitness",
+    "Furniture",
+    "Calculator",
+    "Stationary",
+    "Others",
+  ];
   if (!user) {
     return (
       <>
@@ -117,12 +128,9 @@ const CreateProduct = () => {
                   className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
                   onChange={getdata}
                 >
-                  <option value="Books">Books</option>
-                  <option value="Vehicle">Vehicle</option>
-                  <option value="Calculator">Calculator</option>
-                  <option value="Stationary">Stationary</option>
-                  <option value="Mattress">Mattress</option>
-                  <option value="Others">Others</option>
+                  {optionsArray.map((val) => {
+                    return <option value={val}>{val}</option>;
+                  })}
                 </select>
                 <button
                   type="button"

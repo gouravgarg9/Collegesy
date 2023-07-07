@@ -135,7 +135,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   if (!email)
     return next(new AppError("Bad Request.No mail recieved.", 404));
 
-  const user = await User.findOne({ email});
+  const user = await User.findOne({email});
   if (!user) return next(new AppError("No user found", 404));
 
   //generate key and update user
@@ -224,7 +224,7 @@ exports.checkLoggedIn = (req, res)=>{
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
   //1.get user
-  const user = await User.findById(req.user.id).select("+password");
+  const user = await User.findById(req.user._id).select("+password");
 
   //2.checkforPassword
   const passwordCorrect = await user.verifyPassword(
@@ -261,12 +261,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
-  //find user
-  console.log(req.body)
-  const user = await User.findById(req.user.id).select("+password");
-  console.log(user.password)
+  const user = await User.findById(req.user._id).select("+password");
   const correct = await user.verifyPassword(req.body.password, user.password);
-  user.password = undefined;
   if (!user || !correct) return next(new AppError("Invalid credentials", 404));
 
   LogOutFromAllDevices(user);
@@ -288,7 +284,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
   //select to to explicitly select password as its select is fals ein schema as we need to verify login
   const user = await User.findOne({ email: email }).select("+password");
-
+  console.log(user)
   if (!user || !(user && (await user.verifyPassword(password, user.password)))) {
     return next(new AppError("Invalid mail or password", 401));
   }
@@ -305,7 +301,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
   // if(req.body?.rememberMe) rememberMe = true;
   rememberMe=req.body.rememberMe;
   // console.log(rememberMe)
-  user.updateOne({active:true})
+  await user.updateOne({active:true})
   //await user.updateOne({active:true})
   //save some time dude
   createAndSendToken(user, 200,rememberMe,res);

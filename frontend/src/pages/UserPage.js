@@ -87,7 +87,7 @@ const UserPage = () => {
         toast.error("Something Went Wrong!!!");
       } else {
         setTimeout(() => {
-          navigate("/");
+          navigate("/info");
         }, 4000);
         toast(
           "Your account will be deleted within 15 days along with all your products"

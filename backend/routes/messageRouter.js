@@ -9,11 +9,11 @@ router.get(
   messageControllers.getMessages
 );
 
-router.post(
-  "/sendMessage",
-  authControllers.protect,
-  messageControllers.sendMessage
-);
+// router.post(
+//   "/sendMessage",
+//   authControllers.protect,
+//   messageControllers.sendMessage
+// );
 
 // router.delete(
 //   "/deleteMessage",

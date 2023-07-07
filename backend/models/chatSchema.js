@@ -42,9 +42,20 @@ const chatSchema = new mongoose.Schema(
     lastRecieveByBuyer: Date,
     lastSeenBySeller: Date,
     lastSeenByBuyer: Date,
+    offered : Boolean,
+    offeredPrice : {
+      type : Number,
+      minimum: [0, 'Not a valid price.']
+    }
   },
   { timestamps: true }
 );
+
+
+// chatSchema.pre(/^find/,function(next){
+//     this.find({active : {$ne : false}});
+//     next();
+// });
 
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports = Chat;

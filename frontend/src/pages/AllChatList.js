@@ -21,6 +21,7 @@ const AllChatList = () => {
       setSellingChats(res.data.data.sellingChats);
     } catch (e) {
       console.log(e);
+      setTimeout(()=> navigate('/'),1000);
     }
   };
 
