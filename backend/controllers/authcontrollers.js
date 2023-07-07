@@ -262,7 +262,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
   //find user
+  console.log(req.body)
   const user = await User.findById(req.user.id).select("+password");
+  console.log(user.password)
   const correct = await user.verifyPassword(req.body.password, user.password);
   user.password = undefined;
   if (!user || !correct) return next(new AppError("Invalid credentials", 404));

@@ -8,7 +8,7 @@ import { useNavigate,useLocation } from 'react-router-dom';
 
 const ResetPassword = () => {
     const location = useLocation();
-    console.log(location.state.user)
+    // console.log(location.state.user)
     const navigate = useNavigate();
     const [input,setInput]=useState({
         email:"",

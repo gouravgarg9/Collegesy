@@ -1,13 +1,16 @@
 import Navigation from "../components/Navigation";
-import { useLocation, Link, NavLink,useNavigate } from "react-router-dom";
+import { useLocation, Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-axios.defaults.withCredentials=true;
+import { ToastContainer, toast } from "react-toastify";
+axios.defaults.withCredentials = true;
 const UserPage = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
   const [products, setProduct] = useState([]);
   const [number, setNumber] = useState();
+  const [password, setPassword] = useState();
+  const [ask, setAsk] = useState(false);
   const [designation, setDesignation] = useState();
   let user = location.state.user;
   // console.log(location)
@@ -72,6 +75,114 @@ const UserPage = () => {
     getAllProducts();
   }, []);
 
+  const deleteUserFun = async () => {
+    try {
+      const res = await axios.delete(
+        "http://localhost:5000/api/users/deleteUser",
+        { data: { password } }
+      );
+      console.log("hit1");
+      if (res.status !== 204) {
+        console.log("hit");
+        toast.error("Something Went Wrong!!!");
+      } else {
+        setTimeout(() => {
+          navigate("/");
+        }, 4000);
+        toast(
+          "Your account will be deleted within 15 days along with all your products"
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const askConfirmation = () => {
+    if (ask) {
+      return (
+        <>
+          <div
+            id="deleteModal"
+            tabIndex="-1"
+            aria-hidden="true"
+            className="z-50 justify-center w-full lg:w-4/12 px-4 mx-auto my-auto"
+          >
+            <div className="relative p-4 w-full max-w-md h-full md:h-auto">
+              <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+                {/* <button
+                    type="button"
+                    className="text-gray-400 absolute top-2.5 right-2.5 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-toggle="deleteModal"
+                  > */}
+                {/* <svg
+                      aria-hidden="true"
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg> */}
+                {/* <span className="sr-only">Close modal</span> */}
+                {/* </button> */}
+                <svg
+                  className="text-gray-400 dark:text-gray-500 w-11 h-11 mb-3.5 mx-auto"
+                  aria-hidden="true"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <p className="mb-4 text-gray-500 dark:text-gray-300">
+                  Are you sure you want to delete this user?
+                </p>
+                <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                  Enter the Password to Confirm
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                />
+                <div className="flex justify-center items-center space-x-4">
+                  <button
+                    data-modal-toggle="deleteModal"
+                    type="button"
+                    onClick={() => {
+                      setAsk(false);
+                    }}
+                    className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                  >
+                    No, cancel
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={deleteUserFun}
+                    className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+                  >
+                    Yes, I'm sure
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+  };
+
   if (!user) {
     // console.log("hit")
     return (
@@ -95,8 +206,10 @@ const UserPage = () => {
         href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
       /> */}
       <Navigation user={user} />
-      <section className="pt-16 bg-blueGray-50">
-        <div className="w-full lg:w-4/12 px-4 mx-auto">
+
+      <section className="pt-16 bg-gray-50 z-0">
+        {askConfirmation()}
+        <div className="w-full top-0 lg:w-4/12 px-4 mx-auto z-0">
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
             <div className="px-6">
               <div className="flex flex-wrap justify-center">
@@ -114,21 +227,52 @@ const UserPage = () => {
                   </div>
                 </div>
                 <div className="flex mt-6">
-                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
-                  onClick={()=>{
-                    navigate("/update-user",{state: {user}})
-                  }}>
+                  <button
+                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                    onClick={() => {
+                      navigate("/update-user", { state: { user } });
+                    }}
+                  >
                     Update User
                   </button>
-                  <button className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
-                  onClick={()=>{
-                    navigate("/forgot-password",{
-                      state: user
-                    })
-                  }}>
+                  <button
+                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                    onClick={() => {
+                      navigate("/update-password", {
+                        state: user,
+                      });
+                    }}
+                  >
                     Reset Password
                   </button>
                 </div>
+                {/* <div className="w-full px-4 text-center mt-10"> */}
+                <div className="flex justify-center py-2 lg:pt-4 pt-4">
+                  <div className="mr-4 p-3 text-center">
+                    <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
+                      <button
+                        className="flex bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-4 m-1 border border-red-500 hover:border-red-900 rounded"
+                        onClick={() => {
+                          if (!ask) setAsk(true);
+                          else setAsk(false);
+                        }}
+                      >
+                        Delete User
+                        <svg
+                          className="w-6 h-6 text-gray-800 dark:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 18 20"
+                        >
+                          <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z" />
+                        </svg>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+
+                {/* </div> */}
                 <div className="w-full px-4 text-center mt-10">
                   <div className="flex justify-center py-4 lg:pt-4 pt-8">
                     <div className="mr-4 p-3 text-center">
@@ -215,36 +359,37 @@ const UserPage = () => {
           {products?.map((product) => (
             <div key={product._id}>
               <Link
-              to="/show-product"
-              state={{
-                data: product,
-                user,
-              }}
-            >
-              <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
-                <img
-                  className="rounded-t-lg h-52 w-auto"
-                  //  {`../../../backend/images/products/${product.images[0]}`}
-                  //  src={require(`../../../backend/images/products/${product.images[0]}`)}
-                  crossOrigin="anonymous"
-                  // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
-                  src={`http://localhost:5000/images/products/${product.images[0]}`}
-                  alt=""
-                />
-                <div className="p-5">
-                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {product.title}
-                  </h5>
-                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                    {product.description}
-                  </p>
+                to="/show-product"
+                state={{
+                  data: product,
+                  user,
+                }}
+              >
+                <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
+                  <img
+                    className="rounded-t-lg h-52 w-auto"
+                    //  {`../../../backend/images/products/${product.images[0]}`}
+                    //  src={require(`../../../backend/images/products/${product.images[0]}`)}
+                    crossOrigin="anonymous"
+                    // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
+                    src={`http://localhost:5000/images/products/${product.images[0]}`}
+                    alt=""
+                  />
+                  <div className="p-5">
+                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                      {product.title}
+                    </h5>
+                    <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                      {product.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
             </div>
           ))}
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 };

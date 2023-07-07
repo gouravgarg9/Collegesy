@@ -64,9 +64,7 @@ const LogIn = () => {
     }
   }
   const print=Object.values(messaged);
-  const forgot=()=>{
-    navigate("/forgot-password")
-  }
+  
 
   if (loading) {
     return (
@@ -137,7 +135,9 @@ const LogIn = () => {
                 <div className="text-center sm:text-left whitespace-nowrap">
                   <button
                   type='button'
-                  onClick={forgot} 
+                  onClick={()=>{
+                    navigate('/forgot-password')
+                  }} 
                   className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
