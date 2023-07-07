@@ -53,7 +53,7 @@ const UserPage = () => {
   const getAllProducts = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products//getAllProductsByUserId"
+        "http://localhost:5000/api/products/getAllProductsByUserId"
       );
       // console.log(res.data.data.products);
       setNumber(res.data.data.products.length);

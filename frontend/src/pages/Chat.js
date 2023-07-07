@@ -361,9 +361,7 @@ const Chat = () => {
               </button>
               <button
                 type="button"
-                onClick={(e) => {
-                  changeReveal();
-                }}
+                onClick={(e) => {changeReveal();}}
                 className="inline-flex items-center justify-center rounded-lg border h-10 w-20 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
               >
                 <svg

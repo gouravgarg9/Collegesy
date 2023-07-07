@@ -60,7 +60,7 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 name="email"
-                value={location.state.email}
+                value={location?.state?.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
