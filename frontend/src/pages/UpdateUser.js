@@ -120,7 +120,7 @@ const sendData=(formdata)=>{
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="w-full px-4 flex justify-center">
               <div className="relative">
-                <button className="rounded-full border-2" onClick={removePhotoFun}>✕</button>
+                
                 <img
                   alt="..."
                   crossOrigin="anonymous"
@@ -130,6 +130,9 @@ const sendData=(formdata)=>{
                   className="shadow-xl rounded-full h-52 align-middle border-none"
                   //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
                 />
+              </div>
+              <div>
+              <button className="rounded-full border-2" onClick={removePhotoFun}>✕</button>
               </div>
             </div>
             <div className="px-5 py-7">

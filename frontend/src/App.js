@@ -16,6 +16,7 @@ import Chat from "./pages/Chat";
 import UpdateUser from "./pages/UpdateUser";
 import ChatList from "./pages/ChatList";
 import AllChatList from "./pages/AllChatList"
+import UpdatePassword from "./pages/UpdatePassword";
 
 function App() {
   // const [user, setUser] = useState();
@@ -42,6 +43,7 @@ function App() {
             <Route path="/chat-list" Component={ChatList}></Route>
             <Route path="/info" Component={Info}></Route>
             <Route path="/all-chat-list" Component={AllChatList}></Route>
+            <Route path="/update-password" Component={UpdatePassword}></Route>
           </Routes>
       </Router>
     </>
