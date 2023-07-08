@@ -7,17 +7,21 @@ const router = express.Router();
 
 router.get("/getChats", authControllers.protect, chatControllers.getChats);
 
-router.get("/getChatByProductId/:productId",authControllers.protect,
+router.get(
+  "/getChatByProductId/:productId",
+  authControllers.protect,
   productControllers.putProductOnReq,
   chatControllers.getChatbyProduct
 );
 
-router.get("/getChat/:chatId",authControllers.protect,
+router.get(
+  "/getChat/:chatId",
+  authControllers.protect,
   chatControllers.getChatbyChatId
 );
 
-router.post("/reveal",authControllers.protect,chatControllers.reveal);
+router.post("/reveal", authControllers.protect, chatControllers.reveal);
 
-router.post("/blockChat",authControllers.protect,chatControllers.blockChat);
+router.post("/blockChat", authControllers.protect, chatControllers.blockChat);
 
 module.exports = router;

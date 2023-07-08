@@ -3,6 +3,7 @@ import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
 import Carousel from "react-elastic-carousel";
 import axios from "axios";
+import { ToastContainer,toast } from "react-toastify";
 const ShowProduct = () => {
   const [photo, setPhoto] = useState();
   const location = useLocation();
@@ -39,6 +40,22 @@ const ShowProduct = () => {
       
     }
   }
+
+  const handleDelete=async()=>{
+    try{
+      const res=await axios.delete("http://localhost:5000/api/products/deleteProduct/"+ product._id)
+      if(res.status===200){
+        setTimeout(()=>{
+          navigate("/")
+        },2000);
+        toast.success("Product Deleted")
+      }
+    }
+    catch(e){
+      console.log(e.response.data.message)
+    }
+  }
+
   const displayUpdate = () => {
     if (user._id === product.sellerId) {
       return (
@@ -54,6 +71,11 @@ const ShowProduct = () => {
               >
                 <i className="mdi mdi-wrench -ml-2 mr-2" /> Update Product
               </Link>
+            </button>
+            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold"
+            onClick={handleDelete}
+            >
+                <i className="mdi mdi-delete -ml-2 mr-2" /> Delete Product
             </button>
           </div>
         </>
@@ -179,6 +201,7 @@ const ShowProduct = () => {
           </a>
         </div> */}
       </div>
+      <ToastContainer/>
     </>
   );
 };
