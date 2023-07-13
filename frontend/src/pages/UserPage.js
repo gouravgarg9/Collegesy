@@ -105,7 +105,7 @@ const UserPage = () => {
             id="deleteModal"
             tabIndex="-1"
             aria-hidden="true"
-            className="z-50 justify-center w-full lg:w-4/12 px-4 mx-auto my-auto"
+            className="z-50 absolute top-16 justify-center w-full lg:w-4/12 px-4 mx-auto my-auto"
           >
             <div className="relative p-4 w-full max-w-md h-full md:h-auto">
               <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
@@ -163,14 +163,14 @@ const UserPage = () => {
                     onClick={() => {
                       setAsk(false);
                     }}
-                    className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                    className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 transition ease-in-out delay-150 hover:-translate-y-1"
                   >
                     No, cancel
                   </button>
                   <button
                     type="submit"
                     onClick={deleteUserFun}
-                    className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900"
+                    className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900 transition ease-in-out delay-150 hover:-translate-y-1"
                   >
                     Yes, I'm sure
                   </button>
@@ -208,8 +208,9 @@ const UserPage = () => {
       <Navigation user={user} />
 
       <section className="pt-16 bg-gray-50 z-0">
-        {askConfirmation()}
+        
         <div className="w-full top-0 lg:w-4/12 px-4 mx-auto z-0">
+        {askConfirmation()}
           <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
             <div className="px-6">
               <div className="flex flex-wrap justify-center">
@@ -228,7 +229,7 @@ const UserPage = () => {
                 </div>
                 <div className="flex mt-6">
                   <button
-                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded transition ease-in-out delay-150 hover:-translate-y-1"
                     onClick={() => {
                       navigate("/update-user", { state: { user } });
                     }}
@@ -236,7 +237,7 @@ const UserPage = () => {
                     Update User
                   </button>
                   <button
-                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded"
+                    className="bg-transparent hover:bg-black-500 text-black-700 font-semibold hover:text-black py-1 px-4 m-1 border border-black-500 hover:border-black rounded transition ease-in-out delay-150 hover:-translate-y-1"
                     onClick={() => {
                       navigate("/update-password", {
                         state: user,
@@ -251,7 +252,7 @@ const UserPage = () => {
                   <div className="mr-4 p-3 text-center">
                     <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
                       <button
-                        className="flex bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-4 m-1 border border-red-500 hover:border-red-900 rounded"
+                        className="flex bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-4 m-1 border border-red-500 hover:border-red-900 rounded transition ease-in-out delay-150 hover:-translate-y-1"
                         onClick={() => {
                           if (!ask) setAsk(true);
                           else setAsk(false);

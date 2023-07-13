@@ -17,6 +17,7 @@ const CreateProduct = () => {
     description: "",
     price: "",
     category: "",
+    age: "",
   });
 
   const [messaged, setMessage] = useState({ messaged: "" });
@@ -34,11 +35,12 @@ const CreateProduct = () => {
   const addData = (e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
-    const { title, description, price, category } = input;
+    const { title, description, price, category, age } = input;
     if (title === "") toast.warning("Please enter Title");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
     else if (price < 0) toast.warning("Please enter valid Price");
+    else if (age === "") toast.warning("Please enter Age of product");
     else {
       try {
         axios
@@ -47,6 +49,7 @@ const CreateProduct = () => {
             description,
             price,
             category,
+            age,
           })
           .then((res) => {
             if (res.status === 200) {
@@ -132,6 +135,15 @@ const CreateProduct = () => {
                     return <option value={val}>{val}</option>;
                   })}
                 </select>
+                <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                  Age in months
+                </label>
+                <input
+                  type="number"
+                  name="age"
+                  onChange={getdata}
+                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                />
                 <button
                   type="button"
                   onClick={addData}

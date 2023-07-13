@@ -4,7 +4,7 @@ import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
-axios.defaults.withCredentials=true;
+axios.defaults.withCredentials = true;
 
 const UpdateProduct = () => {
   const location = useLocation();
@@ -16,7 +16,8 @@ const UpdateProduct = () => {
     title: "",
     description: "",
     price: "",
-    category: ""
+    category: "",
+    age: "",
   });
 
   const [prevImages, setPrevImages] = useState([]);
@@ -24,8 +25,8 @@ const UpdateProduct = () => {
   const [messaged, setMessage] = useState({ messaged: "" });
 
   const getphotos = (e) => {
-    const files = e.target.files; 
-    setNewImages((prev) => [...prev,...files]);
+    const files = e.target.files;
+    setNewImages((prev) => [...prev, ...files]);
   };
 
   const getdata = (e) => {
@@ -38,39 +39,40 @@ const UpdateProduct = () => {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setPrevImages(product.images);
     setInput({
       title: product.title,
       description: product.description,
       price: product.price,
       category: product.category,
+      age: product.age,
     });
-    
-  },[]);
+  }, []);
 
   const addData = (e) => {
     e.preventDefault();
 
     const formdata = new FormData();
 
-    newImages.forEach(item=>{
-      formdata.append('productImages', item)
-    })
+    newImages.forEach((item) => {
+      formdata.append("productImages", item);
+    });
 
-    prevImages.forEach(item=>{
-      formdata.append('prevImages', item)
-    })
+    prevImages.forEach((item) => {
+      formdata.append("prevImages", item);
+    });
 
     setMessage({ messaged: "" });
 
-    const { title, description, price,category } = input;
-    formdata.append('title', title);
-    formdata.append('description', description);
-    formdata.append('price', price);
+    const { title, description, price, category, age } = input;
+    formdata.append("title", title);
+    formdata.append("description", description);
+    formdata.append("price", price);
     formdata.append("category", category);
+    formdata.append("age", age);
     for (var key of formdata.entries()) {
-     console.log(key[0] + ', ' + key[1]);
+      console.log(key[0] + ", " + key[1]);
     }
     // const { productImages } = files;
     // console.log(title, description, price);
@@ -83,8 +85,7 @@ const UpdateProduct = () => {
     try {
       axios
         .put(
-          "http://localhost:5000/api/products/updateProduct/" +
-            product._id,
+          "http://localhost:5000/api/products/updateProduct/" + product._id,
           formdata,
           /*title,
             description,
@@ -94,14 +95,15 @@ const UpdateProduct = () => {
               "Content-Type": "multipart/form-data",
             },
           }
-        ).then((res) => {
+        )
+        .then((res) => {
           if (res.status === 200) {
             toast.success("Product Updated Successfully");
             setTimeout(() => {
               navigate("/");
             }, 1000);
           }
-        });  
+        });
     } catch (e) {
       console.log(e);
       setMessage({ messaged: e.response.data.message });
@@ -151,32 +153,59 @@ const UpdateProduct = () => {
           <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
-
               <div>
-                {prevImages && prevImages.length>0 && prevImages.map((image,index)=>{
-                  return (<div key={image}>
-                    <img src={`http://localhost:5000/images/products/${image}`} alt={image} height="50" width ="50" />
-                    <button onClick={()=>{setPrevImages((prev)=>{
-                      const newPrevImages = prev.filter((img)=>{
-                        return img !== image;
-                      })
-                      return newPrevImages;
-                    })}}>✕</button>
-                  </div>)
-                })}
+                {prevImages &&
+                  prevImages.length > 0 &&
+                  prevImages.map((image, index) => {
+                    return (
+                      <div key={image}>
+                        <img
+                          src={`http://localhost:5000/images/products/${image}`}
+                          alt={image}
+                          height="50"
+                          width="50"
+                        />
+                        <button
+                          onClick={() => {
+                            setPrevImages((prev) => {
+                              const newPrevImages = prev.filter((img) => {
+                                return img !== image;
+                              });
+                              return newPrevImages;
+                            });
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
 
-                {newImages && newImages.map((image,index)=>{
-                  return (<div key={image}>
-                    <img src={URL.createObjectURL(image)} alt={image} height="50" width ="50" />
-                    <button onClick={()=>{setNewImages((prev)=>{
-                      const newNewImages = prev.filter((img)=>{
-                        return img !== image;
-                      })
-                      return newNewImages;
-                    })}}>✕</button>
-                  </div>)
-                })}
-
+                {newImages &&
+                  newImages.map((image, index) => {
+                    return (
+                      <div key={image}>
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={image}
+                          height="50"
+                          width="50"
+                        />
+                        <button
+                          onClick={() => {
+                            setNewImages((prev) => {
+                              const newNewImages = prev.filter((img) => {
+                                return img !== image;
+                              });
+                              return newNewImages;
+                            });
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
               </div>
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Upload Photos
@@ -221,18 +250,28 @@ const UpdateProduct = () => {
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
-                  value={input.category}
-                  onChange={getdata}
-                >
-                  {optionsArray.map((val) => {
-                    return <option value={val}>{val}</option>;
-                  })}
-                </select>
+                Category
+              </label>
+              <select
+                name="category"
+                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                value={input.category}
+                onChange={getdata}
+              >
+                {optionsArray.map((val) => {
+                  return <option value={val}>{val}</option>;
+                })}
+              </select>
+              <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                Age
+              </label>
+              <input
+                type="number"
+                name="age"
+                value={input.age}
+                onChange={getdata}
+                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+              />
               <button
                 type="button"
                 onClick={addData}
