@@ -27,6 +27,15 @@ router.put(
   productControllers.deleteProductImages,
   productControllers.updateProduct
 );
+
+router.put(
+  "/reactivateProduct/:productId",
+  authControllers.protect,
+  productControllers.putProductOnReq,
+  productControllers.checkIfSeller,
+  productControllers.reactivateProduct
+);
+
 router.put(
   "/deleteAllProductImages/:productId",
   authControllers.protect,

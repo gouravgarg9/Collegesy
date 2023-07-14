@@ -56,6 +56,8 @@ io.on('connection',(socket)=>{
     
     socket.on('message',async (data)=>{
         const {content, senderId,recieverId, chatId} = data;
+        const chat = await Chat.findById(chatId);
+        if(!chat || !chat.active || !(chat.sellerId == senderId || chat.buyerId == senderId))return ;
         const message = await Message.create({
             senderId,
             content,

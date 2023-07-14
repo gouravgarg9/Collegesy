@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
-    age : Number,
+    age : Date,
     images : [String],
     active : {
         type : Boolean,

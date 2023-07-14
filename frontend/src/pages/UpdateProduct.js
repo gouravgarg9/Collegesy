@@ -144,7 +144,10 @@ const UpdateProduct = () => {
       </>
     );
   }
-
+  const getToday = ()=>{
+    const today = new Date();
+    return today.toISOString().substr(0, 10);
+  }
   return (
     <>
       <Navigation user={user} />
@@ -263,12 +266,13 @@ const UpdateProduct = () => {
                 })}
               </select>
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                Age
+                Date of Purchase
               </label>
               <input
-                type="number"
+                type="date"
                 name="age"
-                value={input.age}
+                value={input.age?.substr(0,10)}
+                max={getToday()}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

@@ -365,6 +365,7 @@ const UserPage = () => {
                   data: product,
                   user,
                 }}
+                style={{opacity: product.active?1:0.6}}
               >
                 <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3">
                   <img
@@ -382,6 +383,9 @@ const UserPage = () => {
                     </h5>
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                       {product.description}
+                    </p>
+                    <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                      {product.createdAt.substr(0,10)}
                     </p>
                   </div>
                 </div>

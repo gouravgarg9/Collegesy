@@ -9,9 +9,7 @@ import { Link } from "react-router-dom";
 axios.defaults.withCredentials = true;
 
 const getAppxDate = (date) => {
-  let time = Math.floor(
-    (Date.now() - Date.parse(date)) / (1000 * 60 * 60 * 24)
-  );
+  let time = Math.floor((Date.now() - Date.parse(date)) / (1000 * 60 * 60 * 24));
   if (time === 0) return "today";
   if (time === 1) return "yesterday";
   if (time < 31) return `${time} days ago`;
@@ -28,7 +26,7 @@ const Home = () => {
   const [categorylist, setcategoryList] = useState([]);
   const [sortValue, setsortValue] = useState();
   const [price, setPrice] = useState(100000);
-  const [age, setAge] = useState(10);
+  const [age, setAge] = useState(24);
   const [filter, setFilter] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -133,7 +131,7 @@ const Home = () => {
   const handleReset = () => {
     setFilter(false);
     setPrice(100000);
-    setAge(10)
+    setAge(24)
     setcategoryList([]);
   };
   const showFilters = () => {
@@ -217,7 +215,7 @@ const Home = () => {
                   max={100000}
                   onChange={(e) => setPrice(e.target.value)}
                   defaultValue={price}
-                  step="100"
+                  step="50"
                   className="w-40 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                 />
                 <div className="flex justify-between">
@@ -238,7 +236,7 @@ const Home = () => {
                   id="steps-range"
                   type="range"
                   min={0}
-                  max={50}
+                  max={240}
                   onChange={(e) => setAge(e.target.value)}
                   defaultValue={age}
                   step="1"
@@ -283,6 +281,17 @@ const Home = () => {
     }
   };
 
+  const getAge = (purDate)=>{
+    
+    const d2 = new Date();
+    const d1 = new Date(purDate || Date.now());
+    let months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
+    
+  }
   return (
     <>
       <Navigation user={user} />
@@ -342,7 +351,7 @@ const Home = () => {
         {products?.map((product) => {
           if (
             (categorylist.includes(product.category) ||
-            categorylist.length === 0) && product.price<=price /*&& product.age<=age*/
+            categorylist.length === 0) && (product.price<=price || price == 100000) && (getAge(product.age)<=age || age == 240)
           )
             return (
               <div key={product._id}>
@@ -370,15 +379,15 @@ const Home = () => {
                       <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                         ₹ {product.price}
                       </p>
+                      {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        {`${getAge(product.age)} months old`}
+                      </p> */}
                       <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                        {getAppxDate(product.createdAt)}
+                        {`${getAppxDate(product.createdAt)}`}
                       </p>
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                        {`${product.age} months`}
-                      </p>
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                      {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                         {`${product.interestedViews} interested`}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </Link>

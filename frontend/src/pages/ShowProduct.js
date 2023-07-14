@@ -1,9 +1,9 @@
-import { useNavigate,useLocation, NavLink, Link } from "react-router-dom";
+import { useNavigate, useLocation, NavLink, Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import { useEffect, useState } from "react";
 import Carousel from "react-elastic-carousel";
 import axios from "axios";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 const ShowProduct = () => {
   const [photo, setPhoto] = useState();
   const location = useLocation();
@@ -17,7 +17,6 @@ const ShowProduct = () => {
     setPhoto(product.images[0]);
   }, []);
 
- 
   if (!user) {
     return (
       <>
@@ -27,37 +26,67 @@ const ShowProduct = () => {
       </>
     );
   }
-  const openChat = async()=>{
+  const openChat = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/chats/getChatByProductId/" + product._id);
+      const res = await axios.get(
+        "http://localhost:5000/api/chats/getChatByProductId/" + product._id
+      );
       navigate("/chat", {
-        state: {user: user,
-                chat : res.data.data.chat},
-      })
-    }
-    catch(err){
+        state: { user: user, chat: res.data.data.chat },
+      });
+    } catch (err) {
       console.log(err);
-      
     }
-  }
+  };
 
-  const handleDelete=async()=>{
-    try{
-      const res=await axios.delete("http://localhost:5000/api/products/deleteProduct/"+ product._id)
-      if(res.status===200){
-        setTimeout(()=>{
-          navigate("/")
-        },2000);
-        toast.success("Product Deleted")
+  const handleReactive = async()=>{
+    try {
+      const res = await axios.put(
+        "http://localhost:5000/api/products/reactivateProduct/" + product._id
+      );
+      if (res.status === 200) {
+        setTimeout(() => {
+          navigate("/user",{
+            state: { user: user},
+          });
+        }, 2000);
+        toast.success("Product Listed");
       }
-    }
-    catch(e){
-      console.log(e.response.data.message)
+    } catch (e) {
+      console.log(e.response.data.message);
     }
   }
+  const handleDelete = async () => {
+    try {
+      const res = await axios.delete(
+        "http://localhost:5000/api/products/deleteProduct/" + product._id
+      );
+      if (res.status === 200) {
+        setTimeout(() => {
+          navigate("/user",{
+            state: { user: user},
+          });
+        }, 2000);
+        toast.success("Product Deleted");
+      }
+    } catch (e) {
+      console.log(e.response.data.message);
+    }
+  };
 
   const displayUpdate = () => {
-    if (user._id === product.sellerId) {
+    if (user._id != product.sellerId)return;
+    if(product.sold)return;
+    if(!product.active) return(
+      <div className="inline-block align-bottom">
+        <button
+              className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold"
+              onClick={handleReactive}
+            >
+              <i className="mdi mdi-delete -ml-2 mr-2" /> Reactivate
+            </button>
+      </div>
+    )
       return (
         <>
           <div className="inline-block align-bottom">
@@ -69,18 +98,28 @@ const ShowProduct = () => {
                   user: user,
                 }}
               >
-                <i className="mdi mdi-wrench -ml-2 mr-2" /> Update Product
+                <i className="mdi mdi-wrench -ml-2 mr-2" /> Update
               </Link>
             </button>
-            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold"
-            onClick={handleDelete}
+            <button
+              className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold"
+              onClick={handleDelete}
             >
-                <i className="mdi mdi-delete -ml-2 mr-2" /> Delete Product
+              <i className="mdi mdi-delete -ml-2 mr-2" /> Delete
             </button>
           </div>
         </>
       );
-    }
+  };
+
+  const getAge = (purDate) => {
+    const d2 = new Date();
+    const d1 = new Date(purDate || Date.now());
+    let months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
   };
 
   const displayChat = () => {
@@ -106,8 +145,11 @@ const ShowProduct = () => {
       return (
         <>
           <div className="inline-block align-bottom">
-            <button className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold" onClick={openChat}>
-                <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
+            <button
+              className="bg-yellow-300 opacity-75 hover:opacity-100 text-yellow-900 hover:text-gray-900 rounded-full px-10 py-2 font-semibold"
+              onClick={openChat}
+            >
+              <i className="mdi mdi-chat -ml-2 mr-2" /> Chat
             </button>
           </div>
         </>
@@ -130,7 +172,11 @@ const ShowProduct = () => {
               <div className="relative">
                 <img
                   crossOrigin="anonymous"
-                  src={{photo}?`http://localhost:5000/images/products/${photo}`:''}
+                  src={
+                    { photo }
+                      ? `http://localhost:5000/images/products/${photo}`
+                      : ""
+                  }
                   className="w-full h-96 border-4 rounded-lg relative z-10"
                   alt="productImage"
                 />
@@ -164,10 +210,8 @@ const ShowProduct = () => {
               </div>
               <div>
                 <div className="inline-block align-bottom mr-5">
-                  <span className="text-2xl leading-none align-baseline">
-                    ₹
-                  </span>
-                  <span className="font-bold text-5xl leading-none align-baseline">
+                  <span className="text-xl leading-none align-baseline">₹</span>
+                  <span className="font-bold text-2xl leading-none align-baseline">
                     {product.price}
                   </span>
                 </div>
@@ -180,6 +224,14 @@ const ShowProduct = () => {
               </div>
               {displayChat()}
               {displayUpdate()}
+              <div>
+                <div className="mb-10">
+                  <p className="text-sm">{`${product.interestedViews} interested views`}</p>
+                  <p className="text-sm">{`${getAge(
+                    product.age
+                  )} months old`}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -201,7 +253,7 @@ const ShowProduct = () => {
           </a>
         </div> */}
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

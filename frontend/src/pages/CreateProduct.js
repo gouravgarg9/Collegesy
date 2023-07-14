@@ -32,6 +32,11 @@ const CreateProduct = () => {
     });
   };
 
+  const getToday = ()=>{
+    const today = new Date();
+    return today.toISOString().substr(0, 10);
+  }
+
   const addData = (e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
@@ -136,12 +141,13 @@ const CreateProduct = () => {
                   })}
                 </select>
                 <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Age in months
+                  Date of Purchase
                 </label>
                 <input
-                  type="number"
+                  type="date"
                   name="age"
                   onChange={getdata}
+                  max={getToday()}
                   className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
                 />
                 <button
