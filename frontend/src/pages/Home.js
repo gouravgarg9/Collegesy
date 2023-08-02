@@ -9,7 +9,9 @@ import { Link } from "react-router-dom";
 axios.defaults.withCredentials = true;
 
 const getAppxDate = (date) => {
-  let time = Math.floor((Date.now() - Date.parse(date)) / (1000 * 60 * 60 * 24));
+  let time = Math.floor(
+    (Date.now() - Date.parse(date)) / (1000 * 60 * 60 * 24)
+  );
   if (time === 0) return "today";
   if (time === 1) return "yesterday";
   if (time < 31) return `${time} days ago`;
@@ -29,6 +31,8 @@ const Home = () => {
   const [age, setAge] = useState(24);
   const [filter, setFilter] = useState(false);
   const [user, setUser] = useState(null);
+  const [search, setSearch] = useState();
+  // console.log(search);
   const navigate = useNavigate();
   const categories = [
     "Books",
@@ -123,7 +127,7 @@ const Home = () => {
       setcategoryList(categorylist.filter((e) => e !== value));
     }
   };
-  console.log(categorylist);
+  // console.log(categorylist);
   const handleFilter = () => {
     // console.log(e);
     setFilter(false);
@@ -131,7 +135,7 @@ const Home = () => {
   const handleReset = () => {
     setFilter(false);
     setPrice(100000);
-    setAge(24)
+    setAge(24);
     setcategoryList([]);
   };
   const showFilters = () => {
@@ -281,8 +285,7 @@ const Home = () => {
     }
   };
 
-  const getAge = (purDate)=>{
-    
+  const getAge = (purDate) => {
     const d2 = new Date();
     const d1 = new Date(purDate || Date.now());
     let months;
@@ -290,11 +293,13 @@ const Home = () => {
     months -= d1.getMonth();
     months += d2.getMonth();
     return months <= 0 ? 0 : months;
-    
-  }
+  };
+  const getSearch = (data) => {
+    setSearch(data.toLowerCase());
+  };
   return (
     <>
-      <Navigation user={user} />
+      <Navigation user={user} getSearch={getSearch} />
       <br />
       <br />
       <br />
@@ -328,7 +333,7 @@ const Home = () => {
           >
             Filter
             <svg
-              class="w-[18px] h-[18px] text-gray-800 dark:text-white ml-1 pt-1"
+              className="w-[18px] h-[18px] text-gray-800 dark:text-white ml-1 pt-1"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -336,9 +341,9 @@ const Home = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.2"
                 d="m2.133 2.6 5.856 6.9L8 14l4 3 .011-7.5 5.856-6.9a1 1 0 0 0-.804-1.6H2.937a1 1 0 0 0-.804 1.6Z"
               />
             </svg>
@@ -348,52 +353,55 @@ const Home = () => {
       </div>
       <br />
       <div className="grid md:grid-cols-3 grid-cols-2 gap-y-10 justify-between z-0 ">
-        {products?.map((product) => {
-          if (
-            (categorylist.includes(product.category) ||
-            categorylist.length === 0) && (product.price<=price || price == 100000) && (getAge(product.age)<=age || age == 240)
-          )
-            return (
-              <div key={product._id}>
-                <Link
-                  to="./show-product"
-                  state={{
-                    data: product,
-                    user: user,
-                  }}
-                >
-                  <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3 transition ease-in-out delay-150 hover:-translate-y-1">
-                    <img
-                      className="rounded-t-lg h-52 w-auto"
-                      //  {`../../../backend/images/products/${product.images[0]}`}
-                      //  src={require(`../../../backend/images/products/${product.images[0]}`)}
-                      crossOrigin="anonymous"
-                      // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
-                      src={`http://localhost:5000/images/products/${product.images[0]}`}
-                      alt=""
-                    />
-                    <div className="p-5">
-                      <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        {product.title}
-                      </h5>
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                        ₹ {product.price}
-                      </p>
-                      {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+        {products
+          ?.map((product) => {
+            if (
+              (categorylist.includes(product.category) ||
+                categorylist.length === 0) &&
+              (product.price <= price || price === 100000) &&
+              (getAge(product.age) <= age || age === 240) && ((!search)||(product.title.toLowerCase().includes(search)) || (product.description.toLowerCase().includes(search)) || (product.category.toLowerCase().includes(search)))
+            )
+              return (
+                <div key={product._id}>
+                  <Link
+                    to="./show-product"
+                    state={{
+                      data: product,
+                      user: user,
+                    }}
+                  >
+                    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 grid grid-cols-3 transition ease-in-out delay-150 hover:-translate-y-1">
+                      <img
+                        className="rounded-t-lg h-52 w-auto"
+                        //  {`../../../backend/images/products/${product.images[0]}`}
+                        //  src={require(`../../../backend/images/products/${product.images[0]}`)}
+                        crossOrigin="anonymous"
+                        // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
+                        src={`http://localhost:5000/images/products/${product.images[0]}`}
+                        alt=""
+                      />
+                      <div className="p-5">
+                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                          {product.title}
+                        </h5>
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                          ₹ {product.price}
+                        </p>
+                        {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                         {`${getAge(product.age)} months old`}
                       </p> */}
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                        {`${getAppxDate(product.createdAt)}`}
-                      </p>
-                      {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                          {`${getAppxDate(product.createdAt)}`}
+                        </p>
+                        {/* <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                         {`${product.interestedViews} interested`}
                       </p> */}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </div>
-            );
-        })}
+                  </Link>
+                </div>
+              );
+          })}
       </div>
       {onLoad()};
     </>
