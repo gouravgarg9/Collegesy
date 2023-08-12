@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const CreateProduct = () => {
   const location = useLocation();
@@ -49,7 +50,7 @@ const CreateProduct = () => {
     else {
       try {
         axios
-          .post("http://localhost:5000/api/products/createProduct", {
+          .post(`http://${BASE}/api/products/createProduct`, {
             title,
             description,
             price,

@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate,useLocation } from 'react-router-dom';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const ResetPassword = () => {
     const location = useLocation();
@@ -41,7 +42,7 @@ const ResetPassword = () => {
         else if(password.length<8) toast.warning("Password is too short")
         else{
           try{
-            const res = await axios.post('http://localhost:5000/api/users/resetPassword',{
+            const res = await axios.post(`http://${BASE}/api/users/resetPassword`,{
               email,
               password,
               passwordConfirm,

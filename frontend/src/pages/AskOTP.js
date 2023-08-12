@@ -4,6 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 axios.defaults.withCredentials=true
 const AskOTP = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const AskOTP = () => {
     else {
       try {
         const res=await axios
-          .post("http://localhost:5000/api/users/verifySignUpOTP", {
+          .post(`http://${BASE}/api/users/verifySignUpOTP`, {
             email,
             otp,
           })

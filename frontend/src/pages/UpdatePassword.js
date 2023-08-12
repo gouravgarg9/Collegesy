@@ -3,6 +3,7 @@ import Navigation from "../components/Navigation";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import axios from "axios";
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const UpdatePassword = () => {
   const location = useLocation();
@@ -41,7 +42,7 @@ const UpdatePassword = () => {
       toast.warning("Please confirm New Password");
     else {
       const res = await axios.patch(
-        "http://localhost:5000/api/users/updatePassword",
+        `http://${BASE}/api/users/updatePassword`,
         {
           currentPassword,
           newPassword,

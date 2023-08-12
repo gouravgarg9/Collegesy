@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+
 const SignUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +47,7 @@ const SignUp = () => {
     else {
       try {
         await axios
-          .post("http://localhost:5000/api/users/signup", {
+          .post(`http://${BASE}/api/users/signup`, {
             email,
             username,
             password,

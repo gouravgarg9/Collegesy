@@ -3,6 +3,8 @@ import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+
 // import { useLocation } from 'react-router-dom';
 
 const ForgotPassword = () => {
@@ -31,7 +33,7 @@ const ForgotPassword = () => {
         else if(!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email")
         else{
           try{
-             await axios.post('http://localhost:5000/api/users/forgotPassword',{
+             await axios.post(`http://${BASE}/api/users/forgotPassword`,{
               email,
             }).then((res)=>{
               toast.success(res.data.message);

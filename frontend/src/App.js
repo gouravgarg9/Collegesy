@@ -17,6 +17,7 @@ import UpdateUser from "./pages/UpdateUser";
 import ChatList from "./pages/ChatList";
 import AllChatList from "./pages/AllChatList"
 import UpdatePassword from "./pages/UpdatePassword";
+import env from "react-dotenv";
 
 function App() {
   // const [user, setUser] = useState();

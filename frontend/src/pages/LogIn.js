@@ -5,8 +5,9 @@ import ClipLoader from "react-spinners/ClipLoader";
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from "react";
+// import env from "react-dotenv";
 axios.defaults.withCredentials=true
-
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 const LogIn = () => {
   const [input,setInput]=useState({
     email:"",
@@ -44,8 +45,9 @@ const LogIn = () => {
     if(email==="") toast.warning("Please enter Email")
     else if(password==="") toast.warning("Please enter Password")
     else{
+      console.log(BASE)
       try{
-        const res= await axios.post('http://localhost:5000/api/users/login',{
+        const res= await axios.post(`http://${BASE}/api/users/login`,{
           email,
           password,
           rememberMe

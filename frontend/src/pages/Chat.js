@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "./../socket";
 import EmojiPicker from "emoji-picker-react";
 import { ToastContainer, toast } from "react-toastify";
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 axios.defaults.withCredentials = true;
 const Chat = () => {
@@ -63,7 +64,7 @@ const Chat = () => {
   const loadChat = async () => {
     try {
       const res2 = await axios.get(
-        "http://localhost:5000/api/chats/getChat/" + chat._id
+        `http://${BASE}/api/chats/getChat/` + chat._id
       );
       chat = res2.data.data.chat;
       other = getOther();
@@ -72,7 +73,7 @@ const Chat = () => {
       if (other.lastRecieve != lastRecieveTime)
         setLastRecieveTime(new Date(Date.parse(other.lastRecieve)));
       const res = await axios.get(
-        "http://localhost:5000/api/messages/getMessages/" + chat._id
+        `http://${BASE}/api/messages/getMessages/` + chat._id
       );
       const previous = res.data.data.messages.reverse();
       setMessages(previous);
@@ -151,7 +152,7 @@ const Chat = () => {
     if (chat._id != chatId) return;
     try {
       const newChat = await axios.get(
-        "http://localhost:5000/api/chats/getChat" + chat._id
+        `http://${BASE}/api/chats/getChat` + chat._id
       );
       navigate("/chat", {
         state: {
@@ -302,7 +303,7 @@ const Chat = () => {
   const changeBlock = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/chats/blockChat",
+        `http://${BASE}/api/chats/blockChat`,
         {
           chatId: chat._id,
         }
@@ -488,7 +489,7 @@ const Chat = () => {
                   </svg>
                 </span> */}
                 <img
-                  src={`http://localhost:5000/images/users/${other.image}`}
+                  src={`http://${BASE}/images/users/${other.image}`}
                   alt=""
                   className="w-10 sm:w-16 h-10 sm:h-16 rounded-full"
                 />

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Carousel from "react-elastic-carousel";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+
 const ShowProduct = () => {
   const [photo, setPhoto] = useState();
   const location = useLocation();
@@ -29,7 +31,7 @@ const ShowProduct = () => {
   const openChat = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/chats/getChatByProductId/" + product._id
+      `http://${BASE}/api/chats/getChatByProductId/` + product._id
       );
       navigate("/chat", {
         state: { user: user, chat: res.data.data.chat },
@@ -42,7 +44,7 @@ const ShowProduct = () => {
   const handleReactive = async()=>{
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/products/reactivateProduct/" + product._id
+        `http://${BASE}/api/products/reactivateProduct/` + product._id
       );
       if (res.status === 200) {
         setTimeout(() => {
@@ -59,7 +61,7 @@ const ShowProduct = () => {
   const handleDelete = async () => {
     try {
       const res = await axios.delete(
-        "http://localhost:5000/api/products/deleteProduct/" + product._id
+        `http://${BASE}/api/products/deleteProduct/` + product._id
       );
       if (res.status === 200) {
         setTimeout(() => {
@@ -174,7 +176,7 @@ const ShowProduct = () => {
                   crossOrigin="anonymous"
                   src={
                     { photo }
-                      ? `http://localhost:5000/images/products/${photo}`
+                      ? `http://${BASE}/images/products/${photo}`
                       : ""
                   }
                   className="w-full h-96 border-4 rounded-lg relative z-10"
@@ -189,7 +191,7 @@ const ShowProduct = () => {
                     product.images?.map((image) => (
                       <img
                         crossOrigin="anonymous"
-                        src={`http://localhost:5000/images/products/${image}`}
+                        src={`http://${BASE}/images/products/${image}`}
                         className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
                         alt="productImage"
                         cursor="pointer"

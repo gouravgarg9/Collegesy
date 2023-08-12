@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+
 const UserPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,14 +58,14 @@ const UserPage = () => {
   const getAllProducts = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/products/getAllProductsByUserId"
+        `http://${BASE}/api/products/getAllProductsByUserId`
       );
       // console.log(res.data.data.products);
       setNumber(res.data.data.products.length);
       setProduct(res.data.data.products);
       //   console.log(products[5].images[0]);
       // console.log(
-      //   `http://localhost:5000/images/products/${products[5].images[0]}`
+      //   `http://${BASE}/images/products/${products[5].images[0]}`
       // );
     } catch (e) {
       console.log(e);
@@ -78,7 +80,7 @@ const UserPage = () => {
   const deleteUserFun = async () => {
     try {
       const res = await axios.delete(
-        "http://localhost:5000/api/users/deleteUser",
+        `http://${BASE}/api/users/deleteUser`,
         { data: { password } }
       );
       console.log("hit1");
@@ -219,8 +221,8 @@ const UserPage = () => {
                     <img
                       alt="..."
                       crossOrigin="anonymous"
-                      src={`http://localhost:5000/images/users/${user.photo}`}
-                      //   src="http://localhost:5000/images/users/xyz.png"
+                      src={`http://${BASE}/images/users/${user.photo}`}
+                      //   src="http://${BASE}/images/users/xyz.png"
                       //   src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
                       className="shadow-xl rounded-full h-52 align-middle border-none"
                       //   absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px
@@ -373,8 +375,8 @@ const UserPage = () => {
                     //  {`../../../backend/images/products/${product.images[0]}`}
                     //  src={require(`../../../backend/images/products/${product.images[0]}`)}
                     crossOrigin="anonymous"
-                    // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
-                    src={`http://localhost:5000/images/products/${product.images[0]}`}
+                    // src={"http://${BASE}/images/products/64940ab0cf981febfb877f12_0.jpg"}
+                    src={`http://${BASE}/images/products/${product.images[0]}`}
                     alt=""
                   />
                   <div className="p-5">

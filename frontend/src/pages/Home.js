@@ -7,6 +7,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import Navigation from "../components/Navigation";
 import { Link } from "react-router-dom";
 axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const getAppxDate = (date) => {
   let time = Math.floor(
@@ -50,7 +51,7 @@ const Home = () => {
   const getUser = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/users/checkLoggedIn"
+        `http://${BASE}/api/users/checkLoggedIn`
       );
       if (res.status === 200) {
         setUser(res.data.data.user);
@@ -66,7 +67,7 @@ const Home = () => {
   const getAllProducts = async (page = 1) => {
     try {
       setloading(true);
-      const fetchURL = `http://localhost:5000/api/products/getAllProducts?page=${page}&limit=12&sort=${
+      const fetchURL = `http://${BASE}/api/products/getAllProducts?page=${page}&limit=12&sort=${
         sortValue ? sortValue : "-createdAt"
       }`;
       const res = await axios.get(fetchURL);
@@ -376,8 +377,8 @@ const Home = () => {
                         //  {`../../../backend/images/products/${product.images[0]}`}
                         //  src={require(`../../../backend/images/products/${product.images[0]}`)}
                         crossOrigin="anonymous"
-                        // src={"http://localhost:5000/images/products/64940ab0cf981febfb877f12_0.jpg"}
-                        src={`http://localhost:5000/images/products/${product.images[0]}`}
+                        // src={"http://${BASE}/images/products/64940ab0cf981febfb877f12_0.jpg"}
+                        src={`http://${BASE}/images/products/${product.images[0]}`}
                         alt=""
                       />
                       <div className="p-5">

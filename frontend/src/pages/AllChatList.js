@@ -4,6 +4,7 @@ import axios from "axios";
 import { socket } from "./../socket";
 import Navigation from "../components/Navigation";
 import SingleChatGrid from "../components/SingleChatGrid";
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 axios.defaults.withCredentials = true;
 const AllChatList = () => {
@@ -16,7 +17,7 @@ const AllChatList = () => {
 
   const loadChat = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/chats/getChats");
+      const res = await axios.get(`http://${process.env.BACK_END_ROOT}/api/chats/getChats`);
       setBuyingChats(res.data.data.buyingChats);
       setSellingChats(res.data.data.sellingChats);
     } catch (e) {

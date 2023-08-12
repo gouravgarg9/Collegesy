@@ -5,6 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const UpdateProduct = () => {
   const location = useLocation();
@@ -85,7 +86,7 @@ const UpdateProduct = () => {
     try {
       axios
         .put(
-          "http://localhost:5000/api/products/updateProduct/" + product._id,
+          `http://${BASE}/api/products/updateProduct/` + product._id,
           formdata,
           /*title,
             description,
@@ -163,7 +164,7 @@ const UpdateProduct = () => {
                     return (
                       <div key={image}>
                         <img
-                          src={`http://localhost:5000/images/products/${image}`}
+                          src={`http://${BASE}/images/products/${image}`}
                           alt={image}
                           height="50"
                           width="50"

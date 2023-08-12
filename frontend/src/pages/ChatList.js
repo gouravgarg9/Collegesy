@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import Navigation from "../components/Navigation";
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 axios.defaults.withCredentials=true
 const ChatList = () => {
@@ -15,7 +16,7 @@ const ChatList = () => {
   const loadChat = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/chats/getChatByProductId/" + product._id
+        `http://${BASE}/api/chats/getChatByProductId/` + product._id
       );
       setChats(res.data.data.chat);
     } catch (e) {
@@ -73,7 +74,7 @@ const ChatList = () => {
                         {" "}
                         <img
                           alt=""
-                          src={`http://localhost:5000/images/users/${chat.buyerId?.photo || 'xyz.png'}`}
+                          src={`http://${BASE}/images/users/${chat.buyerId?.photo || 'xyz.png'}`}
                           width={40}
                           height={40}
                           className="rounded-full"
