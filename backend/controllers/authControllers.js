@@ -312,7 +312,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   //get token and check if exists
   let token = null;
-  // console.log(req)
+  console.log(req.cookies);
   if (req.cookies?.jwt) token = req.cookies.jwt;
   else if (req.headers?.authorization?.split(" ")[0] === "Bearer")
     token = req.headers.authorization.split(" ")[1];
