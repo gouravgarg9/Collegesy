@@ -20,7 +20,8 @@ const createAndSendToken = async (user, statusCode,time, res) => {
     //trying to make things a bit fast. Don't need to wait to add token to user in db 
     const token = signToken(user._id);
     const cookieOptions = {
-    httpOnly: true,
+      httpOnly: true,
+      sameSite: 'none',
     };
     if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
     if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
