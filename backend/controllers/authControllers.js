@@ -356,7 +356,8 @@ exports.logOut = catchAsync(async (req, res, next) => {
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
-    sameSite: 'none'
+    sameSite: 'none',
+    secure: true
   });
   res.status(200).json({
     status: "success"
@@ -369,7 +370,8 @@ exports.logOutAllDevices = catchAsync(async (req,res,next)=>{
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
-    sameSite: 'none'
+    sameSite: 'none',
+    secure: true
   });
   //console.log(req.cookie);
   res.status(200).json({
