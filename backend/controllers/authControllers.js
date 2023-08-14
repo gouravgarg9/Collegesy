@@ -364,11 +364,13 @@ exports.logOut = catchAsync(async (req, res, next) => {
 
 exports.logOutAllDevices = catchAsync(async (req,res,next)=>{
   await LogOutFromAllDevices(req.user);
+  console.log(req.cookie);
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
     sameSite: 'none'
   });
+  console.log(req.cookie);
   res.status(200).json({
     status : 'success'
   })
