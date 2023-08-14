@@ -74,7 +74,7 @@ const ChatList = () => {
                         {" "}
                         <img
                           alt=""
-                          src={`http://${BASE}/images/users/${chat.buyerId?.photo || 'xyz.png'}`}
+                          src={`${BASE}/images/users/${chat.buyerId?.photo || 'xyz.png'}`}
                           width={40}
                           height={40}
                           className="rounded-full"

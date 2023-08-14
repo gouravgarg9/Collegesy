@@ -29,7 +29,7 @@ const SingleChatGrid = (props) => {
         {" "}
         <img
           alt=""
-          src={`http://${process.env.BACK_END_ROOT}/images/users/${chat[`${role}Id`]?.photo || "xyz.png"}`}
+          src={`${process.env.BACK_END_ROOT}/images/users/${chat[`${role}Id`]?.photo || "xyz.png"}`}
           width={40}
           height={40}
           className="rounded-full"
