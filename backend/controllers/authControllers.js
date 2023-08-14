@@ -20,7 +20,8 @@ const createAndSendToken = async (user, statusCode,time, res) => {
     //trying to make things a bit fast. Don't need to wait to add token to user in db 
     const token = signToken(user._id);
     const cookieOptions = {
-    httpOnly: true,
+      httpOnly: true,
+      sameSite: 'none',
     };
     if(time) cookieOptions.expires = new Date(Date.now() + process.env.COOKIE_JWT_EXPIRES * 24 * 60 * 60 * 1000);
     if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true; 
@@ -312,7 +313,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   //get token and check if exists
   let token = null;
-  // console.log(req)
+  console.log(req.cookies);
   if (req.cookies?.jwt) token = req.cookies.jwt;
   else if (req.headers?.authorization?.split(" ")[0] === "Bearer")
     token = req.headers.authorization.split(" ")[1];
@@ -355,18 +356,24 @@ exports.logOut = catchAsync(async (req, res, next) => {
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
+    sameSite: 'none',
+    secure: true
   });
   res.status(200).json({
-    status: "success",
+    status: "success"
   });
 });
 
 exports.logOutAllDevices = catchAsync(async (req,res,next)=>{
   await LogOutFromAllDevices(req.user);
+  //console.log(req.cookie);
   res.cookie("jwt", "logged out", {
     expires: new Date(Date.now() + 1000),
     httpOnly: true,
+    sameSite: 'none',
+    secure: true
   });
+  //console.log(req.cookie);
   res.status(200).json({
     status : 'success'
   })
