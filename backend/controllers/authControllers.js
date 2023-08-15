@@ -144,7 +144,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   //generate url and send mail
   const resetRoute = "reset-password";
-  const resetUrl = `${req.protocol}://${req.hostname}:3000/${resetRoute}/?${resetKey}`;
+  const resetUrl = `${process.env.FRONT_END_URL}/${resetRoute}/?${resetKey}`;
   try {
     new Mail(user).sendResetPasswordURL({ resetUrl });
     //await new Mail(user).sendResetPasswordURL({ resetUrl });
