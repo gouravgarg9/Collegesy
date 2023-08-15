@@ -50,7 +50,7 @@ const Home = () => {
 
   const getUser = async () => {
     try {
-      const res = await axios.get(`http://${BASE}/api/users/checkLoggedIn`);
+      const res = await axios.get(`https://${BASE}/api/users/checkLoggedIn`);
       if (res.status === 200) {
         setUser(res.data.data.user);
       }
@@ -65,7 +65,7 @@ const Home = () => {
   const getAllProducts = async (page = 1) => {
     try {
       setloading(true);
-      const fetchURL = `http://${BASE}/api/products/getAllProducts?page=${page}&limit=12&sort=${
+      const fetchURL = `https://${BASE}/api/products/getAllProducts?page=${page}&limit=12&sort=${
         sortValue ? sortValue : "-createdAt"
       }`;
       const res = await axios.get(fetchURL);
@@ -243,7 +243,7 @@ const Home = () => {
                   onChange={(e) => setAge(e.target.value)}
                   defaultValue={age}
                   step="1"
-                  className="w-40 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-"
+                  className="w-40 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-black"
                 />
               </div>
             </div>
@@ -310,15 +310,17 @@ const Home = () => {
           name="sort"
           id="sort"
           defaultValue="-createdAt"
-          className="bg-white rounded-lg shadow dark:bg-gray-900 text-white mx-2"
+          className="text-black bg-white font-semibold rounded-lg shadow dark:bg-gray-900 text-white mx-2"
           onChange={(e) => {
             sortProducts(e);
           }}
         >
+          {/* <div className="text-black"> */}
           <option value="price">Price ↑</option>
           <option value="-price">Price ↓</option>
           <option value="-createdAt">Recent ↓</option>
           <option value="createdAt">Recent ↑</option>
+          {/* </div> */}
         </select>
         <div>
           <button
@@ -330,7 +332,7 @@ const Home = () => {
             className="text-black bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center mx-2 bg-white rounded-lg shadow dark:bg-gray-900 text-white"
             type="button"
           >
-            Filter
+            <h3 className="text-black dark: text-white">Filter</h3>
             <svg
               className="w-[18px] h-[18px] text-gray-800 dark:text-white ml-1 pt-1"
               aria-hidden="true"
@@ -378,7 +380,7 @@ const Home = () => {
                       <div className="m-auto p-auto h-72">
                         <img
                           className="p-8 rounded-t-lg w-auto"
-                          src={`http://${BASE}/images/products/${product.images[0]}`}
+                          src={`https://${BASE}/images/products/${product.images[0]}`}
                           alt="product image"
                         />
                       </div>
@@ -443,12 +445,12 @@ const Home = () => {
                           <span className="text-3xl font-bold text-gray-900 dark:text-white">
                             ₹ {product.price}
                           </span>
-                          <a
+                          {/* <a
                             href="#"
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                           >
                             Add to cart
-                          </a>
+                          </a> */}
                         </div>
                       </div>
                     </div>

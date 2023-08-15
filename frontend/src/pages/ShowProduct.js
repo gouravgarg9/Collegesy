@@ -31,7 +31,7 @@ const ShowProduct = () => {
   const openChat = async () => {
     try {
       const res = await axios.get(
-      `http://${BASE}/api/chats/getChatByProductId/` + product._id
+      `https://${BASE}/api/chats/getChatByProductId/` + product._id
       );
       navigate("/chat", {
         state: { user: user, chat: res.data.data.chat },
@@ -44,7 +44,7 @@ const ShowProduct = () => {
   const handleReactive = async()=>{
     try {
       const res = await axios.put(
-        `http://${BASE}/api/products/reactivateProduct/` + product._id
+        `https://${BASE}/api/products/reactivateProduct/` + product._id
       );
       if (res.status === 200) {
         setTimeout(() => {
@@ -61,7 +61,7 @@ const ShowProduct = () => {
   const handleDelete = async () => {
     try {
       const res = await axios.delete(
-        `http://${BASE}/api/products/deleteProduct/` + product._id
+        `https://${BASE}/api/products/deleteProduct/` + product._id
       );
       if (res.status === 200) {
         setTimeout(() => {
@@ -176,7 +176,7 @@ const ShowProduct = () => {
                   crossOrigin="anonymous"
                   src={
                     { photo }
-                      ? `http://${BASE}/images/products/${photo}`
+                      ? `https://${BASE}/images/products/${photo}`
                       : ""
                   }
                   className="w-full h-96 border-4 rounded-lg relative z-10"
@@ -191,7 +191,7 @@ const ShowProduct = () => {
                     product.images?.map((image) => (
                       <img
                         crossOrigin="anonymous"
-                        src={`http://${BASE}/images/products/${image}`}
+                        src={`https://${BASE}/images/products/${image}`}
                         className="flex-initial w-16 m-2 border-2 cursor-pointer rounded relative z-10"
                         alt="productImage"
                         cursor="pointer"

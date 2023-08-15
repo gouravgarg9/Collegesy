@@ -33,7 +33,7 @@ const ForgotPassword = () => {
         else if(!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email")
         else{
           try{
-             await axios.post(`http://${BASE}/api/users/forgotPassword`,{
+             await axios.post(`https://${BASE}/api/users/forgotPassword`,{
               email,
             }).then((res)=>{
               toast.success(res.data.message);

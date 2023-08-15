@@ -42,7 +42,7 @@ const UpdatePassword = () => {
       toast.warning("Please confirm New Password");
     else {
       const res = await axios.patch(
-        `http://${BASE}/api/users/updatePassword`,
+        `https://${BASE}/api/users/updatePassword`,
         {
           currentPassword,
           newPassword,
@@ -61,7 +61,7 @@ const UpdatePassword = () => {
       <Navigation user={location.state} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               {/* <label className="font-semibold text-sm text-gray-600 pb-1 block">
@@ -126,7 +126,7 @@ const UpdatePassword = () => {
               </label>
               {/* <div className="py-5"> */}
                 <div className="grid grid-cols-2 gap-1">
-                  <div className="text-center sm:text-left whitespace-nowrap">
+                  {/* <div className="text-center sm:text-left whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => {
@@ -150,7 +150,7 @@ const UpdatePassword = () => {
                       </svg>
                       <span className="inline-block ml-1">Forgot Password</span>
                     </button>
-                  </div>
+                  </div> */}
                   {/* <div className="text-center sm:text-center  whitespace-nowrap"> */}
                   {/* <button className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                     <svg

@@ -86,7 +86,7 @@ const UpdateProduct = () => {
     try {
       axios
         .put(
-          `http://${BASE}/api/products/updateProduct/` + product._id,
+          `https://${BASE}/api/products/updateProduct/` + product._id,
           formdata,
           /*title,
             description,
@@ -102,7 +102,7 @@ const UpdateProduct = () => {
             toast.success("Product Updated Successfully");
             setTimeout(() => {
               navigate("/");
-            }, 1000);
+            }, 500);
           }
         });
     } catch (e) {
@@ -154,7 +154,7 @@ const UpdateProduct = () => {
       <Navigation user={user} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <div>
@@ -164,7 +164,7 @@ const UpdateProduct = () => {
                     return (
                       <div key={image}>
                         <img
-                          src={`http://${BASE}/images/products/${image}`}
+                          src={`https://${BASE}/images/products/${image}`}
                           alt={image}
                           height="50"
                           width="50"

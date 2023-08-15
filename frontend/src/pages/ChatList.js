@@ -16,7 +16,7 @@ const ChatList = () => {
   const loadChat = async () => {
     try {
       const res = await axios.get(
-        `http://${BASE}/api/chats/getChatByProductId/` + product._id
+        `https://${BASE}/api/chats/getChatByProductId/` + product._id
       );
       setChats(res.data.data.chat);
     } catch (e) {
@@ -59,7 +59,7 @@ const ChatList = () => {
                 <i className="fa fa-search absolute right-3 top-4 text-gray-300" />{" "}
               </div>
               <ul>
-                {chats?.map((chat) => (
+                {chats?.reverse().map((chat) => (
                   <Link key={chat._id}
                     to="/chat"
                     state={{

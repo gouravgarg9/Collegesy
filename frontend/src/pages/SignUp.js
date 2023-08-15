@@ -4,12 +4,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
 let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [loading, setloading] = useState(true);
   const location = useLocation();
   const [input, setInput] = useState({
     email: "",
@@ -46,8 +48,9 @@ const SignUp = () => {
       toast.warning("Confirm Password doesn't match");
     else {
       try {
+        setloading(true)
         await axios
-          .post(`http://${BASE}/api/users/signup`, {
+          .post(`https://${BASE}/api/users/signup`, {
             email,
             username,
             password,
@@ -63,18 +66,28 @@ const SignUp = () => {
           });
       } catch (e) {
         // console.log(e);
+        setloading(false)
         setMessage({ messaged: e.response.data.message });
       }
     }
   };
   const print = Object.values(messaged);
+  if (loading) {
+    return (
+      <>
+        <h1>
+          ...loading <ClipLoader color="#000000" />
+        </h1>
+      </>
+    );
+  }
 
   return (
     <>
       <Navigation user={location.state?.user} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">

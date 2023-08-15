@@ -14,7 +14,7 @@ const LogIn = () => {
     password:"",
     rememberMe:false
   })
-  const [loading, setloading] = useState(false);
+  const [loading, setloading] = useState(true);
   const [messaged,setMessage]=useState({messaged:""});
   const navigate = useNavigate();
 
@@ -48,9 +48,10 @@ const LogIn = () => {
     else if(password==="") toast.warning("Please enter Password")
     else{
       console.log(BASE)
+      setloading(true);
       try{
         // console.log("trying");
-        const res= await axios.post(`http://${BASE}/api/users/login`,{
+        const res= await axios.post(`https://${BASE}/api/users/login`,{
           email,
           password,
           rememberMe
@@ -87,7 +88,7 @@ const LogIn = () => {
     <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
