@@ -381,7 +381,7 @@ const UserPage = () => {
                   />
                   <div className="p-5">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      {product.title}
+                    {product.title.length>25? product.title.substr(0,20)+"....":product.title}
                     </h5>
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                       {product.description.substr(0,40)+"...."}

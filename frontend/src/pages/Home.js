@@ -386,7 +386,7 @@ const Home = () => {
                       </div>
                       <div className="px-5 pb-5">
                         <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                          {product.title}
+                          {product.title.length>25? product.title.substr(0,20)+"....":product.title}
                         </h5>
                         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                           {`${getAppxDate(product.createdAt)}`}

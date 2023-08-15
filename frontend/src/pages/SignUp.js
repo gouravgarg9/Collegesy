@@ -11,7 +11,7 @@ let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [loading, setloading] = useState(true);
+  const [loading, setloading] = useState(false);
   const location = useLocation();
   const [input, setInput] = useState({
     email: "",
@@ -72,15 +72,15 @@ const SignUp = () => {
     }
   };
   const print = Object.values(messaged);
-  if (loading) {
-    return (
-      <>
-        <h1>
-          ...loading <ClipLoader color="#000000" />
-        </h1>
-      </>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <h1>
+  //         ...loading <ClipLoader color="#000000" />
+  //       </h1>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
@@ -150,6 +150,7 @@ const SignUp = () => {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
+                {(loading ? <ClipLoader size={15} color="#ffffff" />:<></>)}
               </button>
               <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
                 {print}
