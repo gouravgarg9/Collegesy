@@ -69,7 +69,7 @@ const AllChatList = () => {
         <div className="max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden md:max-w-lg">
           <div className="md:flex">
             <div className="w-full p-4">
-              <div className="relative">
+              {/* <div className="relative">
                 {" "}
                 <input
                   type="text"
@@ -77,7 +77,7 @@ const AllChatList = () => {
                   placeholder="Search..."
                 />{" "}
                 <i className="fa fa-search absolute right-3 top-4 text-gray-300" />{" "}
-              </div>
+              </div> */}
               <p>Buying...</p>
               <ul>
                 {buyingChats?.reverse().map((chat) => (

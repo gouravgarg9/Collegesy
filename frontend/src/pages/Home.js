@@ -355,7 +355,7 @@ const Home = () => {
       <br />
         {/* <div className="grid md:grid-cols-3 grid-cols-3 gap-y-10 space-around space-between"> */}
         {/* <div className=" m-auto grid grid-cols-3 gap-10"> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-20 p-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-20 p-16">
           {products?.map((product) => {
             if (
               (categorylist.includes(product.category) ||

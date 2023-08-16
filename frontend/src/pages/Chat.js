@@ -371,7 +371,7 @@ const Chat = () => {
                 }}
                 className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
               />
-              <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+              <div className="absolute right-0 items-center inset-y-0 sm:flex">
                 {/* <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
@@ -464,9 +464,9 @@ const Chat = () => {
     } else {
       return (
         <>
-          <div className="w-full h-12 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3">
+          <div className="w-full h-16 focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3">
             <div className="w-full text-center">
-              <h2 className="">
+              <h2 className="text-base">
                 This Chat has been Blocked. You can't message any more
               </h2>
             </div>

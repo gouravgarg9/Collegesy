@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Navigation from "../components/Navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 import "react-toastify/dist/ReactToastify.css";
 axios.defaults.withCredentials = true;
 let BASE=process.env.REACT_APP_BACK_END_ROOT
@@ -12,7 +13,7 @@ const CreateProduct = () => {
   const navigate = useNavigate();
   const user = location.state.user;
   //if(!user)navigate('/');
-
+  const [loading, setloading] = useState(false);
   const [input, setInput] = useState({
     title: "",
     description: "",
@@ -43,12 +44,15 @@ const CreateProduct = () => {
     setMessage({ messaged: "" });
     const { title, description, price, category, age } = input;
     if (title === "") toast.warning("Please enter Title");
+    else if (title.length > 20) toast.warning("Title is too long");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
     else if (price < 0) toast.warning("Please enter valid Price");
+    else if (price > 1000000) toast.warning("Price range should be between 0-1000000");
     else if (age === "") toast.warning("Please enter Age of product");
     else {
       try {
+        setloading(true);
         axios
           .post(`https://${BASE}/api/products/createProduct`, {
             title,
@@ -67,6 +71,7 @@ const CreateProduct = () => {
             }
           });
       } catch (e) {
+        setloading(false);
         console.log(e);
         setMessage({ messaged: e.response.data.message });
       }
@@ -171,6 +176,7 @@ const CreateProduct = () => {
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
                   </svg>
+                  {(loading ? <ClipLoader size={15} color="#ffffff" />:<></>)}
                 </button>
                 <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
                   {print}
