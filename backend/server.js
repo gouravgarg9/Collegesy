@@ -84,17 +84,6 @@ io.on('connection',(socket)=>{
         io.to(senderId).emit('seen',chatId);
     })
     
-
-    //to send a message client will emit message event
-    
-    //as soon as client enters the site he emit a recieve event
-    //also client will listen to message event to recieve a message 
-    //and in callback will emit a recieve event to inform server
-    socket.on('message',(message)=>{
-        const chatId = socketToChatIdMap[socket.id].chatId;
-        // io.to(chatId).broadcast.to('message',message);
-        socket.broadcast.to(chatId).emit('message',message);
-    });
     socket.on('reveal',async(data)=>{
         const {chatId,senderId,recieverId} = data;
         let chat = await Chat.findById(chatId);
