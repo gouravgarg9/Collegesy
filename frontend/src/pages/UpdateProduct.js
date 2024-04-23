@@ -1,31 +1,35 @@
 import { useState, useEffect } from "react";
-// import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// import {user} from "./Home"
 import Navigation from "../components/Navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 import "react-toastify/dist/ReactToastify.css";
+axios.defaults.withCredentials = true;
+let BASE = process.env.REACT_APP_BACK_END_ROOT;
 
 const UpdateProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // console.log(location);
+  let product = location.state.data;
+  let user = location.state.user;
+  //if(!product || !user)navigate('/');
+  const [loading, setloading] = useState(false);
   const [input, setInput] = useState({
     title: "",
     description: "",
     price: "",
-    category: ""
+    category: "",
+    age: "",
   });
 
   const [prevImages, setPrevImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
-
   const [messaged, setMessage] = useState({ messaged: "" });
 
   const getphotos = (e) => {
-    const files = e.target.files; 
-    setNewImages((prev) => [...prev,...files]);
+    const files = e.target.files;
+    setNewImages((prev) => [...prev, ...files]);
   };
 
   const getdata = (e) => {
@@ -38,84 +42,102 @@ const UpdateProduct = () => {
     });
   };
 
-  useEffect(()=>{
-    setPrevImages(location.state.data.images);
+  useEffect(() => {
+    setPrevImages(product.images);
     setInput({
-      title: location.state.data.title,
-      description: location.state.data.description,
-      price: location.state.data.price,
-      category: location.state.data.category,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      age: product.age,
     });
-    
-  },[]);
+  }, []);
 
   const addData = (e) => {
     e.preventDefault();
 
     const formdata = new FormData();
 
-    newImages.forEach(item=>{
-      formdata.append('productImages', item)
-    })
-    //formdata.append('productImages', newImages)
+    newImages.forEach((item) => {
+      formdata.append("productImages", item);
+    });
 
-    prevImages.forEach(item=>{
-      formdata.append('prevImages', item)
-    })
-    //formdata.append('prevImages', JSON.stringify(prevImages))
+    prevImages.forEach((item) => {
+      formdata.append("prevImages", item);
+    });
 
     setMessage({ messaged: "" });
 
-    const { title, description, price,category } = input;
-    formdata.append('title', title);
-    formdata.append('description', description);
-    formdata.append('price', price);
-    formdata.append("category", category);
-    for (var key of formdata.entries()) {
-     console.log(key[0] + ', ' + key[1]);
-    }
-    // const { productImages } = files;
-    // console.log(title, description, price);
-    // const id=location.state.prodId;
-    // if (title === "") alert("Please enter Title");
-    // else if (description === "") alert("Please enter Description");
-    // else if (price === "") alert("Please enter Price");
-    // else {
-    // console.log(formdata)
-    try {
-      axios
-        .put(
-          "http://localhost:5000/api/products/updateProduct/" +
-            location.state.data._id,
-          // productImages: files,
-          formdata,
-          /*title,
+    const { title, description, price, category, age } = input;
+    if (title === "") toast.warning("Please enter Title");
+    else if (title.length > 20) toast.warning("Title is too long");
+    else if (description === "") toast.warning("Please enter Description");
+    else if (price === "") toast.warning("Please enter Price");
+    else if (price < 0) toast.warning("Please enter valid Price");
+    else if (price > 1000000)
+      toast.warning("Price range should be between 0-1000000");
+    else if (age === "") toast.warning("Please enter Age of product");
+    else {
+      formdata.append("title", title);
+      formdata.append("description", description);
+      formdata.append("price", price);
+      formdata.append("category", category);
+      formdata.append("age", age);
+      for (var key of formdata.entries()) {
+        console.log(key[0] + ", " + key[1]);
+      }
+      // const { productImages } = files;
+      // console.log(title, description, price);
+      // const id=prodId;
+      // if (title === "") alert("Please enter Title");
+      // else if (description === "") alert("Please enter Description");
+      // else if (price === "") alert("Please enter Price");
+      // else {
+      // console.log(formdata)
+      try {
+        setloading(true);
+        axios
+          .put(
+            `https://${BASE}/api/products/updateProduct/` + product._id,
+            formdata,
+            /*title,
             description,
             price,*/
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            //   setProdId({prodId:res.data.data.product._id})
-            // console.log(prodId)
-            toast.success("Product Updated Successfully");
-            setTimeout(() => {
-              navigate("/");
-            }, 1000);
-          }
-        });
-    } catch (e) {
-      console.log(e);
-      setMessage({ messaged: e.response.data.message });
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              toast.success("Product Updated Successfully");
+              setTimeout(() => {
+                navigate("/");
+              }, 500);
+            }
+          });
+      } catch (e) {
+        setloading(true);
+        console.log(e);
+        setMessage({ messaged: e.response.data.message });
+      }
+      // }
     }
-    // }
   };
   const print = Object.values(messaged);
-
+  const optionsArray = [
+    "Books",
+    "Mobiles",
+    "Electronics",
+    "Accessories",
+    "Vehicle",
+    "Health & Fitness",
+    "Furniture",
+    "Calculator",
+    "Stationary",
+    "Others",
+  ];
   // {
   //   Array.from(files).map(photo=>{
   //     return{
@@ -127,7 +149,7 @@ const UpdateProduct = () => {
   //   })
   // }
 
-  if (!location.state.user) {
+  if (!user) {
     // console.log("hit")
     return (
       <>
@@ -137,41 +159,71 @@ const UpdateProduct = () => {
       </>
     );
   }
-
+  const getToday = () => {
+    const today = new Date();
+    return today.toISOString().substr(0, 10);
+  };
   return (
     <>
-      <Navigation user={location.state.user} />
+      <Navigation user={user} />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
-          <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
+          <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200 mt-16">
             <div className="px-5 py-7">
-
               <div>
-                {prevImages && prevImages.length>0 && prevImages.map((image,index)=>{
-                  return (<div key={image}>
-                    <img src={`http://localhost:5000/images/products/${image}`} alt={image} height="50" width ="50" />
-                    <button onClick={()=>{setPrevImages((prev)=>{
-                      const newPrevImages = prev.filter((img)=>{
-                        return img !== image;
-                      })
-                      return newPrevImages;
-                    })}}>✕</button>
-                  </div>)
-                })}
+                {prevImages &&
+                  prevImages.length > 0 &&
+                  prevImages.map((image, index) => {
+                    return (
+                      <div key={index}>
+                        <img
+                          src={`https://${BASE}/images/products/${image}`}
+                          alt={image}
+                          height="50"
+                          width="50"
+                        />
+                        <button
+                          onClick={() => {
+                            setPrevImages((prev) => {
+                              const newPrevImages = prev.filter((img) => {
+                                return img !== image;
+                              });
+                              return newPrevImages;
+                            });
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
 
-                {newImages && newImages.map((image,index)=>{
-                  return (<div key={image}>
-                    <img src={URL.createObjectURL(image)} alt={image} height="50" width ="50" />
-                    <button onClick={()=>{setNewImages((prev)=>{
-                      const newNewImages = prev.filter((img)=>{
-                        return img !== image;
-                      })
-                      return newNewImages;
-                    })}}>✕</button>
-                  </div>)
-                })}
-
+                {newImages &&
+                  newImages.map((image, index) => {
+                    return (
+                      <div key={index}>
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={image}
+                          height="50"
+                          width="50"
+                        />
+                        <button
+                          onClick={() => {
+                            setNewImages((prev) => {
+                              const newNewImages = prev.filter((img) => {
+                                return img !== image;
+                              });
+                              return newNewImages;
+                            });
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
               </div>
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
                 Upload Photos
@@ -216,21 +268,29 @@ const UpdateProduct = () => {
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
-                  value={input.category}
-                  onChange={getdata}
-                >
-                  <option value="Books">Books</option>
-                  <option value="Vehicle">Vehicle</option>
-                  <option value="Calculator">Calculator</option>
-                  <option value="Stationary">Stationary</option>
-                  <option value="Mattress">Mattress</option>
-                  <option value="Others">Others</option>
-                </select>
+                Category
+              </label>
+              <select
+                name="category"
+                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                value={input.category} selected
+                onChange={getdata}
+              >
+                {optionsArray.map((val) => {
+                  return <option value={val}>{val}</option>;
+                })}
+              </select>
+              <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                Date of Purchase
+              </label>
+              <input
+                type="date"
+                name="age"
+                value={input.age?.substr(0, 10)}
+                max={getToday()}
+                onChange={getdata}
+                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+              />
               <button
                 type="button"
                 onClick={addData}
@@ -251,6 +311,7 @@ const UpdateProduct = () => {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
+                {(loading ? <ClipLoader size={15} color="#ffffff" />:<></>)}
               </button>
               <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
                 {print}

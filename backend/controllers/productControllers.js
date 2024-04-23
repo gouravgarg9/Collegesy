@@ -30,6 +30,7 @@ exports.getAllProducts = catchAsync(async (req,res,next)=>{
 
     //removing field that can't be served directly-sorting,pagination,etc
     let queryObj = {...req.query};
+    queryObj.active = true;
     const excludeFields = ['sort','page','limit','fields'];
     excludeFields.forEach(el=>delete queryObj[el]);
 
@@ -121,11 +122,23 @@ exports.updateProduct = catchAsync(async (req,res,next)=>{
     req.product.description = req.body?.description || req.product.description;
     req.product.price = req.body?.price || req.product.price;
     req.product.category = req.body?.category || req.product.category;
+    req.product.age = req.body?.age || req.product.age;
     await Product.findByIdAndUpdate(req.product._id,req.product);
     res.status(200).json({
         status:'success',
         data:{
             product : req.product
+        }
+    });
+})
+
+exports.reactivateProduct = catchAsync(async (req,res,next)=>{
+    if(req.product.sold)return next(new AppError('Sold already.',404));
+    await Product.findByIdAndUpdate(req.product._id,{active : true});
+    res.status(200).json({
+        status:'success',
+        data:{
+            product : { ...req.product,active:true}
         }
     });
 })
@@ -172,11 +185,12 @@ exports.deleteOneProductImage = catchAsync(async (req,res,next)=>{
 
 exports.deleteProduct = catchAsync(async (req,res,next)=>{
     await Chat.updateMany({productId : req.product._id},{"$set":{"active": false}});
-    await Product.findByIdAndDelete( req.product._id);
+    await Product.findByIdAndUpdate( req.product._id,{active : false});
     res.status(200).json({
         status:'success'
     });
 })
+
 
 exports.createProduct = catchAsync(async (req,res,next)=>{
     const product = new Product({
@@ -184,7 +198,8 @@ exports.createProduct = catchAsync(async (req,res,next)=>{
         description : req.body.description || 'No description',
         price : req.body.price,
         sellerId : req.user._id,
-        category : req.body.category || 'Others'
+        category : req.body.category || 'Others',
+        age : req.body.age
     });
 
     await product.save();

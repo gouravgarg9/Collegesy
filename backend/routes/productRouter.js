@@ -3,9 +3,18 @@ const productControllers = require("./../controllers/productControllers");
 const authControllers = require("../controllers/authControllers");
 const router = express.Router();
 
-router.get("/getAllProducts", productControllers.getAllProducts);
-router.get("/getAllProductsByUserId",authControllers.protect,productControllers.getAllProductsByUserId);
-router.get("/getProduct/:productId",
+router.get(
+  "/getAllProducts",
+  authControllers.protect,
+  productControllers.getAllProducts
+);
+router.get(
+  "/getAllProductsByUserId",
+  authControllers.protect,
+  productControllers.getAllProductsByUserId
+);
+router.get(
+  "/getProduct/:productId",
   productControllers.putProductOnReq,
   productControllers.getProduct
 );
@@ -16,14 +25,23 @@ router.put(
   productControllers.checkIfSeller,
   productControllers.productPhotoUpload,
   productControllers.deleteProductImages,
-  productControllers.updateProduct  
+  productControllers.updateProduct
 );
+
+router.put(
+  "/reactivateProduct/:productId",
+  authControllers.protect,
+  productControllers.putProductOnReq,
+  productControllers.checkIfSeller,
+  productControllers.reactivateProduct
+);
+
 router.put(
   "/deleteAllProductImages/:productId",
   authControllers.protect,
   productControllers.putProductOnReq,
   productControllers.checkIfSeller,
-  productControllers.deleteAllProductImages,
+  productControllers.deleteAllProductImages
 );
 
 router.put(
@@ -31,7 +49,7 @@ router.put(
   authControllers.protect,
   productControllers.putProductOnReq,
   productControllers.checkIfSeller,
-  productControllers.deleteOneProductImage,
+  productControllers.deleteOneProductImage
 );
 
 router.delete(

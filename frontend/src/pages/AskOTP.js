@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+axios.defaults.withCredentials=true
 const AskOTP = () => {
   const navigate = useNavigate();
 
@@ -35,7 +36,7 @@ const AskOTP = () => {
     else {
       try {
         const res=await axios
-          .post("http://localhost:5000/api/users/verifySignUpOTP", {
+          .post(`${BASE}/api/users/verifySignUpOTP`, {
             email,
             otp,
           })
@@ -56,10 +57,10 @@ const AskOTP = () => {
   const print=Object.values(messaged);
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">

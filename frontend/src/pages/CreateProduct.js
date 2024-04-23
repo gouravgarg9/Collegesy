@@ -1,31 +1,31 @@
 import { useState } from "react";
-// import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// import {user} from "./Home"
 import Navigation from "../components/Navigation";
+import ClipLoader from "react-spinners/ClipLoader";
 import "react-toastify/dist/ReactToastify.css";
-// import userToken from "./LogIn";
+axios.defaults.withCredentials = true;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const CreateProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = location.state.user;
+  //if(!user)navigate('/');
+  const [loading, setloading] = useState(false);
   const [input, setInput] = useState({
     title: "",
     description: "",
     price: "",
-    category: ""
-    // _id: userToken,
+    category: "",
+    age: "",
   });
 
   const [messaged, setMessage] = useState({ messaged: "" });
-  // const [prodId,setProdId]=useState();
 
   const getdata = (e) => {
-    // console.log(e.target.value);
     const { value, name } = e.target;
-    // console.log(value,name)
     setInput(() => {
       return {
         ...input,
@@ -34,52 +34,63 @@ const CreateProduct = () => {
     });
   };
 
+  const getToday = ()=>{
+    const today = new Date();
+    return today.toISOString().substr(0, 10);
+  }
+
   const addData = (e) => {
     e.preventDefault();
     setMessage({ messaged: "" });
-    const { title, description, price,category } = input;
-    // console.log(title, description, price);
+    const { title, description, price, category, age } = input;
     if (title === "") toast.warning("Please enter Title");
+    else if (title.length > 20) toast.warning("Title is too long");
     else if (description === "") toast.warning("Please enter Description");
     else if (price === "") toast.warning("Please enter Price");
     else if (price < 0) toast.warning("Please enter valid Price");
+    else if (price > 1000000) toast.warning("Price range should be between 0-1000000");
+    else if (age === "") toast.warning("Please enter Age of product");
     else {
       try {
+        setloading(true);
         axios
-          .post("http://localhost:5000/api/products/createProduct", {
+          .post(`https://${BASE}/api/products/createProduct`, {
             title,
             description,
             price,
-            category
+            category,
+            age,
           })
           .then((res) => {
             if (res.status === 200) {
-              // setProdId({ prodId: res.data.data.product._id });
-              // console.log(prodId)
-              // console.log(res.data.data.product._id)
               const prod = res.data.data.product;
-              // console.log(prodId)
               toast.success("Product Created");
-              setTimeout(() => {
-                navigate("/update-product", {
-                  state: { data: prod, user: location.state.data },
-                });
-              }, 1000);
-
+              navigate("/update-product", {
+                state: { data: prod, user },
+              });
             }
           });
       } catch (e) {
+        setloading(false);
         console.log(e);
         setMessage({ messaged: e.response.data.message });
       }
     }
   };
   const print = Object.values(messaged);
-  // const print = Object.values(prodId);
-
-  // console.log("hi"+user)
-  if (!location.state.data) {
-    // console.log("hit")
+  const optionsArray = [
+    "Books",
+    "Mobiles",
+    "Electronics",
+    "Accessories",
+    "Vehicle",
+    "Health & Fitness",
+    "Furniture",
+    "Calculator",
+    "Stationary",
+    "Others",
+  ];
+  if (!user) {
     return (
       <>
         <h1>
@@ -90,11 +101,11 @@ const CreateProduct = () => {
   } else {
     return (
       <>
-        <Navigation user={location.state.data} />
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
+        <Navigation user={user} />
+        <div className="h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
           <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-            <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
-            <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
+            {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
+            <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200 mt-16">
               <div className="px-5 py-7">
                 <label className="font-semibold text-sm text-gray-600 pb-1 block">
                   Title
@@ -131,13 +142,20 @@ const CreateProduct = () => {
                   className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
                   onChange={getdata}
                 >
-                  <option value="Books">Books</option>
-                  <option value="Vehicle">Vehicle</option>
-                  <option value="Calculator">Calculator</option>
-                  <option value="Stationary">Stationary</option>
-                  <option value="Mattress">Mattress</option>
-                  <option value="Others">Others</option>
+                  {optionsArray.map((val) => {
+                    return <option value={val}>{val}</option>;
+                  })}
                 </select>
+                <label className="font-semibold text-sm text-gray-600 pb-1 block">
+                  Date of Purchase
+                </label>
+                <input
+                  type="date"
+                  name="age"
+                  onChange={getdata}
+                  max={getToday()}
+                  className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+                />
                 <button
                   type="button"
                   onClick={addData}
@@ -158,6 +176,7 @@ const CreateProduct = () => {
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
                   </svg>
+                  {(loading ? <ClipLoader size={15} color="#ffffff" />:<></>)}
                 </button>
                 <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
                   {print}
@@ -171,5 +190,4 @@ const CreateProduct = () => {
     );
   }
 };
-// export {prodId}
 export default CreateProduct;

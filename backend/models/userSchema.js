@@ -65,14 +65,15 @@ const UserSchema = new mongoose.Schema({
             token: String,
             expiresBy: Date
         }
-    ]
+    ],
+    lastLogOutFromAllDevices : Date
 },{timestamps:true});
 
 
-UserSchema.pre(/^find/,function(next){
-    this.find({active : {$ne : false}});
-    next();
-});
+// UserSchema.pre(/^find/,function(next){
+//     this.find({active : {$ne : false}});
+//     next();
+// });
 
 
 UserSchema.pre('save',async function(next){
@@ -110,6 +111,8 @@ UserSchema.methods.addJwtToken = async function(token,time){
 UserSchema.methods.verifyJwtToken = async function(candidateToken){
     let ans;
     const partiallyHashedCandidateToken = crypto.createHash("sha256").update(candidateToken).digest("hex");
+    if(!this.jwtTokens || this.jwtTokens?.length==0)return false;
+    if( await bcrypt.compare(partiallyHashedCandidateToken,this.jwtTokens[0].token)) return true;
     for(const singleTokenObj of this.jwtTokens){
         const userToken = singleTokenObj.token;
         if(await bcrypt.compare(partiallyHashedCandidateToken,userToken)){
@@ -118,11 +121,11 @@ UserSchema.methods.verifyJwtToken = async function(candidateToken){
         }
     }
     if(!ans)return false;
-    //for early verification in subsequent requests, we have added new token at beginning
-    const i = this.jwtTokens.indexOf(ans);
-    this.jwtTokens.unshift(ans);
-    this.jwtTokens.splice(i+1,1);
-    this.save();
+    // //for early verification in subsequent requests, we have added new token at beginning
+    // const i = this.jwtTokens.indexOf(ans);
+    // this.jwtTokens.unshift(ans);
+    // this.jwtTokens.splice(i+1,1);
+    // await this.save();
     return true;
 }
 
@@ -153,12 +156,13 @@ UserSchema.methods.passwordChangedAfter = function(JWTtimestamp){
 }
 
 UserSchema.methods.createPassResetKey = async function(){
-    const resetKey = crypto.randomBytes(32).toString('hex');
+    const resetKey = crypto.randomBytes(16).toString('hex');
     const passwordResetToken = crypto.createHash('sha256').update(resetKey).digest('hex');
+    console.log(passwordResetToken);
     const passwordResetExpires = Date.now() + 10 * 60 * 1000;
     this.passwordResetToken = passwordResetToken;
     this.passwordResetExpires = passwordResetExpires;
-    await this.save({ validateBeforeSave: false }); 
+    console.log(await this.save({ validateBeforeSave: false })); 
     return resetKey;
 }
 

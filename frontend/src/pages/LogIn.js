@@ -1,33 +1,25 @@
-import {useState} from 'react'
-import {NavLink, useLocation, useNavigate} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
-import {socket} from "../socket"
-// import {user} from "./Home"
+import ClipLoader from "react-spinners/ClipLoader";
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
+// import env from "react-dotenv";
 axios.defaults.withCredentials=true
-// import Cookies from 'universal-cookie'
-// import jwt from 'jwt-decode'
-
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 const LogIn = () => {
-
-  // const cookies =new Cookies();
-  const location=useLocation();
-  const navigate = useNavigate();
   const [input,setInput]=useState({
     email:"",
     password:"",
     rememberMe:false
   })
-  // console.log(input)
+  const [loading, setloading] = useState(false);
   const [messaged,setMessage]=useState({messaged:""});
-  // const [user,setUser]=useState(null)
+  const navigate = useNavigate();
 
   const getdata=(e)=>{
-    // console.log(e.target.value);
     const {value,name}=e.target;
-    // console.log(value,name)
     setInput(()=>{
       return{
         ...input,
@@ -48,45 +40,55 @@ const LogIn = () => {
   }
   const addData=async(e)=>{
     e.preventDefault();
+    // console.log("hit");
     setMessage({messaged:""});
     const {email,password,rememberMe}=input
-    // console.log(email,password,rememberMe)
+    // console.log(email+password+rememberMe);
     if(email==="") toast.warning("Please enter Email")
-    // else if (!email.includes("@mnnit.ac.in")) alert("Please enter valid Email");
     else if(password==="") toast.warning("Please enter Password")
     else{
-      // console.log(rememberMe)
+      console.log(BASE)
+      setloading(true);
       try{
-        const res=await axios.post('http://localhost:5000/api/users/login',{
+        // console.log("trying");
+        const res= await axios.post(`https://${BASE}/api/users/login`,{
           email,
           password,
           rememberMe
-        })
-          
-          if(res.status===200){
-            toast.success("Login Successful")
-            socket.emit('joinAllChats',location.state.data._id)
-            setTimeout(() => {
-              navigate('/');
-            }, 1000);     
-          }
-      } catch(e){
+        },{ withCredentials: true })
+        if(res.status===200){
+          // console.log("success")
+          toast.success("Login Successful")
+          setTimeout(()=>{
+          navigate('/')
+          },1000);     
+        }
+      }catch(e){
+        // console.log("error");
         setMessage({messaged: e.response.data.message})
         console.log(e);
       }
+      setloading(false);
     }
   }
   const print=Object.values(messaged);
-  const forgot=()=>{
-    navigate("/forgot-password")
-  }
+  
 
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <h1>
+  //         ...loading <ClipLoader color="#000000" />
+  //       </h1>
+  //     </>
+  //   );
+  // }
   return (
     <>
-    <Navigation user={location.state.user}/>
+    <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
@@ -131,6 +133,7 @@ const LogIn = () => {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
+                {(loading ? <ClipLoader size={15} color="#ffffff" />:<></>)}
               </button>
               <label className="font-semibold text-sm text-gray-600 py-4 pb-1 block">
                 {print}
@@ -141,7 +144,9 @@ const LogIn = () => {
                 <div className="text-center sm:text-left whitespace-nowrap">
                   <button
                   type='button'
-                  onClick={forgot} 
+                  onClick={()=>{
+                    navigate('/forgot-password')
+                  }} 
                   className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

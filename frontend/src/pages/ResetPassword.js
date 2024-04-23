@@ -2,12 +2,15 @@ import {useState} from 'react'
 // import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate,useLocation } from 'react-router-dom';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const ResetPassword = () => {
-
+    const location = useLocation();
+    // console.log(location.state.user)
+    const navigate = useNavigate();
     const [input,setInput]=useState({
         email:"",
         password:"",
@@ -29,7 +32,7 @@ const ResetPassword = () => {
       }
 
     
-      const addData=(e)=>{
+      const addData= async(e)=>{
         e.preventDefault();
         setMessage({messaged:""});
         const {email,password,passwordConfirm}=input
@@ -39,29 +42,25 @@ const ResetPassword = () => {
         else if(password.length<8) toast.warning("Password is too short")
         else{
           try{
-            // console.log(window.location.search)
-            axios.post('http://localhost:5000/api/users/resetPassword',{
+            const res = await axios.post(`https://${BASE}/api/users/resetPassword`,{
               email,
               password,
               passwordConfirm,
               token: window.location.search
-            })/*.then((res)=>{
-              if(res.status===200) navigate("/")
-            })*/
-          } catch(e){
-            // console.log(e);
-            setMessage({messaged: e.response.data.message})          }
+            });
+            if(res.status===200) navigate("/");
+          }catch(err) {
+              setMessage({messaged: err.response.data.message});
+            }
         }
       }
-
       const print=Object.values(messaged);
-
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation />
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">

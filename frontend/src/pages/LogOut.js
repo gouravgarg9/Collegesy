@@ -6,8 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Navigation from "../components/Navigation";
 import ClipLoader from "react-spinners/ClipLoader";
 axios.defaults.withCredentials = true;
-
-let user = null;
+let BASE=process.env.REACT_APP_BACK_END_ROOT
 
 const LogOut = () => {
   const [loading, setloading] = useState(true);
@@ -15,21 +14,15 @@ const LogOut = () => {
   const deleteUser = () => {
     try {
       axios
-        .post("http://localhost:5000/api/users/logout", {
-          Credentials: "include",
-        })
+        .post(`https://${BASE}/api/users/logout`)
         .then((res) => {
           if (res.status === 200) {
-            toast.success("Logged out Successfully");
-            setTimeout(() => {
-              setloading(false);
-              navigate("/");
-            }, 500);
+            navigate('/login')
           }
         });
     } catch (e) {
-      console.log("hit");
       console.log(e);
+      navigate('/')
     }
   };
   useEffect(() => {
@@ -46,8 +39,7 @@ const LogOut = () => {
   }
   return (
     <>
-      <Navigation user={user} />
-
+      <Navigation />
       <ToastContainer />
     </>
   );

@@ -24,7 +24,7 @@ const limiter = rateLimit({
 
 const app = express();
 
-app.use(cors({credentials:true, origin: "http://localhost:3000"}));
+app.use(cors({credentials:true, exposedHeaders: ["set-cookie"], origin: process.env.FRONT_END_URL}));
 
 //setting pug view engine for mails
 app.set('views', path.join(__dirname,'views'));

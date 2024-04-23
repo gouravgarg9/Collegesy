@@ -1,6 +1,8 @@
 require('dotenv').config();
 const path = require('path');
 const mongoose = require('mongoose');
+const Message = require('./models/messgaeSchema')
+
 process.on('uncaughtException',(err)=>{
     console.log(err);
     process.exit(1);
@@ -21,36 +23,65 @@ mongoose.connect(DB,{
 
 const port = process.env.PORT;
 const server = app.listen(port,() => console.log("Server running on port :",port));
+    
 const io = require('socket.io')(server,{
     pingTimeout : 60000,
     cors : {
-        origin : `http://localhost:3000`
+        origin : process.env.FRONT_END_URL
     }
 })
 
-const socketToChatIdMap = {};
-io.on('connection',(socket)=>{
-    console.log('a new socket joined');
+const mapping = {};
+io.on('connection',(socket)=>{    
     //need userId to be passed
-    socket.on('joinAllChats',async(userId)=>{
-        (await Chat.find({buyerId : userId})).forEach((chat)=>{
-            socket.join(chat._id);
-            socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'buyer'};
-        })
+    socket.on('join',async (userId)=>{
+        socket.join(userId);
+        socket.emit('connected');
+        let chat = await Chat.find({buyerId : userId});
+        const nDate = new Date(Date.now());
 
-        (await Chat.find({sellerId : userId})).forEach((chat)=>{
-            socket.join(chat._id);
-            socketToChatIdMap[socket.id] = {chatId : chat._id,role : 'seller'};
-        })
+        for(let ch of chat){
+            ch.lastRecieveByBuyer = nDate;
+            await Chat.findByIdAndUpdate(ch._id,ch);
+            io.to(ch.sellerId).emit('recieve',ch._id)
+        };
 
+        chat = await Chat.find({sellerId : userId});
+        for(let ch of chat){
+            ch.lastRecieveBySeller = nDate;
+            await Chat.findByIdAndUpdate(ch._id,ch);
+            io.to(ch.buyerId).emit('recieve',ch._id)
+        };
+    });
+    
+    socket.on('message',async (data)=>{
+        const {content, senderId,recieverId, chatId} = data;
+        const chat = await Chat.findById(chatId);
+        if(!chat || !chat.active || !(chat.sellerId == senderId || chat.buyerId == senderId))return ;
+        const message = await Message.create({
+            senderId,
+            content,
+            chatId
+        })
+        await Chat.findByIdAndUpdate(chatId,{latestMessage : message._id})
+        io.to(senderId).emit('message1',message);
+        io.to(recieverId).emit('message1',message);
     });
 
-    //while emitting joinChat,client needs to send object containing 
-    //chatId and current user role i.e. - 'buyer'/'seller'
-    socket.on('joinChat',(data)=>{
-        const {chatId,role} = data;
-        socket.join({chatId});
-        socketToChatIdMap[socket.id] = {chatId,role};
+    socket.on('typing',(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        socket.in(senderId).emit('disableTyping',chatId);
+        io.to(recieverId).emit('typing',chatId);
+    })
+
+    socket.on('seen',async(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        let chat = await Chat.findById(chatId);
+        const role = (chat.sellerId ==recieverId)?'Seller':'Buyer';
+        const x = {}
+        x[`lastSeenBy${role}`] = new Date(Date.now());
+        console.log(await Chat.findByIdAndUpdate(chat._id,x,{new:true}));
+        io.to(senderId).emit('seen',chatId);
     })
     
 
@@ -64,38 +95,40 @@ io.on('connection',(socket)=>{
         // io.to(chatId).broadcast.to('message',message);
         socket.broadcast.to(chatId).emit('message',message);
     });
+    socket.on('reveal',async(data)=>{
+        const {chatId,senderId,recieverId} = data;
+        let chat = await Chat.findById(chatId);
+        if (senderId == chat.sellerId) chat.sReveal = true;
+        if (senderId == chat.buyerId) chat.bReveal = true;
+        if(chat.sReveal && chat.bReveal) chat.bothReveal = true;
+        console.log(await chat.save());
+        if (chat.bothReveal) io.to(senderId).emit('reveal',chatId);
+        if (chat.bothReveal) io.to(recieverId).emit('reveal',chatId);
+    })
 
     //client will listen to recieve event to mark its sent messages delivered
-    socket.on('recieve',()=>{
-        const {chatId,role} = socketToChatIdMap[socket.id];
-        const roleStandardized = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-        const field = {};
-        field[`lastRecieveBy${roleStandardized}`] = Date.now();
-        Chat.findByIdAndUpdate(chatId,field);
-        io.to(chatId).broadcast('recieve');
-        
+    socket.on('recieve',async (data)=>{
+        const {chatId,senderId,recieverId} = data;
+        const chat = await Chat.findById(chatId);
+        const role = (chat.sellerId == recieverId)?'Seller':'Buyer';
+        chat[`lastRecieveBy${role}`] = new Date(Date.now());
+        console.log(await Chat.findByIdAndUpdate(chat._id,chat,{new:true}));
+        io.to(senderId).emit('recieve',chatId);
     });
 
-    //client as soon as open chat will emit read event 
-    //to mark blue tick he will listen to read events
-    socket.on('read',()=>{
-        const {chatId,role} = socketToChatIdMap[socket.id];
-        const roleStandardized = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-        const field = {};
-        field[`lastSeenBy${roleStandardized}`] = Date.now();
-        Chat.findByIdAndUpdate(chatId,field);
-        io.to(chatId).broadcast('read');
-    })
+    // //client as soon as open chat will emit read event 
+    // //to mark blue tick he will listen to read events
+    // socket.on('read',async (data)=>{
+    //     const {chatId,userId} = data;
+    //     const chat = await Chat.findById(chatId);
+    //     const role = (chat.sellerId ==userId)?'Seller':'Buyer';
+    //     chat[`lastSeenBy${role}`] = Date.now();
+    //     await Chat.findByIdAndUpdate(chat._id,chat);
+    //     socket.broadcast.to(chatId).emit('read1');
+    // })
 
-    socket.on('disconnect',()=>{
-        delete socketToChatIdMap[socket.id];
-    })
+    socket.on('disconnect',()=>{})
 })
-
-io.on('message',(chatId,content)=>{
-    io.to()
-})
-
 
 process.on('unhandledRejection',(err)=>{
     console.log(err);

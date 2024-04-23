@@ -1,22 +1,22 @@
 import {useState} from 'react'
-// import {NavLink, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
-import {user} from "./Home"
 import Navigation from "../components/Navigation";
 import 'react-toastify/dist/ReactToastify.css';
+let BASE=process.env.REACT_APP_BACK_END_ROOT
+
+// import { useLocation } from 'react-router-dom';
 
 const ForgotPassword = () => {
 
+    // const location = useLocation();
     const [input,setInput]=useState({
         email:"",
     })
     const [messaged,setMessage]=useState({messaged:""});
 
     const getdata=(e)=>{
-        // console.log(e.target.value);
         const {value,name}=e.target;
-        // console.log(value,name)
         setInput(()=>{
           return{
             ...input,
@@ -25,23 +25,24 @@ const ForgotPassword = () => {
         })
       }
     
-      const addData=(e)=>{
+      const addData=async(e)=>{
         e.preventDefault();
         setMessage({messaged:""});
         const {email}=input
         if(email==="") toast.warning("Please enter Email")
-        else if(!email.includes("@")) toast.warning("Please enter valid Email")
+        else if(!email.includes("@mnnit.ac.in")) toast.warning("Please enter valid Email")
         else{
           try{
-             axios.post('http://localhost:5000/api/users/forgotPassword',{
+             await axios.post(`https://${BASE}/api/users/forgotPassword`,{
               email,
             }).then((res)=>{
-              // console.log(res)
               toast.success(res.data.message);
+              console.log(res.data.message)
               setMessage({messaged: res.data.message})
             })
           } catch(e){
             console.log(e);
+            setMessage({messaged: e.response.data.message})
           }
         }
       }
@@ -51,18 +52,19 @@ const ForgotPassword = () => {
 
   return (
     <>
-    <Navigation user={user}/>
+    <Navigation/>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-4">
-        <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1>
+        <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md mt-16">
+          {/* <h1 className="font-bold text-center text-2xl mb-5">Your Logo</h1> */}
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                E-mail
+                Enter E-mail for Reset Link
               </label>
               <input
                 type="email"
                 name="email"
+                // defaultValue={location.state.email}
                 onChange={getdata}
                 className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />

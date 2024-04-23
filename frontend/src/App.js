@@ -1,5 +1,4 @@
 import "./App.css";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -10,19 +9,19 @@ import ResetPassword from "./pages/ResetPassword";
 import CreateProduct from "./pages/CreateProduct";
 import LogOut from "./pages/LogOut";
 import UpdateProduct from "./pages/UpdateProduct";
-// import { useEffect, useState} from "react";
-// import axios from "axios";
-// import Demo from "./pages/Demo";
+import Info from "./pages/Info";
 import ShowProduct from "./pages/ShowProduct";
 import UserPage from "./pages/UserPage";
 import Chat from "./pages/Chat";
 import UpdateUser from "./pages/UpdateUser";
+import ChatList from "./pages/ChatList";
+import AllChatList from "./pages/AllChatList"
+import UpdatePassword from "./pages/UpdatePassword";
+import env from "react-dotenv";
 
-// let user
 function App() {
   // const [user, setUser] = useState();
   // const [loading, setloading] = useState(true);
-
   return (
     <>
       <Router>
@@ -42,6 +41,10 @@ function App() {
             <Route path="/user" Component={UserPage}></Route>
             <Route path="/chat" Component={Chat}></Route>
             <Route path="/update-user" Component={UpdateUser}></Route>
+            <Route path="/chat-list" Component={ChatList}></Route>
+            <Route path="/info" Component={Info}></Route>
+            <Route path="/all-chat-list" Component={AllChatList}></Route>
+            <Route path="/update-password" Component={UpdatePassword}></Route>
           </Routes>
       </Router>
     </>
